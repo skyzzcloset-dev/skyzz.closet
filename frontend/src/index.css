@@ -10,3 +10,9 @@ body {
 }
 
 
+
+@layer components {
+  .hover-effect {
+    @apply text-white bg-blue-700 rounded hover:bg-blue-800 md:bg-transparent md:text-blue-700 md:p-0;
+  }
+}

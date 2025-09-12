@@ -1,3 +1,4 @@
+import Logo from "./Logo"
 import Navbar from "./Navbar"
 
-export {Navbar}
+export {Navbar, Logo}

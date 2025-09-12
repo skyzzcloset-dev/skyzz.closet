@@ -1,36 +1,39 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Logo } from "./index";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState(false);
-  const [active , isActive] = useState(false)
+  const [active, setActive] = useState("home");
 
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const linkClasses = (name) =>
+    `block py-2 px-3 rounded md:p-0 transition ${
+      active === name
+        ? "text-white bg-blue-700 md:bg-transparent md:text-blue-700"
+        : "text-black hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700"
+    }`;
 
   return (
-    <nav className="bg-white text-black border-b border-gray-200 shadow-sm ">
+    <nav className="bg-white text-black border-b border-gray-200 shadow-sm">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         {/* Logo */}
-        <a href="#" className="flex items-center space-x-3">
-          <img src="/Logo.jpg" className="h-12 rounded-full" alt="Logo" />
-          <span onClick={()=>navigate("/")} className="self-center text-2xl font-semibold whitespace-nowrap">
-            Skyzz.closet
-          </span>
-        </a>
+        <Logo />
 
         {/* Right side */}
         <div className="flex md:order-2">
           {/* Search / User / Cart (desktop) */}
           <div className="relative hidden md:flex items-center gap-5">
-            {/* Search toggle */}
             <i
               onClick={() => setSearch(!search)}
               className="ri-search-line cursor-pointer"
             ></i>
-            <i onClick={()=>navigate("/login")} className="ri-user-line cursor-pointer"></i>
+            <i
+              onClick={() => navigate("/login")}
+              className="ri-user-line cursor-pointer"
+            ></i>
             <i className="ri-shopping-bag-2-line cursor-pointer"></i>
           </div>
 
@@ -94,22 +97,25 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Search (when toggled) */}
-          {search  ? (
+          {search ? (
             <div className="w-full md:w-auto md:ml-5 flex justify-center items-center gap-4">
               <input
                 type="text"
                 placeholder="Search..."
-                className="block  md:w-150 p-3 pl-3 text-sm text-black border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500"
+                className="block md:w-[150px] p-3 pl-3 text-sm text-black border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500"
               />
-              <i onClick={()=>setSearch(false)} className="ri-close-line text-xl cursor-pointer"></i>
+              <i
+                onClick={() => setSearch(false)}
+                className="ri-close-line text-xl cursor-pointer"
+              ></i>
             </div>
           ) : (
             <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-white md:space-x-8 md:flex-row md:mt-0 md:border-0">
               <li>
                 <a
                   href="#"
-                  className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0"
-                  aria-current="page"
+                  onClick={() => setActive("home")}
+                  className={linkClasses("home")}
                 >
                   Home
                 </a>
@@ -117,7 +123,8 @@ const Navbar = () => {
               <li>
                 <a
                   href="#"
-                  className="block py-2 px-3 text-black rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+                  onClick={() => setActive("shop")}
+                  className={linkClasses("shop")}
                 >
                   Shop
                 </a>
@@ -125,7 +132,8 @@ const Navbar = () => {
               <li>
                 <a
                   href="#"
-                  className="block py-2 px-3 text-black rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+                  onClick={() => setActive("newdrop")}
+                  className={linkClasses("newdrop")}
                 >
                   New Drop
                 </a>
@@ -133,7 +141,8 @@ const Navbar = () => {
               <li>
                 <a
                   href="#"
-                  className="block py-2 px-3 text-black rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+                  onClick={() => setActive("contact")}
+                  className={linkClasses("contact")}
                 >
                   Contact
                 </a>
