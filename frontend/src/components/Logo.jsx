@@ -7,7 +7,7 @@ const Logo = () => {
         <img src="/Logo.jpg" className="h-12 rounded-full" alt="Logo" />
         <span
           onClick={() => navigate("/")}
-          className="self-center text-2xl font-semibold whitespace-nowrap"
+          className="self-center text-lg lg:text-2xl font-semibold whitespace-nowrap"
         >
           Skyzz.closet
         </span>

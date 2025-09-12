@@ -1,6 +1,6 @@
 import {useForm} from "react-hook-form";
 import axios from "axios";
-import {useNavigate , Link} from "react-router-dom";
+import {useNavigate, Link} from "react-router-dom";
 import Back from "../components/Back";
 
 const Login = () => {
@@ -42,17 +42,17 @@ const Login = () => {
         <Back />
       </div>
 
-      <div className="min-h-screen flex flex-col items-center gap-5 lg:gap-0 p-6 space-y-5 ">
+      <div className="min-h-screen flex flex-col items-center gap-5 lg:gap-0 p-6  ">
         <div className="space-y-1 px-2 py-8">
           <h1 className="text-2xl lg:text-[2rem] lg:font-bold text-center">
             Welcome Back to Skyzz.closet
           </h1>
-          <p className="text-gray-500 text-md">Sign in to your Account</p>
+          <p className="text-gray-500 text-md text-center" >Sign in to your Account</p>
         </div>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-4"
+          className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md  space-y-3"
         >
           <h2 className="text-2xl font-bold text-center">Login</h2>
 
@@ -104,7 +104,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full font-semibold py-2 px-4 rounded-lg transition 
+            className={`w-full font-semibold py-2 px-4 rounded-lg transition my-3
               ${
                 isSubmitting
                   ? "bg-gray-400 cursor-not-allowed"
@@ -116,11 +116,11 @@ const Login = () => {
         </form>
 
         <div>
-          <h1>
+          <h1 className="py-4">
             Dont have account ?{" "}
             <Link
               to="/register"
-              className="text-blue-600 hover:underline font-medium"
+              className="text-blue-600 hover:underline font-medium "
             >
               Register
             </Link>
