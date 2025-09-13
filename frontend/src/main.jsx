@@ -4,8 +4,9 @@ import "./index.css";
 import App from "./App";
 import {store} from "./app/store";
 import {Provider} from "react-redux";
+import {BrowserRouter} from "react-router-dom";
 
-import { ToastContainer, toast } from 'react-toastify';
+import {ToastContainer, toast} from "react-toastify";
 
 const container = document.getElementById("root");
 
@@ -14,8 +15,10 @@ if (container) {
 
   root.render(
     <Provider store={store}>
-      <App />
-      <ToastContainer />
+      <BrowserRouter>
+        <App />
+        <ToastContainer />
+      </BrowserRouter>
     </Provider>
   );
 } else {
