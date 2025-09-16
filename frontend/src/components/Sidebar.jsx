@@ -1,9 +1,14 @@
 import React, {useState} from "react";
-import {NavLink} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {NavLink, useNavigate} from "react-router-dom";
 import "remixicon/fonts/remixicon.css";
+import {logout} from "../features/auth/authSlice";
+import {toast} from "react-toastify";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const navigate = useNavigate()
+   const dispatch = useDispatch();
 
   const linkClasses = ({isActive}) =>
     `flex items-center p-2 rounded-lg transition group ${
@@ -11,6 +16,18 @@ const Sidebar = () => {
         ? "text-blue-700 dark:text-blue-400 bg-gray-100 dark:bg-gray-700"
         : "text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
     }`;
+
+ 
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout()); // if logout is async thunk
+      toast.success("Logged Out");
+
+      navigate("/login");
+    } catch (error) {
+      toast.error(`Error: ${error.message || error}`);
+    }
+  };
 
   return (
     <>
@@ -72,7 +89,7 @@ const Sidebar = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/" className={linkClasses}>
+              <NavLink onClick={handleLogout} to="/" className={linkClasses}>
                 <i className="ri-logout-box-line text-lg"></i>
                 <span className="ms-3">Sign Out</span>
               </NavLink>

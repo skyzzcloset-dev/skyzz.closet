@@ -3,6 +3,8 @@ import axios from "axios";
 
 const API_URL = "https://skyzz-closet.onrender.com/api/auth/";
 
+
+
 // login user
 const login = async (userData) => {
   const res = await axios.post(API_URL + "login", userData, {

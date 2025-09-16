@@ -3,6 +3,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, reset } from "../features/auth/authSlice";
 import { Logo } from "./index";
+import { toast } from "react-toastify";
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,11 +15,16 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
-  const handleLogout = () => {
-    dispatch(logout());
+ const handleLogout = async () => {
+  try {
+    await dispatch(logout()); // if logout is async thunk
+    toast.success("Logged Out");
     dispatch(reset());
     navigate("/login");
-  };
+  } catch (error) {
+    toast.error(`Error: ${error.message || error}`);
+  }
+};
 
   const linkClasses = (name) =>
     `block py-2 px-3 rounded md:p-0 transition ${
