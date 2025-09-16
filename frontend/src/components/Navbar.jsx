@@ -194,6 +194,24 @@ const Navbar = () => {
                 Contact
               </a>
             </li>
+            <li>
+              <a
+                href="/register"
+                onClick={() => setActive("contact")}
+                className={linkClasses("contact")}
+              >
+                Sign Up
+              </a>
+            </li>
+            <li>
+              <a
+                href="/cart"
+                onClick={() => setActive("contact")}
+                className={linkClasses("contact")}
+              >
+                Cart
+              </a>
+            </li>
           </ul>
         </div>
       )}
