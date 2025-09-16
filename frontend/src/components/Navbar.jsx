@@ -141,7 +141,7 @@ const Navbar = () => {
             {user ? (
               <>
                 <span className="font-medium">
-                  Hi, {user.fullName?.firstName || user.email}
+                  Hi, {user.fullName?.firstName}
                 </span>
                 <button
                   onClick={handleLogout}
