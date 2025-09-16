@@ -1,62 +1,77 @@
-import {useForm} from "react-hook-form";
-import axios from "axios";
-import {useNavigate, Link} from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { useEffect } from "react";
+import { login as loginUser } from "../../features/auth/authSlice"; 
 import Back from "../../components/Back";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: {errors, isSubmitting},
+    formState: { errors, isSubmitting },
     reset,
   } = useForm();
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // ✅ Only once
+  const { user, isLoading } = useSelector((state) => state.auth);
 
   const onSubmit = async (data) => {
     try {
-      console.log("Form Data:", data);
+      const payload = {
+        email: data.email,
+        password: data.password,
+      };
 
-      const res = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        {
-          email: data.email,
-          password: data.password,
-        },
-        {withCredentials: true}
-      );
+      const resultAction = await dispatch(loginUser(payload));
 
-      console.log("Login success:", res.data);
-
-      reset(); // clear form after success
-      navigate("/"); // redirect to home
+      if (loginUser.fulfilled.match(resultAction)) {
+        toast.success("Logged in Successfully");
+        reset();
+        // ✅ Don't navigate here, let useEffect handle redirect by role
+      } else {
+        toast.error(resultAction.payload || "Invalid credentials");
+      }
     } catch (err) {
-      console.error("Login failed:", err.response?.data || err.message);
-      alert(err.response?.data?.message || "Login failed, try again!");
+      toast.error("Something went wrong!");
     }
   };
 
-  return (
-    <div className="max-h-full  ">
-      <div>
-        <Back />
-      </div>
+ useEffect(() => {
+  if (user) {
+    if (user.role === "admin") {
+      navigate("/admin/dashboard", { replace: true });
+    } else {
+      navigate("/", { replace: true });
+    }
+  }
+}, [user, navigate]);
 
-      <div className="min-h-screen flex flex-col items-center gap-5 lg:gap-0 p-6  ">
+  return (
+    <div className="max-h-full">
+      <Back />
+
+      <div className="min-h-screen flex flex-col items-center gap-5 lg:gap-0 p-6">
         <div className="space-y-1 px-2 py-8">
           <h1 className="text-2xl lg:text-[2rem] lg:font-bold text-center">
             Welcome Back to Skyzz.closet
           </h1>
-          <p className="text-gray-500 text-md text-center" >Sign in to your Account</p>
+          <p className="text-gray-500 text-md text-center">
+            Sign in to your Account
+          </p>
         </div>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md  space-y-3"
+          className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-3"
         >
           <h2 className="text-2xl font-bold text-center">Login</h2>
 
-          {/* Email Field */}
+          {/* Email */}
           <div>
             <label className="block text-gray-700 font-medium">Email</label>
             <input
@@ -78,7 +93,7 @@ const Login = () => {
             )}
           </div>
 
-          {/* Password Field */}
+          {/* Password */}
           <div>
             <label className="block text-gray-700 font-medium">Password</label>
             <input
@@ -100,27 +115,27 @@ const Login = () => {
             )}
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isLoading}
             className={`w-full font-semibold py-2 px-4 rounded-lg transition my-3
               ${
-                isSubmitting
+                isSubmitting || isLoading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-500 text-white hover:bg-blue-600"
               }`}
           >
-            {isSubmitting ? "Logging in..." : "Submit"}
+            {isSubmitting || isLoading ? "Logging in..." : "Submit"}
           </button>
         </form>
 
         <div>
           <h1 className="py-4">
-            Dont have account ?{" "}
+            Don’t have an account?{" "}
             <Link
               to="/register"
-              className="text-blue-600 hover:underline font-medium "
+              className="text-blue-600 hover:underline font-medium"
             >
               Register
             </Link>

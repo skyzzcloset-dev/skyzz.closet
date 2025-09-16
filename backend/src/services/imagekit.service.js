@@ -9,11 +9,11 @@ const imagekit = new ImageKit({
 async function uploadFile(file, fileName, folderName) {
   try {
     const response = await imagekit.upload({
-      file,       // can be base64, binary, or URL
-      fileName,   // e.g., "product-shirt-123.jpg"
+      file,       // base64 image
+      fileName,
       folder: folderName ? `/products/${folderName}` : "/products",
     });
-    return response; // contains url, fileId, name, etc.
+    return response;
   } catch (err) {
     throw new Error(err.message);
   }

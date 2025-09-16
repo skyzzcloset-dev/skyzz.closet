@@ -4,7 +4,6 @@ import "./index.css";
 import App from "./App";
 import {store} from "./app/store";
 import {Provider} from "react-redux";
-import {BrowserRouter} from "react-router-dom";
 
 import {ToastContainer, toast} from "react-toastify";
 
@@ -15,10 +14,20 @@ if (container) {
 
   root.render(
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-        <ToastContainer />
-      </BrowserRouter>
+      <App />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+       
+      />
     </Provider>
   );
 } else {

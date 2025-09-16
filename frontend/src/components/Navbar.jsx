@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout, reset } from "../features/auth/authSlice";
 import { Logo } from "./index";
 
 const Navbar = () => {
@@ -8,6 +10,16 @@ const Navbar = () => {
   const [active, setActive] = useState("home");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Get auth state from Redux
+  const { user } = useSelector((state) => state.auth);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(reset());
+    navigate("/login");
+  };
 
   const linkClasses = (name) =>
     `block py-2 px-3 rounded md:p-0 transition ${
@@ -48,7 +60,7 @@ const Navbar = () => {
           <ul className="hidden md:flex md:space-x-10 font-medium ml-6">
             <li>
               <a
-                href="#"
+                href="/"
                 onClick={() => setActive("home")}
                 className={linkClasses("home")}
               >
@@ -57,7 +69,7 @@ const Navbar = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="/shop"
                 onClick={() => setActive("shop")}
                 className={linkClasses("shop")}
               >
@@ -66,7 +78,7 @@ const Navbar = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="/new"
                 onClick={() => setActive("newdrop")}
                 className={linkClasses("newdrop")}
               >
@@ -75,7 +87,7 @@ const Navbar = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="/contact"
                 onClick={() => setActive("contact")}
                 className={linkClasses("contact")}
               >
@@ -118,10 +130,25 @@ const Navbar = () => {
                 className="ri-search-line cursor-pointer text-xl"
               ></i>
             )}
-            <i
-              onClick={() => navigate("/login")}
-              className="ri-user-line cursor-pointer text-xl"
-            ></i>
+
+            {/* Auth condition */}
+            {user ? (
+              <>
+                <span className="font-medium">Hi, {user.name}</span>
+                <button
+                  onClick={handleLogout}
+                  className="text-red-500 hover:underline"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <i
+                onClick={() => navigate("/login")}
+                className="ri-user-line cursor-pointer text-xl"
+              ></i>
+            )}
+
             <i className="ri-shopping-bag-2-line cursor-pointer text-xl"></i>
           </div>
         </div>
@@ -133,7 +160,7 @@ const Navbar = () => {
           <ul className="flex flex-col space-y-2 font-medium">
             <li>
               <a
-                href="#"
+                href="/"
                 onClick={() => setActive("home")}
                 className={linkClasses("home")}
               >
@@ -142,7 +169,7 @@ const Navbar = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="/shop"
                 onClick={() => setActive("shop")}
                 className={linkClasses("shop")}
               >
@@ -151,7 +178,7 @@ const Navbar = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="/new"
                 onClick={() => setActive("newdrop")}
                 className={linkClasses("newdrop")}
               >
@@ -160,7 +187,7 @@ const Navbar = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="/contact"
                 onClick={() => setActive("contact")}
                 className={linkClasses("contact")}
               >

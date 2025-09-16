@@ -1,7 +1,10 @@
 import {useForm} from "react-hook-form";
-import axios from "axios";
-import {useNavigate,Link} from "react-router-dom";
+import {useNavigate, Link} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+
+import {register as registerUser} from "../../features/auth/authSlice";
 import Back from "../../components/Back";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const {
@@ -12,22 +15,36 @@ const Register = () => {
   } = useForm();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const onSubmit = (data) => {
-    console.log("Register Data:", data);
+  const {user, isLoading, isError, isSuccess, message} = useSelector(
+    (state) => state.auth
+  );
 
+  const onSubmit = async (data) => {
     try {
-      axios.post("http://localhost:3000/api/auth/register", {
-        firstName: data.firstName,
-        lastName: data.lastName,
+      const payload = {
+        fullName: {firstName: data.firstName, lastName: data.lastName},
         email: data.email,
         password: data.password,
-      });
-      reset();
-      navigate("/");
-    } catch (error) {
-      console.error("Login failed:", error);
+      };
+      const resultAction = await dispatch(registerUser(payload));
+
+      if (registerUser.fulfilled.match(resultAction)) {
+        console.log("Registration success:", resultAction.payload);
+        toast.success("Logged in Successfully");
+        reset();
+        navigate("/"); // redirect home
+      } else {
+        console.error("Registration failed:", resultAction.payload);
+         toast.error(resultAction.payload?.message || "Invalid credentials");
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+       toast.error( "Invalid credentials");
     }
+
+    console.log(data);
   };
 
   return (
@@ -140,23 +157,26 @@ const Register = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="bg-blue-500 w-full font-semibold py-2 px-4 rounded-lg transition text-white hover:bg-blue-600"
+              disabled={isLoading}
+              className={`bg-blue-500 w-full font-semibold py-2 px-4 rounded-lg transition text-white hover:bg-blue-600 ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Register
+              {isLoading ? "Registering..." : "Register"}
             </button>
           </form>
 
-           <div>
-          <h1 className="py-4">
-            Already have an Account?{" "}
-            <Link
-              to="/login"
-              className="text-blue-600 hover:underline font-medium"
-            >
-             Login
-            </Link>
-          </h1>
-        </div>
+          <div>
+            <h1 className="py-4">
+              Already have an Account?{" "}
+              <Link
+                to="/login"
+                className="text-blue-600 hover:underline font-medium"
+              >
+                Login
+              </Link>
+            </h1>
+          </div>
         </div>
       </div>
     </>

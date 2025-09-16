@@ -17,7 +17,7 @@ async function registerUser(req, res) {
       fullName: { firstName, lastName } = {},
       email,
       password,
-      address,
+     
     } = req.body;
 
     // Basic validation
@@ -36,7 +36,7 @@ async function registerUser(req, res) {
       fullName: { firstName, lastName },
       email,
       password: hashedPassword,
-      address,
+      
     });
 
     const token = generateToken(user._id);
@@ -48,14 +48,18 @@ async function registerUser(req, res) {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
+    console.log("Register body:", req.body);
+
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      user: { id: user._id, email: user.email },
+      user: { id: user._id, email: user.email , role:user.role},
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Server error", details: error.message });
   }
+
+  
 }
 
 // ================== LOGIN ==================
@@ -89,7 +93,7 @@ async function loginUser(req, res) {
     return res.status(200).json({
       success: true,
       message: "User logged in successfully",
-      user: { id: user._id, email: user.email },
+      user: { id: user._id, email: user.email, role: user.role },
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Server error", details: error.message });

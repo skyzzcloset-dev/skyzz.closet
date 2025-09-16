@@ -13,7 +13,7 @@ const Back = () => {
               onClick={() => navigate(-1)}
               className=" flex gap-2  cursor-pointer"
             >
-              <i class="ri-arrow-left-line"> </i> <label>Back</label>
+              <i className="ri-arrow-left-line"> </i> <label>Back</label>
             </div>
             <div>
               <Logo />
