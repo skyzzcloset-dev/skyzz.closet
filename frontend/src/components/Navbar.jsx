@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, reset } from "../features/auth/authSlice";
 import { Logo } from "./index";
@@ -11,8 +11,6 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // Get auth state from Redux
   const { user } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
@@ -59,24 +57,40 @@ const Navbar = () => {
           {/* Links (desktop only) */}
           <ul className="hidden md:flex md:space-x-10 font-medium ml-6">
             <li>
-              <a href="/" onClick={() => setActive("home")} className={linkClasses("home")}>
+              <NavLink
+                to="/"
+                onClick={() => setActive("home")}
+                className={linkClasses("home")}
+              >
                 Home
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="/shop" onClick={() => setActive("shop")} className={linkClasses("shop")}>
+              <NavLink
+                to="/shop"
+                onClick={() => setActive("shop")}
+                className={linkClasses("shop")}
+              >
                 Shop
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="/new" onClick={() => setActive("newdrop")} className={linkClasses("newdrop")}>
+              <NavLink
+                to="/new"
+                onClick={() => setActive("newdrop")}
+                className={linkClasses("newdrop")}
+              >
                 New Drop
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="/contact" onClick={() => setActive("contact")} className={linkClasses("contact")}>
+              <NavLink
+                to="/contact"
+                onClick={() => setActive("contact")}
+                className={linkClasses("contact")}
+              >
                 Contact
-              </a>
+              </NavLink>
             </li>
           </ul>
         </div>
@@ -98,6 +112,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-8">
             {search ? (
               <div className="flex items-center gap-2">
+                <i className="ri-search-line text-xl"></i>
                 <input
                   type="text"
                   placeholder="Search..."
@@ -129,13 +144,14 @@ const Navbar = () => {
                 </button>
               </>
             ) : (
-              <i
-                onClick={() => navigate("/login")}
-                className="ri-user-line cursor-pointer text-xl"
-              ></i>
+              <NavLink to="/login">
+                <i className="ri-user-line cursor-pointer text-xl"></i>
+              </NavLink>
             )}
 
-            <i className="ri-shopping-bag-2-line cursor-pointer text-xl"></i>
+            <NavLink to="/cart">
+              <i className="ri-shopping-bag-2-line cursor-pointer text-xl"></i>
+            </NavLink>
           </div>
         </div>
       </div>
@@ -145,34 +161,58 @@ const Navbar = () => {
         <div className="md:hidden px-4 pb-4">
           <ul className="flex flex-col space-y-2 font-medium">
             <li>
-              <a href="/" onClick={() => setActive("home")} className={linkClasses("home")}>
+              <NavLink
+                to="/"
+                onClick={() => setActive("home")}
+                className={linkClasses("home")}
+              >
                 Home
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="/shop" onClick={() => setActive("shop")} className={linkClasses("shop")}>
+              <NavLink
+                to="/shop"
+                onClick={() => setActive("shop")}
+                className={linkClasses("shop")}
+              >
                 Shop
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="/new" onClick={() => setActive("newdrop")} className={linkClasses("newdrop")}>
+              <NavLink
+                to="/new"
+                onClick={() => setActive("newdrop")}
+                className={linkClasses("newdrop")}
+              >
                 New Drop
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="/contact" onClick={() => setActive("contact")} className={linkClasses("contact")}>
+              <NavLink
+                to="/contact"
+                onClick={() => setActive("contact")}
+                className={linkClasses("contact")}
+              >
                 Contact
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="/register" className={linkClasses("register")}>
-                Sign Up
-              </a>
+              <NavLink
+                to="/register"
+                onClick={() => setActive("signup")}
+                className={linkClasses("signup")}
+              >
+                Signup
+              </NavLink>
             </li>
             <li>
-              <a href="/cart" className={linkClasses("cart")}>
+              <NavLink
+                to="/cart"
+                onClick={() => setActive("cart")}
+                className={linkClasses("cart")}
+              >
                 Cart
-              </a>
+              </NavLink>
             </li>
           </ul>
         </div>
@@ -182,6 +222,7 @@ const Navbar = () => {
       {search && (
         <div className="md:hidden fixed inset-0 bg-white z-50 flex items-start p-4">
           <div className="flex w-full items-center gap-2">
+            <i className="ri-search-line text-xl"></i>
             <input
               type="text"
               placeholder="Search..."

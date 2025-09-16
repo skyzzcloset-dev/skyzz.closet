@@ -2,8 +2,8 @@ import React from 'react'
 
 const NewDrop = () => {
   return (
-    <div>
-      
+    <div className='mt-10'>
+      this is new Drop
     </div>
   )
 }

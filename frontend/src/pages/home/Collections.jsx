@@ -34,7 +34,7 @@ const Collections = () => {
             <img
               src={item.img}
               alt={item.name}
-              className="rounded-lg w-40 h-40 object-cover sm:w-48 sm:h-48 lg:w-72 lg:h-80"
+              className="rounded-lg w-40  h-50 object-cover sm:w-58 sm:h-58 lg:w-92 lg:h-80"
             />
             <p className="mt-3 text-sm sm:text-base lg:text-lg font-medium">
               {item.name}

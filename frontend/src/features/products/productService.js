@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/api/products";
+const API_URL = "https://skyzz-closet.onrender.com/api/products";
 
 const addProduct = async (productData) => {
   try {
