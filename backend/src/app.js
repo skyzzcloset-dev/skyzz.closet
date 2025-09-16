@@ -11,7 +11,7 @@ app.use(cookieParser());
 // ✅ CORS setup (allow cookies + frontend URL)
 app.use(
   cors({
-    origin: "http://localhost:5173", // no trailing slash
+    origin: "https://skyzzcloset.netlify.app/", // no trailing slash
     credentials: true,
     optionsSuccessStatus: 200,
   })
