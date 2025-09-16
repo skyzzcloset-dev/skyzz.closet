@@ -31,7 +31,7 @@ const Navbar = () => {
   return (
     <nav className="bg-white text-black border-b border-gray-200 shadow-sm">
       <div className="max-w-screen-xl mx-auto p-4 grid grid-cols-3 items-center">
-        {/* Left side (hamburger on mobile | links on desktop) */}
+        {/* Left side */}
         <div className="flex items-center">
           {/* Hamburger (mobile only) */}
           <button
@@ -59,58 +59,42 @@ const Navbar = () => {
           {/* Links (desktop only) */}
           <ul className="hidden md:flex md:space-x-10 font-medium ml-6">
             <li>
-              <a
-                href="/"
-                onClick={() => setActive("home")}
-                className={linkClasses("home")}
-              >
+              <a href="/" onClick={() => setActive("home")} className={linkClasses("home")}>
                 Home
               </a>
             </li>
             <li>
-              <a
-                href="/shop"
-                onClick={() => setActive("shop")}
-                className={linkClasses("shop")}
-              >
+              <a href="/shop" onClick={() => setActive("shop")} className={linkClasses("shop")}>
                 Shop
               </a>
             </li>
             <li>
-              <a
-                href="/new"
-                onClick={() => setActive("newdrop")}
-                className={linkClasses("newdrop")}
-              >
+              <a href="/new" onClick={() => setActive("newdrop")} className={linkClasses("newdrop")}>
                 New Drop
               </a>
             </li>
             <li>
-              <a
-                href="/contact"
-                onClick={() => setActive("contact")}
-                className={linkClasses("contact")}
-              >
+              <a href="/contact" onClick={() => setActive("contact")} className={linkClasses("contact")}>
                 Contact
               </a>
             </li>
           </ul>
         </div>
 
-        {/* Center (Logo always perfectly centered) */}
+        {/* Center (Logo) */}
         <div className="flex justify-center">
           <Logo />
         </div>
 
         {/* Right side */}
         <div className="flex items-center justify-end gap-5">
-          {/* Mobile: search icon */}
+          {/* Mobile search icon */}
           <i
             onClick={() => setSearch(true)}
             className="ri-search-line cursor-pointer text-xl md:hidden"
           ></i>
 
-          {/* Desktop: search + user + cart */}
+          {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-8">
             {search ? (
               <div className="flex items-center gap-2">
@@ -134,7 +118,9 @@ const Navbar = () => {
             {/* Auth condition */}
             {user ? (
               <>
-                <span className="font-medium">Hi, {user.name}</span>
+                <span className="font-medium">
+                  Hi, {user.fullName?.firstName || user.email}
+                </span>
                 <button
                   onClick={handleLogout}
                   className="text-red-500 hover:underline"
@@ -154,61 +140,37 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile dropdown menu */}
+      {/* Mobile dropdown */}
       {isOpen && (
         <div className="md:hidden px-4 pb-4">
           <ul className="flex flex-col space-y-2 font-medium">
             <li>
-              <a
-                href="/"
-                onClick={() => setActive("home")}
-                className={linkClasses("home")}
-              >
+              <a href="/" onClick={() => setActive("home")} className={linkClasses("home")}>
                 Home
               </a>
             </li>
             <li>
-              <a
-                href="/shop"
-                onClick={() => setActive("shop")}
-                className={linkClasses("shop")}
-              >
+              <a href="/shop" onClick={() => setActive("shop")} className={linkClasses("shop")}>
                 Shop
               </a>
             </li>
             <li>
-              <a
-                href="/new"
-                onClick={() => setActive("newdrop")}
-                className={linkClasses("newdrop")}
-              >
+              <a href="/new" onClick={() => setActive("newdrop")} className={linkClasses("newdrop")}>
                 New Drop
               </a>
             </li>
             <li>
-              <a
-                href="/contact"
-                onClick={() => setActive("contact")}
-                className={linkClasses("contact")}
-              >
+              <a href="/contact" onClick={() => setActive("contact")} className={linkClasses("contact")}>
                 Contact
               </a>
             </li>
             <li>
-              <a
-                href="/register"
-                onClick={() => setActive("contact")}
-                className={linkClasses("contact")}
-              >
+              <a href="/register" className={linkClasses("register")}>
                 Sign Up
               </a>
             </li>
             <li>
-              <a
-                href="/cart"
-                onClick={() => setActive("contact")}
-                className={linkClasses("contact")}
-              >
+              <a href="/cart" className={linkClasses("cart")}>
                 Cart
               </a>
             </li>
