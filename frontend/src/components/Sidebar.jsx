@@ -23,7 +23,7 @@ const Sidebar = () => {
       await dispatch(logout()); // if logout is async thunk
       toast.success("Logged Out");
 
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       toast.error(`Error: ${error.message || error}`);
     }
@@ -37,7 +37,7 @@ const Sidebar = () => {
         type="button"
         className="inline-flex py-4 me-3 text-sm  rounded-lg 
                    focus:outline-none2
-                    fixed top-0 right-10 z-50"
+                    fixed top-0 right-5 z-50"
       >
         <span className="sr-only">Toggle sidebar</span>
         {isOpen ? (

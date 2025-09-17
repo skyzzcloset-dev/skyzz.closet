@@ -5,6 +5,7 @@ import App from "./App";
 import {store} from "./app/store";
 import {Provider} from "react-redux";
 
+
 import {ToastContainer, toast} from "react-toastify";
 
 const container = document.getElementById("root");
@@ -14,6 +15,7 @@ if (container) {
 
   root.render(
     <Provider store={store}>
+       
       <App />
       <ToastContainer
         position="top-right"

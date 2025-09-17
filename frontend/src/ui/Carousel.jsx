@@ -2,10 +2,10 @@ import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {FaChevronLeft, FaChevronRight} from "react-icons/fa";
 
-function Carousel({ products = [], perView = 3, title = "" }) {
-  const NextArrow = ({ onClick }) => (
+function Carousel({products = [], perView = 3, title = ""}) {
+  const NextArrow = ({onClick}) => (
     <button
       onClick={onClick}
       aria-label="Next"
@@ -15,7 +15,7 @@ function Carousel({ products = [], perView = 3, title = "" }) {
     </button>
   );
 
-  const PrevArrow = ({ onClick }) => (
+  const PrevArrow = ({onClick}) => (
     <button
       onClick={onClick}
       aria-label="Previous"
@@ -33,27 +33,25 @@ function Carousel({ products = [], perView = 3, title = "" }) {
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     responsive: [
-      { breakpoint: 1280, settings: { slidesToShow: Math.min(perView, 3) } }, // Desktop
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },                     // Tablet
-      { breakpoint: 640, settings: { slidesToShow: 1, arrows: false } },       // Mobile
+      {breakpoint: 1280, settings: {slidesToShow: Math.min(perView, 3)}}, // Desktop
+      {breakpoint: 1024, settings: {slidesToShow: 2}}, // Tablet
+      {breakpoint: 640, settings: {slidesToShow: 1, arrows: false}}, // Mobile
     ],
   };
 
   return (
-    <div className="relative my-6 px-2">
-      {title && <h2 className="text-center text-2xl font-bold mb-6">{title}</h2>}
-
+    <div className="relative my-2 lg:my-6 px-2">
       <Slider {...settings}>
         {products.map((product, index) => (
-          <div key={index} className="px-2">
-            <div className="bg-white rounded-xl border shadow-md overflow-hidden hover:shadow-lg transition w-full">
-              <div className="h-64 w-full flex items-center justify-center bg-gray-50">
+          <div key={index} className="px-9">
+            <div className="bg-white rounded-xl w-75 lg:w-90  border shadow-md overflow-hidden hover:shadow-lg transition ">
+              <div className="h-75 lg:h-60a w-full flex items-center justify-center bg-gray-50">
                 <img
                   src={product.img}
                   alt={product.name}
                   loading="lazy"
                   decoding="async"
-                  className="object-contain h-full w-full"
+                  className="cursor-pointer h-full w-full"
                 />
               </div>
               <div className="p-4 text-center">

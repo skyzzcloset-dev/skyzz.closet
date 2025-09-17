@@ -12,7 +12,7 @@ const AdminRoutes = (
   <Route path="/admin" element={<AdminLayout />}>
     <Route path="dashboard" element={<Dashboard />} />
     <Route path="products" element={<Products />} />
-    <Route path="products/add" element={<AddProducts />} />
+    <Route path="add" element={<AddProducts />} />
     <Route path="users" element={<Users />} />
     <Route path="orders" element={<Orders />} />
     {/* fallback for unknown admin routes */}

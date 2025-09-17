@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {toast} from "react-toastify";
-import {addProduct, reset} from "../../features/products/productSlice";
+import {addProduct,getAllProduct, reset} from "../../features/products/productSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
@@ -9,7 +9,7 @@ const AddProduct = () => {
   const {
     register,
     handleSubmit,
-   formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
     reset: resetForm,
   } = useForm();
   const sizes = ["XS", "S", "M", "L", "XL"];
@@ -53,7 +53,9 @@ const AddProduct = () => {
         resetForm();
         setImages([]);
         dispatch(reset());
-        navigate("/products"); // redirect to products page
+         dispatch(getAllProduct());
+        navigate("/admin/dashboard"); // redirect to products page
+        
       } else {
         toast.error(resultAction.payload || "Failed to add product");
       }
@@ -124,8 +126,9 @@ const AddProduct = () => {
             >
               <option value="">Select category</option>
               <option value="Tops">Tops</option>
+              <option value="Shirts">Shirts</option>
+              <option value="Dress">Dress</option>
               <option value="Bottoms">Bottoms</option>
-              <option value="Accessories">Accessories</option>
             </select>
             {errors.category && (
               <p className="text-red-500 text-sm">{errors.category.message}</p>
@@ -227,7 +230,6 @@ const AddProduct = () => {
                   : "bg-blue-500 text-white hover:bg-blue-600"
               }`}
         >
-         
           {isSubmitting || isLoading ? "Loading" : "Save Product"}
         </button>
       </form>
