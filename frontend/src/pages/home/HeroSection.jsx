@@ -2,11 +2,22 @@ import React from "react";
 
 const HeroSection = () => {
   return (
-    <div className="relative w-full h-[740px]">
-      {/* Hero Image */}
+    <div className="relative w-full h-[600px] lg:h-[740px]">
+      {/* Hero Image with srcSet */}
       <img
-        src="/Hero4.jpg"
-        alt="Hero"
+        src="/Hero4_962.jpg" // default fallback
+        srcSet="
+          /Hero4_657.jpg 657w,
+          /Hero4_962.jpg 962w,
+          /Hero4_1117.jpg 1117w,
+          /Hero4_1267.jpg 1267w,
+          /Hero4_1400.jpg 1400w
+        "
+        sizes="(max-width: 640px) 100vw, 
+               (max-width: 1024px) 100vw, 
+               1400px"
+        alt="Hero Image"
+        fetchPriority="high"
         className="w-full h-full object-cover object-center"
       />
 

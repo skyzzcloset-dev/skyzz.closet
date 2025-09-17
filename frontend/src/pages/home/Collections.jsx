@@ -1,50 +1,32 @@
-import React from "react";
+
+import { lazy } from 'react';
+import Carousel from "../../ui/Carousel";
+import ScrollAnimate from "../../ui/ScrollAnimate";
+
 
 const Collections = () => {
   const featuredCollections = [
-    {
-      name: "Morning Wear",
-      img: "/featured1.png",
-    },
-    {
-      name: "Noon Wear",
-      img: "/featured2.png",
-    },
-    {
-      name: "Party/Occasion Wear",
-      img: "/featured3.png",
-    },
+    { name: "Shirts", img: "/shirts.webp" },
+    { name: "Skirts", img: "/skirts.webp" },
+    { name: "Tops", img: "/tops.webp" },
+    { name: "Bottoms", img: "/bottoms.webp" },
   ];
 
   return (
-    <div className="min-h-screen">
-      <div>
-        <h1 className="text-center font-bold p-12 lg:text-4xl">
+    <div className="min-h-screen px-4 lg:px-12">
+      <ScrollAnimate direction="up" duration={0.6}>
+        <h2 className="text-center font-bold py-12 text-2xl lg:text-4xl">
           Featured Collections
-        </h1>
-      </div>
+        </h2>
+      </ScrollAnimate>
 
-      {/* Horizontal scroll on small screens, grid on large screens with snapping */}
-      <div className="flex overflow-x-auto lg:grid lg:grid-cols-3 gap-6 px-4 scrollbar-hide snap-x snap-mandatory">
-        {featuredCollections.map((item, index) => (
-          <div
-            key={index}
-            className="flex flex-col items-center flex-shrink-0 cursor-pointer snap-start"
-          >
-            <img
-              src={item.img}
-              alt={item.name}
-              className="rounded-lg w-40  h-50 object-cover sm:w-58 sm:h-58 lg:w-92 lg:h-80"
-            />
-            <p className="mt-3 text-sm sm:text-base lg:text-lg font-medium">
-              {item.name}
-            </p>
-          </div>
-        ))}
-      </div>
+      <ScrollAnimate direction="up" duration={0.6} delay={0.1}>
+        <Carousel products={featuredCollections} perView={3} title="" />
+      </ScrollAnimate>
     </div>
   );
 };
 
 export default Collections;
+
 

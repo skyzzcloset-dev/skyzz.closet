@@ -1,12 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@500;600&display=swap');
 
 @import "tailwindcss";
 
 body {
-    font-family: 'Barlow', sans-serif;
-    letter-spacing: 0.3px;
-    background-color: #F9F8F4;
-    
+  font-family: "Roboto", sans-serif;
+  letter-spacing: 0.3px;
+  
 }
 
 
@@ -16,7 +14,6 @@ body {
     @apply text-white bg-blue-700 rounded hover:bg-blue-800 md:bg-transparent md:text-blue-700 md:p-0;
   }
 }
-
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
