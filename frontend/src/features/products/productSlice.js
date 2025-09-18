@@ -9,12 +9,12 @@ const initialState = {
   message: "",
 };
 
-// Async thunk to add a product
+// Add product
 export const addProduct = createAsyncThunk(
   "products/add",
-  async (productData, thunkAPI) => {
+  async ({productData, token}, thunkAPI) => {
     try {
-      return await productService.addProduct(productData);
+      return await productService.addProduct(productData, token);
     } catch (error) {
       const message =
         error.response?.data?.message ||
@@ -24,19 +24,22 @@ export const addProduct = createAsyncThunk(
     }
   }
 );
+
+// Get all products
 export const getAllProduct = createAsyncThunk(
   "products/getAll",
-  async (_, thunkAPI) => {
+  async (token, thunkAPI) => {
     try {
-      return await productService.getAllProduct();
+      return await productService.getAllProduct(token);
     } catch (error) {
       const message =
-        error.response?.data?.message || error.message || "Something went wrong";
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
       return thunkAPI.rejectWithValue(message);
     }
   }
 );
-
 
 const productsSlice = createSlice({
   name: "products",
@@ -51,13 +54,14 @@ const productsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Add product
       .addCase(addProduct.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(addProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.items.push(action.payload); // Add the new product to items
+        state.items.push(action.payload);
       })
       .addCase(addProduct.rejected, (state, action) => {
         state.isLoading = false;
@@ -65,20 +69,20 @@ const productsSlice = createSlice({
         state.message = action.payload;
       })
 
+      // Get all products
       .addCase(getAllProduct.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(getAllProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-       state.items = action.payload.products
-        
+        state.items = action.payload.products || action.payload; // flexible
       })
       .addCase(getAllProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-        state.items = null;
+        state.items = []; // never null
       });
   },
 });
