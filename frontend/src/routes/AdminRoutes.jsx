@@ -9,7 +9,7 @@ import Orders from "../pages/admin/Orders";
 import Products from "../pages/admin/Products";
 
 const AdminRoutes = (
-  <Route path="/admin" element={<AdminLayout />}>
+  <Route path="/admin/" element={<AdminLayout />}>
     <Route path="dashboard" element={<Dashboard />} />
     <Route path="products" element={<Products />} />
     <Route path="add" element={<AddProducts />} />
