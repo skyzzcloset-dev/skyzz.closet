@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const uploadFile = require("../services/imagekit.service");
 const productModel = require("../models/product.model");
 
+// ✅ Add product
 async function addProduct(req, res) {
   try {
     const { name, description, price, stock, sizes, colors, category, brand } = req.body;
@@ -11,7 +12,6 @@ async function addProduct(req, res) {
       return res.status(400).json({ error: "No image uploaded" });
     }
 
-    // Upload images to ImageKit
     const uploadImages = [];
     for (const file of files) {
       const base64Image = file.buffer.toString("base64");
@@ -23,7 +23,6 @@ async function addProduct(req, res) {
       uploadImages.push({ url: result.url, fileId: result.fileId });
     }
 
-    // Create product
     const product = await productModel.create({
       name,
       description,
@@ -43,6 +42,7 @@ async function addProduct(req, res) {
   }
 }
 
+// ✅ Get all products
 async function allProducts(req, res) {
   try {
     const products = await productModel.find();
@@ -52,6 +52,7 @@ async function allProducts(req, res) {
   }
 }
 
+// ✅ Get single product
 async function singleProduct(req, res) {
   try {
     const product = await productModel.findById(req.params.id);
@@ -62,6 +63,7 @@ async function singleProduct(req, res) {
   }
 }
 
+// ✅ Update product
 async function updateProduct(req, res) {
   try {
     const product = await productModel.findByIdAndUpdate(req.params.id, req.body, {
@@ -75,6 +77,7 @@ async function updateProduct(req, res) {
   }
 }
 
+// ✅ Delete product
 async function deleteProduct(req, res) {
   try {
     const product = await productModel.findByIdAndDelete(req.params.id);

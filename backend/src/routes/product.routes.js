@@ -11,9 +11,10 @@ const { uploadMultiple } = require("../middleware/upload.middleware");
 
 const router = express.Router();
 
-// Routes
+// Protected Admin Routes
 router.post("/add", authMiddleware, adminPage, uploadMultiple("images", 7), addProduct);
 router.get("/getAll", authMiddleware, adminPage, allProducts);
+router.get("/products", authMiddleware, adminPage, allProducts);
 router.get("/get/:id", authMiddleware, adminPage, singleProduct);
 router.put("/update/:id", authMiddleware, adminPage, updateProduct);
 router.delete("/delete/:id", authMiddleware, adminPage, deleteProduct);
