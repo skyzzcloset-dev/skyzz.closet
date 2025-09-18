@@ -11,7 +11,7 @@ app.use(cookieParser());
 // ✅ CORS setup (frontend: Vercel, allow cookies)
 app.use(
   cors({
-    origin: "https://skyzzcloset.vercel.app",
+    origin: "https://www.skyzzcloset.shop",
     credentials: true,
     optionsSuccessStatus: 200,
   })
