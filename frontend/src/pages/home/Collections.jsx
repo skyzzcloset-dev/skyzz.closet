@@ -2,16 +2,11 @@
 import { lazy } from 'react';
 
 import ScrollAnimate from "../../ui/ScrollAnimate";
+import Carousel from '../../ui/Carousel';
 
 
 const Collections = () => {
-  const featuredCollections = [
-    { name: "Shirts", img: "/shirts.webp" },
-    { name: "Skirts", img: "/skirts.webp" },
-    { name: "Tops", img: "/tops.webp" },
-    { name: "Bottoms", img: "/bottoms.webp" },
-  ];
-
+  
   return (
     <div className="min-h-screen px-4 lg:px-12">
       <ScrollAnimate direction="up" duration={0.6}>
@@ -21,7 +16,7 @@ const Collections = () => {
       </ScrollAnimate>
 
       <ScrollAnimate direction="up" duration={0.6} delay={0.1}>
-        
+        <Carousel/>
       </ScrollAnimate>
     </div>
   );

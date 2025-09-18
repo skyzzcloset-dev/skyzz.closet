@@ -7,10 +7,10 @@ const HeroSection = () => {
       <img
         src="/heroImage_jhlt5e/heroImage_jhlt5e_c_scale,w_603.webp"
         srcSet="
-          /heroImage_jhlt5e/heroImage_jhlt5e_c_scale,w_200.webp 200w,
-          /heroImage_jhlt5e/heroImage_jhlt5e_c_scale,w_603.webp 603w,
-          /heroImage_jhlt5e/heroImage_jhlt5e_c_scale,w_927.webp 927w,
-          /heroImage_jhlt5e/heroImage_jhlt5e_c_scale,w_1056.webp 1056w
+          /heroImage/heroImage_200.webp 200w,
+          /heroImage/heroImage_603.webp 603w,
+          /heroImage/heroImage_927.webp 927w,
+          /heroImage/heroImage_1056.webp 1056w
         "
         sizes="(max-width: 640px) 100vw, 
                (max-width: 1024px) 100vw, 
