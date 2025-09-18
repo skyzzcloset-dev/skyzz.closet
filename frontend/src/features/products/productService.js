@@ -2,39 +2,44 @@ import axios from "axios";
 
 const API_URL = "https://skyzz-closet.onrender.com/api/product/";
 
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token"); // 👈 get token
+  return { Authorization: `Bearer ${token}` };
+};
+
 // Add product
-const addProduct = async (productData, token) => {
+const addProduct = async (productData) => {
   const res = await axios.post(API_URL + "add", productData, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: getAuthHeader(),
   });
   return res.data;
 };
 
 // Get all products
-const getAllProduct = async (token) => {
+const getAllProduct = async () => {
   const res = await axios.get(API_URL + "getAll", {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: getAuthHeader(),
   });
   return res.data;
 };
 
-const getProduct = async (id, token) => {
+const getProduct = async (id) => {
   const res = await axios.get(API_URL + "get/" + id, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: getAuthHeader(),
   });
   return res.data;
 };
 
-const updateProduct = async (id, productData, token) => {
+const updateProduct = async (id, productData) => {
   const res = await axios.put(API_URL + "update/" + id, productData, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: getAuthHeader(),
   });
   return res.data;
 };
 
-const deleteProduct = async (id, token) => {
+const deleteProduct = async (id) => {
   const res = await axios.delete(API_URL + "delete/" + id, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: getAuthHeader(),
   });
   return res.data;
 };

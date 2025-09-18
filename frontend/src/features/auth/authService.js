@@ -5,12 +5,12 @@ const API_URL = "https://skyzz-closet.onrender.com/api/auth/";
 
 // login user
 const login = async (userData) => {
-  const res = await axios.post(API_URL + "login", userData, {
-    withCredentials: true,
-  });
+  const res = await axios.post(API_URL + "login", userData);
 
-  if (res.data) {
-    localStorage.setItem("user", JSON.stringify(res.data));
+  if (res.data?.token) {
+    // store token + user separately
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
   }
 
   return res.data;
@@ -18,12 +18,11 @@ const login = async (userData) => {
 
 // register user
 const register = async (userData) => {
-  const res = await axios.post(API_URL + "register", userData, {
-    withCredentials: true,
-  });
+  const res = await axios.post(API_URL + "register", userData);
 
-  if (res.data) {
-    localStorage.setItem("user", JSON.stringify(res.data));
+  if (res.data?.token) {
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
   }
 
   return res.data;
@@ -31,7 +30,7 @@ const register = async (userData) => {
 
 // logout
 const logout = async () => {
-  await axios.post(API_URL + "logout", {}, {withCredentials: true});
+  localStorage.removeItem("token");
   localStorage.removeItem("user");
 };
 
