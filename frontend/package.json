@@ -24,6 +24,7 @@
     "react-slick": "^0.31.0",
     "react-toastify": "^11.0.5",
     "remixicon": "^4.6.0",
+    "sharp": "^0.34.4",
     "slick-carousel": "^1.8.1",
     "tailwind-scrollbar-hide": "^4.0.0",
     "tailwindcss": "^4.1.13"
