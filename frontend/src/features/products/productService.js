@@ -14,11 +14,12 @@ const getProduct = () => {};
 
 const getAllProduct = async (token) => {
   const res = await axios.get(API_URL + "getAll", {
-    headers: {Authorization: `Bearer ${token}`},
+    headers: { Authorization: `Bearer ${token}` },
     withCredentials: true,
   });
   return res.data;
 };
+
 
 const updateProduct = () => {};
 const deleteProduct = () => {};

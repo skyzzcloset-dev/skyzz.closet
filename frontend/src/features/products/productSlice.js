@@ -28,18 +28,18 @@ export const addProduct = createAsyncThunk(
 // Get all products
 export const getAllProduct = createAsyncThunk(
   "products/getAll",
-  async (token, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
+      const token = thunkAPI.getState().auth.user?.token; // get token from auth slice
       return await productService.getAllProduct(token);
     } catch (error) {
       const message =
-        error.response?.data?.message ||
-        error.message ||
-        "Something went wrong";
+        error.response?.data?.message || error.message || "Something went wrong";
       return thunkAPI.rejectWithValue(message);
     }
   }
 );
+
 
 const productsSlice = createSlice({
   name: "products",
