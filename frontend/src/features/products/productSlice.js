@@ -1,4 +1,4 @@
-import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import productService from "./productService";
 
 const initialState = {
@@ -12,14 +12,13 @@ const initialState = {
 // Add product
 export const addProduct = createAsyncThunk(
   "products/add",
-  async ({productData, token}, thunkAPI) => {
+  async (productData, thunkAPI) => {
     try {
+      const token = thunkAPI.getState().auth.user?.token;
       return await productService.addProduct(productData, token);
     } catch (error) {
       const message =
-        error.response?.data?.message ||
-        error.message ||
-        "Something went wrong";
+        error.response?.data?.message || error.message || "Something went wrong";
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -30,7 +29,7 @@ export const getAllProduct = createAsyncThunk(
   "products/getAll",
   async (_, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user?.token; // get token from auth slice
+      const token = thunkAPI.getState().auth.user?.token;
       return await productService.getAllProduct(token);
     } catch (error) {
       const message =
@@ -39,7 +38,6 @@ export const getAllProduct = createAsyncThunk(
     }
   }
 );
-
 
 const productsSlice = createSlice({
   name: "products",
@@ -54,38 +52,35 @@ const productsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Add product
       .addCase(addProduct.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(addProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.items.push(action.payload);
+        state.items.push(action.payload.product);
       })
       .addCase(addProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-
-      // Get all products
       .addCase(getAllProduct.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(getAllProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.items = action.payload.products || action.payload; // flexible
+        state.items = action.payload.products || action.payload;
       })
       .addCase(getAllProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-        state.items = []; // never null
+        state.items = [];
       });
   },
 });
 
-export const {reset} = productsSlice.actions;
+export const { reset } = productsSlice.actions;
 export default productsSlice.reducer;
