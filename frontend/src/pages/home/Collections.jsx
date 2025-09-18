@@ -1,6 +1,6 @@
 
 import { lazy } from 'react';
-import Carousel from "../../ui/Carousel";
+
 import ScrollAnimate from "../../ui/ScrollAnimate";
 
 
@@ -21,7 +21,7 @@ const Collections = () => {
       </ScrollAnimate>
 
       <ScrollAnimate direction="up" duration={0.6} delay={0.1}>
-        <Carousel products={featuredCollections} perView={3} title="" />
+        
       </ScrollAnimate>
     </div>
   );
