@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["offline.html"], // add your offline page here
+      includeAssets: ["offline.html", "favicon.ico", "robots.txt"], // precache these
       manifest: {
         name: "skyzz.closet",
         short_name: "skyzz.closet",
@@ -25,48 +25,21 @@ export default defineConfig({
           { src: "icons/icon-48x48.webp", sizes: "48x48", type: "image/webp" },
           { src: "icons/icon-72x72.webp", sizes: "72x72", type: "image/webp" },
           { src: "icons/icon-96x96.webp", sizes: "96x96", type: "image/webp" },
-          {
-            src: "icons/icon-128x128.webp",
-            sizes: "128x128",
-            type: "image/webp",
-          },
-          {
-            src: "icons/icon-144x144.webp",
-            sizes: "144x144",
-            type: "image/webp",
-          },
-          {
-            src: "icons/icon-152x152.webp",
-            sizes: "152x152",
-            type: "image/webp",
-          },
-          {
-            src: "icons/icon-192x192.webp",
-            sizes: "192x192",
-            type: "image/webp",
-          },
-          {
-            src: "icons/icon-256x256.webp",
-            sizes: "256x256",
-            type: "image/webp",
-          },
-          {
-            src: "icons/icon-384x384.webp",
-            sizes: "384x384",
-            type: "image/webp",
-          },
-          {
-            src: "icons/icon-512x512.webp",
-            sizes: "512x512",
-            type: "image/webp",
-          },
+          { src: "icons/icon-128x128.webp", sizes: "128x128", type: "image/webp" },
+          { src: "icons/icon-144x144.webp", sizes: "144x144", type: "image/webp" },
+          { src: "icons/icon-152x152.webp", sizes: "152x152", type: "image/webp" },
+          { src: "icons/icon-192x192.webp", sizes: "192x192", type: "image/webp" },
+          { src: "icons/icon-256x256.webp", sizes: "256x256", type: "image/webp" },
+          { src: "icons/icon-384x384.webp", sizes: "384x384", type: "image/webp" },
+          { src: "icons/icon-512x512.webp", sizes: "512x512", type: "image/webp" },
         ],
       },
       workbox: {
-        navigateFallback: "/offline.html", // fallback page for offline
+        navigateFallback: "/offline.html", // serve offline.html for navigation requests
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/your-api-domain\.com\/.*$/, // API calls
+            // Replace this with your actual API domain
+            urlPattern: /^https:\/\/your-api-domain\.com\/.*$/,
             handler: "NetworkFirst",
             options: {
               cacheName: "api-cache",
@@ -82,7 +55,7 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|webp|gif)$/, // images
+            urlPattern: /\.(?:png|jpg|jpeg|svg|webp|gif)$/,
             handler: "CacheFirst",
             options: {
               cacheName: "image-cache",
