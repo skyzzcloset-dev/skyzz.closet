@@ -31,7 +31,7 @@ const Register = () => {
       const resultAction = await dispatch(registerUser(payload));
 
       if (registerUser.fulfilled.match(resultAction)) {
-        console.log("Registration success:", resultAction.payload);
+       
         toast.success("Logged in Successfully");
         reset();
         navigate("/"); // redirect home
