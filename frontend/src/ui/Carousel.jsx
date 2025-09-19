@@ -52,7 +52,7 @@ const Carousel = () => {
         drag="x"
         dragConstraints={{ left: -100, right: 100 }}
         animate={{ x: `-${(index * 100) / slidesPerView}%` }}
-        transition={{ type: "spring", stiffness: 70, damping: 20 }}
+        transition={{ type: "spring", stiffness: 210, damping: 100 }}
         onDragEnd={(_, info) => {
           if (info.offset.x < -50) nextSlide();
           if (info.offset.x > 50) prevSlide();

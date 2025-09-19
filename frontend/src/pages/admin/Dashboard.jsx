@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import Sidebar from "../../components/Sidebar";
 
 const Dashboard = () => {

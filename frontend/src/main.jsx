@@ -1,12 +1,26 @@
 import React from "react";
-import {createRoot} from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import {store} from "./app/store";
-import {Provider} from "react-redux";
+import { store } from "./app/store";
+import { Provider } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import { registerSW } from "virtual:pwa-register";
 
-
-import {ToastContainer, toast} from "react-toastify";
+// Register Service Worker with update + offline handling
+const updateSW = registerSW({
+  onNeedRefresh() {
+    toast.info("🔄 New version available! Updating...", {
+      autoClose: 3000,
+    });
+    setTimeout(() => {
+      updateSW(true); // refresh SW
+    }, 3000);
+  },
+  onOfflineReady() {
+    toast.success("✅ App ready to work offline!", { autoClose: 3000 });
+  },
+});
 
 const container = document.getElementById("root");
 
@@ -14,23 +28,23 @@ if (container) {
   const root = createRoot(container);
 
   root.render(
-    <Provider store={store}>
-       
-      <App />
+    <>
+      <Provider store={store}>
+        <App />
+      </Provider>
       <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
-        closeOnClick={false}
+        closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
         theme="light"
-       
       />
-    </Provider>
+    </>
   );
 } else {
   throw new Error(
