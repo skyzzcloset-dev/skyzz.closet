@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["offline.html", "favicon.ico", "robots.txt"], // precache these
+      includeAssets: ["offline.html", "favicon.ico", "robots.txt"],
       manifest: {
         name: "skyzz.closet",
         short_name: "skyzz.closet",
@@ -35,10 +35,25 @@ export default defineConfig({
         ],
       },
       workbox: {
-        navigateFallback: "/offline.html", // serve offline.html for navigation requests
+        // fallback page only when offline
+        navigateFallback: "/offline.html",
+        navigateFallbackAllowlist: [
+          /^\/$/,         // homepage
+          /^\/products/,  // product pages
+          /^\/about/,     // about page
+        ],
         runtimeCaching: [
           {
-            // Replace this with your actual API domain
+            // HTML / app shell
+            urlPattern: ({ request }) => request.destination === "document",
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "html-cache",
+              expiration: { maxEntries: 50, maxAgeSeconds: 86400 },
+            },
+          },
+          {
+            // API requests
             urlPattern: /^https:\/\/your-api-domain\.com\/.*$/,
             handler: "NetworkFirst",
             options: {
@@ -47,6 +62,7 @@ export default defineConfig({
             },
           },
           {
+            // Google Fonts
             urlPattern: /^https:\/\/fonts\.(?:gstatic|googleapis)\.com\/.*/i,
             handler: "CacheFirst",
             options: {
@@ -55,6 +71,7 @@ export default defineConfig({
             },
           },
           {
+            // Images
             urlPattern: /\.(?:png|jpg|jpeg|svg|webp|gif)$/,
             handler: "CacheFirst",
             options: {
