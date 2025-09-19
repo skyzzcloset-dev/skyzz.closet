@@ -8,11 +8,12 @@ const {
 } = require("../controllers/auth.controller");
 
 const {authMiddleware} = require("../middleware/auth.middleware");
+const validators = require("../middleware/validate.middleware")
 
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/register", validators.registerUserValidations ,  registerUser);
+router.post("/login", validators.registerUserValidations, loginUser);
 router.post("/logout", logoutUser);
 
 // Protect profile routes
