@@ -1,13 +1,17 @@
-import { useSelector } from "react-redux";
-import Sidebar from "../../components/Sidebar";
+import {useState} from "react";
+import Table from "../../ui/tables";
+import {useEffect} from "react";
+import axios from "axios";
 
-const Dashboard = () => {
+const Dashboard = async () => {
+  const [product, setProduct] = useState(0);
   const stats = [
-    {name: "Total Product", value: 120},
+    {name: "Total Product", value: product},
     {name: "Total Users", value: 85},
     {name: "Total Orders", value: 45},
   ];
 
+  const columns = ["ID", "Customer", "Date", "Total"];
   const orders = [
     {
       id: "#12345",
@@ -41,13 +45,28 @@ const Dashboard = () => {
     },
   ];
 
+  useEffect(() => {
+    const fetchProductCount = async () => {
+      try {
+        const res = await axios.get(
+          "https://skyzz-closet.onrender.com/api/product/count"
+        );
+        setProduct(res.data.count);
+      } catch (error) {
+        console.error(err);
+      }
+    };
+    fetchProductCount();
+  }, []);
   return (
     <div className="px-5 lg:mr-65">
-      <header className="mb-4  border-b border-gray-300 p-5">
+      <header className="mb-4 border-b border-gray-300 p-5">
         <h1 className="text-2xl lg:text-4xl font-bold">Dashboard</h1>
       </header>
+
       <main className="p-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5  ">
+        {/* Stats cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {stats.map((item, index) => (
             <div
               key={index}
@@ -58,31 +77,11 @@ const Dashboard = () => {
             </div>
           ))}
         </div>
-        <br />
-        <div>
-          <h1>Recent Orders</h1>
-          <div className="overflow-x-auto my-5 rounded">
-            <table className="min-w-full border border-gray-200 text-left text-sm">
-              <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
-                <tr>
-                  <th className="px-6 py-3">Order ID</th>
-                  <th className="px-6 py-3">Customer</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {orders.map((order, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-medium">{order.id}</td>
-                    <td className="px-6 py-4">{order.customer}</td>
-                    <td className="px-6 py-4">{order.date}</td>
-                    <td className="px-6 py-4 font-semibold">{order.total}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+
+        {/* Recent Orders Table */}
+        <div className="mt-10">
+          <h1 className="text-lg font-semibold mb-2">Recent Orders</h1>
+          <Table columns={columns} data={orders} />
         </div>
       </main>
     </div>
