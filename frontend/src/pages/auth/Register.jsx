@@ -36,7 +36,7 @@ const Register = () => {
         reset();
         navigate("/"); // redirect home
       } else {
-        console.error("Registration failed:", resultAction.payload);
+      
          toast.error(resultAction.payload?.message || "Invalid credentials");
       }
     } catch (err) {
@@ -44,7 +44,7 @@ const Register = () => {
        toast.error( "Invalid credentials");
     }
 
-    console.log(data);
+ 
   };
 
   return (
