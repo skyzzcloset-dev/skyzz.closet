@@ -16,11 +16,11 @@ const NewDrop = () => {
      <h1 className='text-center font-bold py-12 text-2xl lg:text-4xl'>New Drop</h1>
 
      <div>
-      {
+      {/* {
         items.map((product , idx) =>(
           <img src={product.image} alt={product.name} />
         ))
-      }
+      } */}
      </div>
       </div>
     </div>
