@@ -1,0 +1,24 @@
+
+@import "tailwindcss";
+
+body {
+  font-family: "Roboto", sans-serif;
+  letter-spacing: 0.3px;
+  
+}
+
+
+
+@layer components {
+  .hover-effect {
+    @apply text-white bg-blue-700 rounded hover:bg-blue-800 md:bg-transparent md:text-blue-700 md:p-0;
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
