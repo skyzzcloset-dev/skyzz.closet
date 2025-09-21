@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://skyzz-closet.onrender.com/api/product/";
+const API_URL = "https://skyzz-closet-1.onrender.com/api/product/";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token"); // 👈 get token
