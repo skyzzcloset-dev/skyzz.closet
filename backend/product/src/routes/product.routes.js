@@ -22,7 +22,6 @@ router.post(
   addProduct
 );
 router.get("/getAll", allProducts);
-router.get("/products", allProducts);
 router.get("/count", countProduct);
 router.get("/get/:id", singleProduct);
 router.put("/update/:id", updateProduct);

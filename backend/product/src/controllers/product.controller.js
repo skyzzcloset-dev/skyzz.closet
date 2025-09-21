@@ -8,8 +8,8 @@ async function addProduct(req, res) {
     const {name, description, price, stock, sizes, colors, category, brand} =
       req.body;
 
-    if (!files || files.length === 0) {
-      return res.status(400).json({error: "No image uploaded"});
+    if (!name || !description || !price || !stock || !category || !brand) {
+      return res.status(400).json({error: "All fields are required"});
     }
 
     const admin = req.user.id;
@@ -17,28 +17,34 @@ async function addProduct(req, res) {
       return res.status(400).json({error: "Admin ID is required"});
     }
 
-    const uploadImages = [];
+ 
 
-    const files = await Promise.all(
-      (req.files || []).map(async (file) =>
-        uploadFile(
+    const uploadImages = await Promise.all(
+      (req.files || []).map(async (file) => {
+        const result = await uploadFile(
           file.buffer.toString("base64"),
           `${uuidv4()}-${file.originalname}`,
           category
-        )
-      )
+        );
+        return {url: result.url, fileId: result.fileId};
+      })
     );
-    uploadImages.push({url: result.url, fileId: result.fileId});
 
+    if (!uploadImages || uploadImages.length === 0) {
+      return res.status(400).json({error: "No image uploaded"});
+    }
+
+    // create product
     const product = await productModel.create({
       name,
       description,
       price,
       stock,
-      sizes: sizes ? sizes.split(",") : [],
-      colors: colors ? colors.split(",") : [],
+      sizes,
+      colors,
       category,
       brand,
+      admin,
       images: uploadImages,
     });
 
@@ -105,11 +111,12 @@ async function countProduct(req, res) {
     if (!count) {
       return res.status(400).json({message: "Bad Request"});
     }
-    res.status(200).json({message: "Count Fetch Successfully"});
+    res.status(200).json({message: "Count Fetch Successfully" , count : count });
   } catch (error) {
     res.status(500).json({error: err.message});
   }
 }
+
 
 module.exports = {
   addProduct,

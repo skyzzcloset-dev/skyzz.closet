@@ -1,24 +1,10 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import Table from "../../ui/Tables";
 import axios from "axios";
 
+
 const Dashboard = () => {
   const [product, setProduct] = useState(0);
-
-  const stats = [
-    { name: "Total Product", value: product },
-    { name: "Total Users", value: 85 },
-    { name: "Total Orders", value: 45 },
-  ];
-
-  const columns = ["ID", "Customer", "Date", "Total"];
-  const orders = [
-    { id: "#12345", customer: "Sophia Clark", date: "2024-07-26", total: "$150.00" },
-    { id: "#12346", customer: "Olivia Bennett", date: "2024-07-25", total: "$200.00" },
-    { id: "#12347", customer: "Emma Carter", date: "2024-07-24", total: "$100.00" },
-    { id: "#12348", customer: "Ava Mitchell", date: "2024-07-23", total: "$180.00" },
-    { id: "#12349", customer: "Isabella Turner", date: "2024-07-22", total: "$120.00" },
-  ];
 
   useEffect(() => {
     const fetchProductCount = async () => {
@@ -26,13 +12,53 @@ const Dashboard = () => {
         const res = await axios.get(
           "https://skyzz-closet.onrender.com/api/product/count"
         );
-        setProduct(res.data.count);
+        setProduct(res.data.count || 0);
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     };
     fetchProductCount();
   }, []);
+
+  const stats = [
+    {name: "Total Product", value: product},
+    {name: "Total Users", value: 85},
+    {name: "Total Orders", value: 45},
+  ];
+
+  const columns = ["ID", "Customer", "Date", "Total"];
+  const orders = [
+    {
+      id: "#12345",
+      customer: "Sophia Clark",
+      date: "2024-07-26",
+      total: "$150.00",
+    },
+    {
+      id: "#12346",
+      customer: "Olivia Bennett",
+      date: "2024-07-25",
+      total: "$200.00",
+    },
+    {
+      id: "#12347",
+      customer: "Emma Carter",
+      date: "2024-07-24",
+      total: "$100.00",
+    },
+    {
+      id: "#12348",
+      customer: "Ava Mitchell",
+      date: "2024-07-23",
+      total: "$180.00",
+    },
+    {
+      id: "#12349",
+      customer: "Isabella Turner",
+      date: "2024-07-22",
+      total: "$120.00",
+    },
+  ];
 
   return (
     <div className="px-5 lg:mr-65">

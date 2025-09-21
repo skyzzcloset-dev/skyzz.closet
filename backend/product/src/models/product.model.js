@@ -4,7 +4,9 @@ const productSchema = new mongoose.Schema(
   {
     name: {type: String, required: true, trim: true},
     description: {type: String, trim: true},
-    price: {type: Number, enum: ["USD", "IND"], required: true, default: "IND"},
+    price: {type: Number, required: true},
+    currency: {type: String, enum: ["USD", "IND"], default: "IND"},
+
     category: {type: String, ref: "Category", required: true},
     stock: {type: Number, default: 0},
     sizes: [{type: String}],
@@ -15,10 +17,8 @@ const productSchema = new mongoose.Schema(
         fileId: {type: String, required: true},
       },
     ],
-    admin :{
-      type :mongoose.Schema.Types.ObjectId,
-      required:true
-    },
+    admin: {type: mongoose.Schema.Types.ObjectId, required: true},
+
     sku: {
       type: String,
       unique: true,
