@@ -33,7 +33,7 @@ const Carousel = ({products}) => {
   const prev = () => setIndex((i) => Math.max(i - 1, 0));
 
   return (
-    <div className="relative w-full  mx-auto overflow-hidden py-8">
+    <div className="relative w-full max-w-8xl mx-auto overflow-hidden py-8">
       {/* Carousel */}
       <motion.div
         className="flex"

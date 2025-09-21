@@ -8,7 +8,7 @@ const Collections = () => {
     {id: 1, name: "Dress", img: "/dress.png", link: "/product/1"},
     {id: 2, name: "Tops", img: "/tops.png", link: "/product/2"},
     {id: 3, name: "Bottoms", img: "/bottoms.png", link: "/product/3"},
-    {id: 3, name: "Shirts", img: "/shirts.png", link: "/product/3"},
+    {id: 4, name: "Shirts", img: "/shirts.png", link: "/product/3"},
    
   ];
   return (
