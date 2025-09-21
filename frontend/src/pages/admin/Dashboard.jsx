@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Table from "../../ui/tables";
+import Table from "../../ui/Tables";
 import axios from "axios";
 
 const Dashboard = () => {
