@@ -14,7 +14,7 @@ const AdminRoutes = () => {
   return (
     <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
       <Routes>
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin/" element={<AdminLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="products" element={<Products />} />
           <Route path="add" element={<AddProducts />} />
