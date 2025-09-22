@@ -14,6 +14,10 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
+
+ 
+  
+
   const handleLogout = async () => {
     try {
       await dispatch(logout());
@@ -118,7 +122,7 @@ const Navbar = () => {
 
             {user ? (
               <>
-                <span className="ml-4 font-medium">Hi, {user.fullName?.firstName}</span>
+                <span className="ml-4 font-medium">Hi, {user.username}</span>
                 <button
                   onClick={handleLogout}
                   className="ml-4 text-red-500 hover:underline transition"

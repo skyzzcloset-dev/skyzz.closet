@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const redis = require("../db/redis");
 
+
 function generateToken(id, email, role) {
   return jwt.sign({id, email, role}, process.env.JWT_SECRET, {expiresIn: "7d"});
 }
@@ -90,7 +91,12 @@ async function loginUser(req, res) {
       success: true,
       message: "User logged in successfully",
       token,
-      user: {id: user._id, email: user.email, role: user.role},
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        username: user.fullName.firstName,
+      },
     });
   } catch (error) {
     return res
@@ -135,7 +141,7 @@ async function logoutUser(req, res) {
 async function getProfile(req, res) {
   try {
     const user = await userModel.findById(req.params.id).select("-password");
-    
+
     if (!user) {
       return res.status(404).json({success: false, message: "User not found"});
     }

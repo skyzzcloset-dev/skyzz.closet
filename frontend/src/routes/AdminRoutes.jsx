@@ -12,7 +12,7 @@ const ErrorPage = lazy(() => import("../pages/ErrorPage"));
 const AdminRoutes = () => {
   return (
     <Routes>
-      <Route path="/admin" element={<AdminLayout />}>
+      <Route  element={<AdminLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="products" element={<Products />} />
         <Route path="add" element={<AddProducts />} />

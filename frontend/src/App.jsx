@@ -15,6 +15,8 @@ import AdminRoutes from "./routes/AdminRoutes";
 
 function App() {
   const {user} = useSelector((state) => state.auth || {});
+  console.log(user);
+  
 
   return (
     <BrowserRouter>
