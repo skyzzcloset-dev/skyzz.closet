@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const redis = require("../db/redis");
 
-
 function generateToken(id, email, role) {
   return jwt.sign({id, email, role}, process.env.JWT_SECRET, {expiresIn: "7d"});
 }
@@ -183,10 +182,26 @@ async function updateProfile(req, res) {
   }
 }
 
+async function userCount(req, res) {
+  try {
+    const count = await userModel.countDocuments();
+    if (!count) {
+      return res.status(404).json({message: "No users found"});
+    }
+    res
+      .status(200)
+      .json({message: "User count fetched successfully", count: count});
+  } catch (error) {
+    return res
+      .status(500)
+      .json({message: "Server error", details: error.message});
+  }
+}
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
   getProfile,
   updateProfile,
+  userCount,
 };

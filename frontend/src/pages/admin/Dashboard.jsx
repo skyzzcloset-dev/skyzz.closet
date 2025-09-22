@@ -5,12 +5,13 @@ import axios from "axios";
 
 const Dashboard = () => {
   const [product, setProduct] = useState(0);
+  const [user , setUser] = useState(0)
 
   useEffect(() => {
     const fetchProductCount = async () => {
       try {
         const res = await axios.get(
-          "https://skyzz-closet-1.onrender.com/api/product/count"
+          "/api/product/count"
         );
         setProduct(res.data.count || 0);
       } catch (error) {

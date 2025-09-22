@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProduct } from "../../features/products/productSlice";
-import ProductCard from "../../components/ProductCard";
+import ProductCard from "../../ui/ProductCard";
 
 const NewDrop = () => {
   const { items } = useSelector((state) => state.products);

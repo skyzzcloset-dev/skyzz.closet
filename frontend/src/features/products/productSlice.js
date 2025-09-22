@@ -47,19 +47,6 @@ export const getAllProduct = createAsyncThunk(
 );
 
 
-export const countAllProduct = createAsyncThunk(
-  "product/count",
-  async (_, thunkAPI) => {
-    try {
-      const token = getToken(thunkAPI);
-      return await productService.countProduct()
-    } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || "Something went wrong";
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
 
 const productsSlice = createSlice({
   name: "products",
@@ -105,21 +92,7 @@ const productsSlice = createSlice({
         state.items = [];
       })
 
-      //countAllProduct
-      .addCase(countAllProduct.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(countAllProduct.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.items = action.payload.products || [];
-      })
-      .addCase(countAllProduct.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
-        state.items = [];
-      });
+  
   },
 });
 

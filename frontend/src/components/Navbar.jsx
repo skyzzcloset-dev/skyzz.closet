@@ -156,7 +156,7 @@ const Navbar = () => {
         }`}
       >
         <div className="flex flex-col h-full justify-between p-6">
-          <ul className="flex flex-col space-y-3 font-medium text-lg">
+          <ul className="flex flex-col  font-medium text-lg">
             <li>
               <NavLink
                 to="/"

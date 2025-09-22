@@ -44,18 +44,11 @@ const deleteProduct = async (id) => {
   return res.data;
 };
 
-const countProduct = async () => {
-  const res = await axios.get(API_URL + "count", {
-    headers: getAuthHeader(),
-  });
-  return res.data;
-};
-
 const productService = {
   addProduct,
   getAllProduct,
   getProduct,
-  countProduct,
+
   updateProduct,
   deleteProduct,
 };

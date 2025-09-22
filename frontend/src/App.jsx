@@ -1,22 +1,18 @@
-// src/App.jsx
 import React from "react";
-import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
-import {useSelector} from "react-redux";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // Layouts & Pages
 import MainLayout from "./layout/MainLayout";
-import {Home, Login, Register} from "./pages";
+import { Home, Login, Register } from "./pages";
 import ErrorPage from "./pages/ErrorPage";
 import Contact from "./pages/home/Contact";
 import NewDrop from "./pages/home/NewDrop";
-
-// Admin Routes
 import AdminRoutes from "./routes/AdminRoutes";
+import ProductLayout from "./ui/ProductLayout";
 
 function App() {
-  const {user} = useSelector((state) => state.auth || {});
-  console.log(user);
-  
+  const { user } = useSelector((state) => state.auth || {});
 
   return (
     <BrowserRouter>
@@ -32,7 +28,6 @@ function App() {
               <Route path="register" element={<Register />} />
             </>
           ) : user?.role === "admin" ? (
-            // If already logged in as admin, redirect away from auth routes
             <>
               <Route
                 path="login"
@@ -44,7 +39,6 @@ function App() {
               />
             </>
           ) : (
-            // If logged in but not admin → normal redirect to home
             <>
               <Route path="login" element={<Navigate to="/" replace />} />
               <Route path="register" element={<Navigate to="/" replace />} />
@@ -54,12 +48,13 @@ function App() {
           {/* Public pages */}
           <Route path="new" element={<NewDrop />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="product/:id" element={<ProductLayout />} />
 
           {/* Catch-all */}
           <Route path="*" element={<ErrorPage />} />
         </Route>
 
-        {/* Admin Layout (protected) */}
+        {/* Admin Layout */}
         {user?.role === "admin" ? (
           <Route path="/admin/*" element={<AdminRoutes />} />
         ) : (

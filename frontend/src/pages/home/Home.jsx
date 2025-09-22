@@ -1,18 +1,20 @@
 import React from "react";
-import {Navbar} from "../../components/index";
+
 import HeroSection from "./HeroSection";
 import Collections from "./Collections";
 import NewDrop from "./NewDrop";
 
 const Home = () => {
   return (
-    <div className="relative">
-      <HeroSection />
+    <>
+    
+    <HeroSection />
 
-      <Collections />
+    <Collections />
 
-      <NewDrop/>
-    </div>
+    <NewDrop/>
+    </>
+   
   );
 };
 

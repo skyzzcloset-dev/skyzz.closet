@@ -3,6 +3,7 @@ import React, { Suspense, lazy } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import MainLayout from "../layout/MainLayout";
+import ProductLayout from "../ui/ProductLayout";
 
 // Lazy-loaded pages
 const Home = lazy(() => import("../pages/Home"));
@@ -37,6 +38,7 @@ const MainRoutes = () => {
           {/* Main */}
           <Route path="new" element={<NewDrop />} />
           <Route path="contact" element={<Contact />} />
+         
 
           {/* Catch-all for 404 */}
           <Route path="*" element={<ErrorPage />} />
