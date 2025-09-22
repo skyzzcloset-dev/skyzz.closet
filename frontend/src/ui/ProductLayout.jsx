@@ -13,7 +13,7 @@ const ProductLayout = () => {
   useEffect(() => {
     const fetchSingleProduct = async () => {
       try {
-        const res = await axios.get(`/api/product/get/${id}`);
+        const res = await axios.get(`https://skyzz-closet-1.onrender.com/api/product/get/${id}`);
         const product = res.data.product;
         setItem(product);
         if (product.images?.length > 0) {
