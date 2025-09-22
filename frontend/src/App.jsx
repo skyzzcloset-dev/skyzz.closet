@@ -1,11 +1,11 @@
 // src/App.jsx
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 // Layouts & Pages
 import MainLayout from "./layout/MainLayout";
-import { Home, Login, Register } from "./pages";
+import {Home, Login, Register} from "./pages";
 import ErrorPage from "./pages/ErrorPage";
 import Contact from "./pages/home/Contact";
 import NewDrop from "./pages/home/NewDrop";
@@ -14,7 +14,7 @@ import NewDrop from "./pages/home/NewDrop";
 import AdminRoutes from "./routes/AdminRoutes";
 
 function App() {
-  const { user } = useSelector((state) => state.auth || {});
+  const {user} = useSelector((state) => state.auth || {});
 
   return (
     <BrowserRouter>
@@ -32,8 +32,14 @@ function App() {
           ) : user?.role === "admin" ? (
             // If already logged in as admin, redirect away from auth routes
             <>
-              <Route path="login" element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="register" element={<Navigate to="/admin/dashboard" replace />} />
+              <Route
+                path="login"
+                element={<Navigate to="/admin/dashboard" replace />}
+              />
+              <Route
+                path="register"
+                element={<Navigate to="/admin/dashboard" replace />}
+              />
             </>
           ) : (
             // If logged in but not admin → normal redirect to home
@@ -53,7 +59,7 @@ function App() {
 
         {/* Admin Layout (protected) */}
         {user?.role === "admin" ? (
-          AdminRoutes
+          <Route path="/admin/*" element={<AdminRoutes />} />
         ) : (
           <Route path="/admin/*" element={<Navigate to="/login" replace />} />
         )}
