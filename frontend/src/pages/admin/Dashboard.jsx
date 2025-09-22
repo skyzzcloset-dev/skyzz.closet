@@ -10,7 +10,7 @@ const Dashboard = () => {
     const fetchProductCount = async () => {
       try {
         const res = await axios.get(
-          "https://skyzz-closet.onrender.com/api/product/count"
+          "https://skyzz-closet-1.onrender.com/api/product/count"
         );
         setProduct(res.data.count || 0);
       } catch (error) {
