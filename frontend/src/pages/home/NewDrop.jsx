@@ -15,13 +15,13 @@ const NewDrop = () => {
   const revArr = [...items].reverse();
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen px-4">
       <div className="w-full">
         <h1 className="text-center font-bold py-12 text-2xl lg:text-4xl">
           New Drop
         </h1>
 
-        <div className=" mx-auto flex flex-wrap justify-center items-center lg:gap-20">
+        <div className="mx-auto grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {revArr.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
