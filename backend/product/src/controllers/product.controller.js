@@ -1,6 +1,7 @@
 const {v4: uuidv4} = require("uuid");
 const uploadFile = require("../services/imagekit.service");
 const productModel = require("../models/product.model");
+const {mongo, default: mongoose} = require("mongoose");
 
 // ✅ Add product
 async function addProduct(req, res) {
@@ -16,8 +17,6 @@ async function addProduct(req, res) {
     if (!admin) {
       return res.status(400).json({error: "Admin ID is required"});
     }
-
- 
 
     const uploadImages = await Promise.all(
       (req.files || []).map(async (file) => {
@@ -57,9 +56,31 @@ async function addProduct(req, res) {
 
 // ✅ Get all products
 async function allProducts(req, res) {
+  const {q, maxPrice, minPrice, skip = 0, limit = 20} = req.query;
   try {
-    const products = await productModel.find();
-    res.status(200).json({message: "Products Fetched", products});
+    const filter = {};
+    if (q) {
+      filter.$text = {$search: q};
+    }
+
+    if (minPrice) {
+      filter["price.amount"] = {
+        ...filter["price.amount"],
+        $gte: Number(minPrice),
+      };
+    }
+    if (maxPrice) {
+      filter["price.amount"] = {
+        ...filter["price.amount"],
+        $lte: Number(maxPrice),
+      };
+    }
+    const product = await productModel
+      .find(filter)
+      .skip(Number(skip))
+      .limit(Math.min(Number(limit), 20));
+
+    res.status(200).json({message: "All Products fetched", items: product});
   } catch (err) {
     res.status(500).json({error: err.message});
   }
@@ -78,31 +99,68 @@ async function singleProduct(req, res) {
 
 // ✅ Update product
 async function updateProduct(req, res) {
-  try {
-    const product = await productModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    if (!product) return res.status(404).json({message: "Product not found"});
-    res.status(200).json({message: "Product updated successfully", product});
-  } catch (err) {
-    res.status(500).json({error: err.message});
+  const {id} = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({message: "Invalid product id"});
   }
+
+  const product = await productModel.findOne({
+    _id: id,
+    admin: req.user.id,
+  });
+
+  if (!product) {
+    return res.status(404).json({message: "Product not found"});
+  }
+
+  const allowerUpdates = ["name", " description", "price", "category", "stock"];
+
+  for (const key of Object.keys(req.body)) {
+    if (allowerUpdates.includes(key)) {
+      if (key === "price" && typeof req.body.price === "object") {
+        if (req.body.price.amount) {
+          product.price.amount = req.body.price.amount;
+        }
+        if (req.body.price.currency) {
+          product.price.currency = req.body.price.currency;
+        }
+      } else {
+        product[key] = req.body[key];
+      }
+    }
+  }
+
+  await product.save();
+  res
+    .status(200)
+    .json({message: "Product updated successfully", product: product});
 }
 
 // ✅ Delete product
 async function deleteProduct(req, res) {
-  try {
-    const product = await productModel.findByIdAndDelete(req.params.id);
-    if (!product) return res.status(404).json({message: "Product not found"});
-    res.status(200).json({message: "Product deleted successfully", product});
-  } catch (err) {
-    res.status(500).json({error: err.message});
+  const {id} = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({message: "Invalid Product ID"});
   }
+
+  const product = await productModel.findOne({
+    _id: id,
+  });
+
+  if (!product) {
+    return res.status(404).json({message: "Product not Found"});
+  }
+
+  if (product.admin.toString() !== req.user.id) {
+    return res
+      .status(403)
+      .json({message: "Forbidden : You can delete your own products"});
+  }
+
+  await product.deleteOne();
+  return res.status(200).json({message: "Product deleted"});
 }
 
 async function countProduct(req, res) {
@@ -111,12 +169,11 @@ async function countProduct(req, res) {
     if (!count) {
       return res.status(400).json({message: "Bad Request"});
     }
-    res.status(200).json({message: "Count Fetch Successfully" , count : count });
+    res.status(200).json({message: "Count Fetch Successfully", count: count});
   } catch (error) {
     res.status(500).json({error: err.message});
   }
 }
-
 
 module.exports = {
   addProduct,

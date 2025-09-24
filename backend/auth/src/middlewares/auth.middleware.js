@@ -20,7 +20,7 @@ async function authMiddleware(req, res, next) {
         .status(401)
         .json({success: false, message: "Unauthorized: User not found"});
     }
-    req.user = user;
+    req.user = decoded;
     next();
   } catch (error) {
     return res

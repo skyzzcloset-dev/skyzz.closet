@@ -9,7 +9,9 @@ const {
 } = require("../controllers/product.controller");
 const {createAuthMiddleware} = require("../middlewares/auth.middleware");
 const {uploadMultiple} = require("../middlewares/upload.middleware");
-const {createProductValidations} = require("../middlewares/validate.middleware");
+const {
+  createProductValidations,
+} = require("../middlewares/validate.middleware");
 
 const router = express.Router();
 
@@ -21,10 +23,13 @@ router.post(
   createProductValidations,
   addProduct
 );
+router.patch("/update/:id", createAuthMiddleware(["admin"]), updateProduct);
+router.delete("/delete/:id", createAuthMiddleware(["admin"]), deleteProduct);
+
+// Public Routes
+
 router.get("/getAll", allProducts);
 router.get("/count", countProduct);
 router.get("/get/:id", singleProduct);
-router.put("/update/:id", updateProduct);
-router.delete("/delete/:id", deleteProduct);
 
 module.exports = router;

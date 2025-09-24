@@ -20,7 +20,7 @@ router.post("/logout", logoutUser);
 
 // Protect profile routes
 router.get("/profile/:id", authMiddleware, getProfile);
-router.put("/updateprofile/:id", authMiddleware, updateProfile);
+router.patch("/updateprofile/:id", authMiddleware, updateProfile);
 router.get("/userCount", authMiddleware, userCount);
 
 module.exports = router;

@@ -1,27 +1,17 @@
-
 const request = require("supertest");
 const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const bcrypt = require("bcrypt");
-const app = require("../../../backend/src/app"); // Your Express app
-const User = require("../../../backend/src/models/user.model");
+const app = require("../src/app");
+const User = require("../src/models/user.model");
 
 let mongoServer;
-
-// Enable debug logs for mongodb-memory-server
-process.env.DEBUG = "MongoMS:*";
+jest.setTimeout(60000); // 60s for slow downloads
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create({
-    binary: {
-      version: "7.0.3", // ✅ stable version, avoids download/version issues
-    },
-  });
-
+  mongoServer = await MongoMemoryServer.create({ binary: { version: "7.0.3" } });
   const uri = mongoServer.getUri();
 
-  // Set environment variables for testing
-  process.env.MONGOOSE_KEY = uri;
   process.env.JWT_SECRET = "test_jwt_secret";
   process.env.SALT_ROUNDS = "10";
   process.env.NODE_ENV = "test";
@@ -37,36 +27,35 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
-  if (mongoServer) {
-    await mongoServer.stop();
-  }
+  if (mongoServer) await mongoServer.stop();
   await mongoose.disconnect();
   await mongoose.connection.close();
 });
 
-// -------------------------
-// Auth API tests
-// -------------------------
-describe("Auth API", () => {
-  describe("POST /api/auth/register", () => {
-    it("should register a new user", async () => {
-      const res = await request(app)
-        .post("/api/auth/register")
-        .send({
-          fullName: { firstName: "John", lastName: "Doe" },
-          email: "john.doe@example.com",
-          password: "password123",
-          address: [
-            { street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "USA" },
-          ],
-        });
+describe("POST /api/auth/register", () => {
+  it(
+    "should register a new user",
+    async () => {
+      const res = await request(app).post("/api/auth/register").send({
+        fullName: { firstName: "John", lastName: "Doe" },
+        email: "john.doe@example.com",
+        password: "password123",
+        role:"customer",
+        address: [
+          { street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "USA" },
+        ],
+      });
 
       expect(res.statusCode).toEqual(201);
       expect(res.body).toHaveProperty("user");
       expect(res.body.user).toHaveProperty("email", "john.doe@example.com");
-    });
+    },
+    20000
+  );
 
-    it("should not register a user with existing email", async () => {
+  it(
+    "should not register a user with existing email",
+    async () => {
       const hashedPassword = await bcrypt.hash("password123", 10);
       await new User({
         fullName: { firstName: "John", lastName: "Doe" },
@@ -74,20 +63,20 @@ describe("Auth API", () => {
         password: hashedPassword,
       }).save();
 
-      const res = await request(app)
-        .post("/api/auth/register")
-        .send({
-          fullName: { firstName: "Jane", lastName: "Doe" },
-          email: "john.doe@example.com",
-          password: "password123",
-          address: [
-            { street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "USA" },
-          ],
-        });
+      const res = await request(app).post("/api/auth/register").send({
+        fullName: { firstName: "Jane", lastName: "Doe" },
+        email: "john.doe@example.com",
+        password: "password123",
+        role:"customer",
+        address: [
+          { street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "USA" },
+        ],
+      });
 
       expect(res.statusCode).toEqual(400);
       expect(res.body).toHaveProperty("message", "User already exists");
       expect(res.body).toHaveProperty("success", false);
-    });
-  });
+    },
+    20000
+  );
 });
