@@ -3,8 +3,8 @@ import {useNavigate, Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 
 import {register as registerUser} from "../../features/auth/authSlice";
-import Back from "../../components/Back";
-import { toast } from "react-toastify";
+
+import {toast} from "react-toastify";
 
 const Register = () => {
   const {
@@ -31,29 +31,21 @@ const Register = () => {
       const resultAction = await dispatch(registerUser(payload));
 
       if (registerUser.fulfilled.match(resultAction)) {
-       
         toast.success("Logged in Successfully");
         reset();
         navigate("/"); // redirect home
       } else {
-      
-         toast.error(resultAction.payload?.message || "Invalid credentials");
+        toast.error(resultAction.payload?.message || "Invalid credentials");
       }
     } catch (err) {
       console.error("Unexpected error:", err);
-       toast.error( "Invalid credentials");
+      toast.error("Invalid credentials");
     }
-
- 
   };
 
   return (
     <>
       <div className="max-h-full">
-        <div>
-          <Back />
-        </div>
-
         <div className="min-h-screen flex flex-col items-center gap-5 lg:gap-0 p-6 ">
           <div className="space-y-1 px-2 py-8">
             <h1 className="text-2xl lg:text-[2rem] lg:font-bold text-center">

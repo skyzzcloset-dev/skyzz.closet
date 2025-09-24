@@ -1,16 +1,15 @@
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
-import { useEffect } from "react";
-import { login as loginUser } from "../../features/auth/authSlice"; 
-import Back from "../../components/Back";
-import { toast } from "react-toastify";
+import {useForm} from "react-hook-form";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, Link} from "react-router-dom";
+import {useEffect} from "react";
+import {login as loginUser} from "../../features/auth/authSlice";
+import {toast} from "react-toastify";
 
 const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
     reset,
   } = useForm();
 
@@ -18,9 +17,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   // ✅ Only once
-  const { user, isLoading } = useSelector((state) => state.auth);
-
-
+  const {user, isLoading} = useSelector((state) => state.auth);
 
   const onSubmit = async (data) => {
     try {
@@ -30,7 +27,6 @@ const Login = () => {
       };
 
       const resultAction = await dispatch(loginUser(payload));
-     
 
       if (loginUser.fulfilled.match(resultAction)) {
         toast.success("Logged in Successfully");
@@ -44,20 +40,18 @@ const Login = () => {
     }
   };
 
- useEffect(() => {
-  if (user) {
-    if (user.role === "admin") {
-      navigate("/admin/dashboard", { replace: true });
-    } else {
-      navigate("/", { replace: true });
+  useEffect(() => {
+    if (user) {
+      if (user.role === "admin") {
+        navigate("/admin/dashboard", {replace: true});
+      } else {
+        navigate("/", {replace: true});
+      }
     }
-  }
-}, [user, navigate]);
+  }, [user, navigate]);
 
   return (
     <div className="max-h-full">
-      <Back />
-
       <div className="min-h-screen flex flex-col items-center gap-5 lg:gap-0 p-6">
         <div className="space-y-1 px-2 py-8">
           <h1 className="text-2xl lg:text-[2rem] lg:font-bold text-center">
