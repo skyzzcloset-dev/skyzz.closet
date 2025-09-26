@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {stringify: uuidStringify} = require("uuid");
+
 
 const shippingSchema = new mongoose.Schema({
   street: {type: String, required: true},
