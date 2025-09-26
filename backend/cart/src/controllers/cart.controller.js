@@ -6,15 +6,23 @@ async function getCart(req, res) {
   try {
     const user = req.user;
 
-    let cart = await cartModel.findOne({user: user.id});
+    if (!user) {
+      return res.status(403).json({
+        success: false,
+        message: "Insufficient permissions",
+      });
+    }
+
+    let cart = await cartModel.findOne({ user: user.id });
 
     if (!cart) {
-      cart = new cartModel({user: user.id, items: []});
+      cart = new cartModel({ user: user.id, items: [] });
       await cart.save();
     }
 
     return res.status(200).json({
-      message: "Cart Found",
+      success: true,
+      message: "Cart found",
       cart,
       totals: {
         itemsCount: cart.items.length,
@@ -23,9 +31,11 @@ async function getCart(req, res) {
     });
   } catch (error) {
     console.error("Error fetching cart:", error);
-    return res
-      .status(500)
-      .json({message: "Server Error", error: error.message});
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
   }
 }
 
@@ -97,38 +107,58 @@ async function addItemToCart(req, res) {
 // ================= UPDATE CART ITEM =================
 async function updateCart(req, res) {
   try {
-    const {productId} = req.params;
-    const {quantity} = req.body; // <- changed from qty
-
-    if (!mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({message: "Invalid Product ID"});
-    }
-
-    if (!quantity || quantity <= 0) {
-      return res.status(400).json({message: "Quantity must be greater than 0"});
-    }
-
     const user = req.user;
-    const cart = await cartModel.findOne({user: user._id});
+    const cart = await cartModel.findOne({ user: user.id });
 
-    if (!cart) return res.status(404).json({message: "Cart not found"});
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
 
-    const existingIndex = cart.items.findIndex(
-      (item) => item.productId.toString() === productId
-    );
+    // 🟢 Case 1: Bulk update with items array
+    if (req.body.items && Array.isArray(req.body.items)) {
+      req.body.items.forEach((updateItem) => {
+        const idx = cart.items.findIndex(
+          (i) => i.productId.toString() === updateItem.productId
+        );
+        if (idx >= 0) {
+          if (!updateItem.quantity || updateItem.quantity <= 0) {
+            throw new Error("Quantity must be greater than 0");
+          }
+          cart.items[idx].quantity = updateItem.quantity;
+        }
+      });
+    } else {
+      // 🟢 Case 2: Single update with productId param + quantity in body
+      const { productId } = req.params;
+      const { quantity } = req.body;
 
-    if (existingIndex < 0)
-      return res.status(404).json({message: "Item not found in cart"});
+      if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return res.status(400).json({ message: "Invalid Product ID" });
+      }
 
-    cart.items[existingIndex].quantity = quantity;
+      if (!quantity || quantity <= 0) {
+        return res
+          .status(400)
+          .json({ message: "Quantity must be greater than 0" });
+      }
+
+      const idx = cart.items.findIndex(
+        (i) => i.productId.toString() === productId
+      );
+      if (idx < 0) {
+        return res.status(404).json({ message: "Item not found in cart" });
+      }
+
+      cart.items[idx].quantity = quantity;
+    }
+
     await cart.save();
-
-    return res.status(200).json({message: "Item updated", cart});
+    return res.status(200).json({ message: "Cart updated", cart });
   } catch (error) {
     console.error(error);
     return res
       .status(500)
-      .json({message: "Server error", error: error.message});
+      .json({ message: "Server error", error: error.message });
   }
 }
 
