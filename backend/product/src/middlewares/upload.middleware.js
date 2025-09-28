@@ -1,9 +1,7 @@
 const multer = require("multer");
-const storage = multer.memoryStorage();
+
+const storage = multer.memoryStorage(); // ✅ so we get file.buffer
 const upload = multer({ storage });
 
-function uploadMultiple(fieldName, maxCount) {
-  return upload.array(fieldName, maxCount);
-}
-
-module.exports = { uploadMultiple };
+exports.uploadMultiple = (fieldName, maxCount) =>
+  upload.array(fieldName, maxCount);

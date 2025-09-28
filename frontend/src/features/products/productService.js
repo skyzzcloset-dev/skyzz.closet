@@ -3,14 +3,15 @@ import axios from "axios";
 const API_URL = "https://skyzz-closet-1.onrender.com/api/product/";
 
 const getAuthHeader = () => {
-  const token = localStorage.getItem("token"); // 👈 get token
+  const token = localStorage.getItem("token");
   return { Authorization: `Bearer ${token}` };
 };
 
 // Add product
-const addProduct = async (productData) => {
-  const res = await axios.post(API_URL + "add", productData, {
+const addProduct = async (formData) => {
+  const res = await axios.post(API_URL + "add", formData, {
     headers: getAuthHeader(),
+    withCredentials: true,
   });
   return res.data;
 };
@@ -48,7 +49,6 @@ const productService = {
   addProduct,
   getAllProduct,
   getProduct,
-
   updateProduct,
   deleteProduct,
 };

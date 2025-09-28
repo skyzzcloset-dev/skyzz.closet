@@ -10,9 +10,8 @@ const initialState = {
 };
 
 // ✅ Get token helper
-const getToken = (thunkAPI) => {
-  return thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
-};
+const getToken = (thunkAPI) =>
+  thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
 
 // Add product
 export const addProduct = createAsyncThunk(
@@ -40,13 +39,13 @@ export const getAllProduct = createAsyncThunk(
       return await productService.getAllProduct(token);
     } catch (error) {
       const message =
-        error.response?.data?.message || error.message || "Something went wrong";
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
       return thunkAPI.rejectWithValue(message);
     }
   }
 );
-
-
 
 const productsSlice = createSlice({
   name: "products",
@@ -68,7 +67,7 @@ const productsSlice = createSlice({
       .addCase(addProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.items.push(action.payload.product); // ensure .product
+        state.items.push(action.payload.product); // ✅ matches controller
       })
       .addCase(addProduct.rejected, (state, action) => {
         state.isLoading = false;
@@ -90,9 +89,7 @@ const productsSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         state.items = [];
-      })
-
-  
+      });
   },
 });
 

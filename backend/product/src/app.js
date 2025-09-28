@@ -1,14 +1,14 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const routes = require("./routes/product.routes");
+const productRoutes = require("./routes/product.routes");
 
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ CORS setup (frontend: Vercel, allow cookies)
+// ✅ CORS setup (frontend: Vite/Vercel)
 app.use(
   cors({
     origin: "https://www.skyzzcloset.shop",
@@ -17,8 +17,8 @@ app.use(
   })
 );
 
-// Routes
-app.use("/api/product", routes);
+// ✅ Routes
+app.use("/api/product", productRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend is running!");

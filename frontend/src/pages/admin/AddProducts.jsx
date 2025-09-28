@@ -1,7 +1,11 @@
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {toast} from "react-toastify";
-import {addProduct,getAllProduct, reset} from "../../features/products/productSlice";
+import {
+  addProduct,
+  getAllProduct,
+  reset,
+} from "../../features/products/productSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
@@ -53,9 +57,8 @@ const AddProduct = () => {
         resetForm();
         setImages([]);
         dispatch(reset());
-         dispatch(getAllProduct());
+        dispatch(getAllProduct());
         navigate("/admin/dashboard"); // redirect to products page
-        
       } else {
         toast.error(resultAction.payload || "Failed to add product");
       }
@@ -72,6 +75,7 @@ const AddProduct = () => {
         <label>Name</label>
         <input
           type="text"
+          name="name"
           placeholder="e.g. 'Minimalist Silk Kurta'"
           {...register("name", {required: "Name is required"})}
           className="w-full p-2 border rounded"
@@ -83,6 +87,7 @@ const AddProduct = () => {
         {/* Description */}
         <label>Description</label>
         <textarea
+          name="description"
           placeholder="A short description of the product."
           {...register("description")}
           className="w-full p-2 border rounded"
@@ -94,7 +99,8 @@ const AddProduct = () => {
             <label>Price</label>
             <input
               type="number"
-              placeholder="$ 0.00"
+              name="price"
+              placeholder=" ₹ 0.00"
               {...register("price", {required: "Price is required"})}
               className="w-full p-2 border rounded"
             />
@@ -106,6 +112,7 @@ const AddProduct = () => {
             <label>Stock</label>
             <input
               type="number"
+              name="stock"
               placeholder="100"
               {...register("stock", {required: "Stock is required"})}
               className="w-full p-2 border rounded"
@@ -121,6 +128,7 @@ const AddProduct = () => {
           <div>
             <label>Category</label>
             <select
+              name="category"
               {...register("category", {required: "Category is required"})}
               className="w-full p-2 border rounded"
             >
@@ -138,6 +146,7 @@ const AddProduct = () => {
             <label>Brand</label>
             <input
               type="text"
+              name="brand"
               placeholder="e.g. 'Aavani'"
               {...register("brand", {required: "Brand is required"})}
               className="w-full p-2 border rounded"
@@ -152,6 +161,7 @@ const AddProduct = () => {
         <div className="border-2 border-dashed p-6 rounded text-center">
           <input
             type="file"
+            name="images"
             accept="image/png, image/jpeg, image/gif"
             multiple
             className="hidden"
@@ -198,7 +208,12 @@ const AddProduct = () => {
                 key={size}
                 className="flex items-center gap-1 cursor-pointer"
               >
-                <input type="checkbox" value={size} {...register("sizes")} />
+                <input
+                  type="checkbox"
+                  name="sizes"
+                  value={size}
+                  {...register("sizes")}
+                />
                 <span className="px-2 py-1 border rounded">{size}</span>
               </label>
             ))}
@@ -210,6 +225,7 @@ const AddProduct = () => {
           <h2 className="font-semibold mb-2">Colors</h2>
           <input
             type="text"
+            name="colors"
             placeholder="e.g. 'Red , Black , Blue'"
             {...register("colors", {required: "Colors are required"})}
             className="w-full p-2 border rounded"

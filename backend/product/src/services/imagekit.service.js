@@ -9,7 +9,7 @@ const imagekit = new ImageKit({
 async function uploadFile(file, fileName, folderName) {
   try {
     const response = await imagekit.upload({
-      file,       // base64 image
+      file,      
       fileName,
       folder: folderName ? `/products/${folderName}` : "/products",
     });
