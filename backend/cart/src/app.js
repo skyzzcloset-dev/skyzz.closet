@@ -12,7 +12,7 @@ app.use(express.urlencoded({extended:true}))
 
 // ✅ CORS setup (frontend: Vercel, allow cookies)
 app.use(cors({
-    origin: "https://www.skyzzcloset.shop",
+   origin: ["https://www.skyzzcloset.shop", "http://localhost:5173"],
     credentials: true,
     optionsSuccessStatus: 200,
 }))

@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const API_URL = "https://skyzz-closet-1.onrender.com/api/product/";
+const API_URL = "http://localhost:8000/api/product/";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
-  return { Authorization: `Bearer ${token}` };
+  return {Authorization: `Bearer ${token}`};
 };
 
 // Add product
