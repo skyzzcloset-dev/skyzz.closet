@@ -27,6 +27,8 @@ async function getCart(req, res) {
       totals: {
         itemsCount: cart.items.length,
         totalQuantity: cart.items.reduce((sum, item) => sum + item.quantity, 0),
+        colors:cart.colors,
+        sizes : cart.sizes
       },
     });
   } catch (error) {
@@ -44,65 +46,74 @@ async function addItemToCart(req, res) {
     const user = req.user;
 
     if (!user) {
-      return res.status(401).json({message: "Unauthorized: No user found"});
+      return res.status(401).json({ message: "Unauthorized: No user found" });
     }
 
     let items = [];
 
-    // Handle both formats: { productId, quantity } OR { items: [{ productId, quantity }, ...] }
-    if (
-      req.body.items &&
-      Array.isArray(req.body.items) &&
-      req.body.items.length > 0
-    ) {
+    // Handle both formats
+    if (req.body.items && Array.isArray(req.body.items) && req.body.items.length > 0) {
       items = req.body.items;
     } else if (req.body.productId && req.body.quantity) {
       items.push({
         productId: req.body.productId,
         quantity: Number(req.body.quantity),
+        sizes: req.body.sizes || [],
+        colors: req.body.colors || [],
       });
     } else {
-      return res.status(400).json({message: "Invalid product or quantity"});
+      return res.status(400).json({ message: "Invalid product or quantity" });
     }
 
-    // Validate each item
+    // Validate
     for (const item of items) {
       if (!item.productId || !item.quantity || item.quantity <= 0) {
-        return res
-          .status(400)
-          .json({message: "Invalid product or quantity in items"});
+        return res.status(400).json({ message: "Invalid product or quantity in items" });
       }
     }
 
     // Find or create cart
-    let cart = await cartModel.findOne({user: user.id});
+    let cart = await cartModel.findOne({ user: user.id });
     if (!cart) {
-      cart = new cartModel({user: user.id, items: []});
+      cart = new cartModel({ user: user.id, items: [] });
     }
 
-    // Add/update items in cart
+    // Add/update items
     for (const item of items) {
       const existingIndex = cart.items.findIndex(
         (i) => i.productId.toString() === item.productId
       );
 
       if (existingIndex !== -1) {
+        // If already in cart → update
         cart.items[existingIndex].quantity += item.quantity;
+
+        if (item.sizes?.length > 0) {
+          cart.items[existingIndex].sizes = item.sizes;
+        }
+        if (item.colors?.length > 0) {
+          cart.items[existingIndex].colors = item.colors;
+        }
       } else {
-        cart.items.push({productId: item.productId, quantity: item.quantity});
+        // New item
+        cart.items.push({
+          productId: item.productId,
+          quantity: item.quantity,
+          sizes: item.sizes || [],
+          colors: item.colors || [],
+        });
       }
     }
 
     await cart.save();
 
-    return res.status(201).json({message: "Item(s) added to cart", cart});
+    return res.status(201).json({ message: "Item(s) added to cart", cart });
   } catch (error) {
     console.error("Error adding item to cart:", error);
-    return res
-      .status(500)
-      .json({message: "Server error", error: error.message});
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 }
+
 
 // ================= UPDATE CART ITEM =================
 async function updateCart(req, res) {

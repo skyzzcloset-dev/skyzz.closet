@@ -5,6 +5,9 @@ import { logout, reset } from "../features/auth/authSlice";
 import { Logo } from "./index";
 import { toast } from "react-toastify";
 
+// React Icons
+import { FiMenu, FiX, FiSearch, FiUser, FiShoppingBag } from "react-icons/fi";
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -13,10 +16,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-
-
- 
-  
+  const { cartItems } = useSelector((state) => state.cart);
 
   const handleLogout = async () => {
     try {
@@ -44,11 +44,7 @@ const Navbar = () => {
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 w-10 h-10 flex justify-center items-center rounded-lg hover:bg-gray-100 transition"
           >
-            {isOpen ? (
-              <i className="ri-close-line text-2xl"></i>
-            ) : (
-              <i className="ri-menu-line text-2xl"></i>
-            )}
+            {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
 
           <ul className="hidden md:flex md:space-x-5 font-medium">
@@ -92,71 +88,83 @@ const Navbar = () => {
         </div>
 
         {/* Center - Logo */}
-        <div className="absolute left-1/2 transform -translate-x-1/2">
+        <div className="absolute left-1/2 transform -translate-x-1/2 z-10">
           <Logo />
         </div>
 
         {/* Right side - Search, Auth, Cart */}
-        <div className="flex items-center  gap-4 ml-auto">
-          {/* Desktop search */}
-          <div className="hidden md:flex items-center space-x-5">
-            {searchOpen ? (
-              <div className="flex items-center gap-2 transition-all duration-300">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  autoFocus
-                  className="w-[200px] p-2 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition"
-                />
-                <i
-                  onClick={() => setSearchOpen(false)}
-                  className="ri-close-line cursor-pointer text-xl"
-                ></i>
-              </div>
-            ) : (
-              <i
-                onClick={() => setSearchOpen(true)}
-                className="ri-search-line cursor-pointer text-xl hover:text-blue-700 transition"
-              ></i>
-            )}
+        <div className="hidden md:flex items-center gap-4 ml-auto z-20 relative">
+          {searchOpen ? (
+            <div className="flex items-center gap-2 transition-all duration-300">
+              <input
+                type="text"
+                placeholder="Search..."
+                autoFocus
+                className="w-[200px] p-2 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition"
+              />
+              <FiX
+                size={20}
+                className="cursor-pointer"
+                onClick={() => setSearchOpen(false)}
+              />
+            </div>
+          ) : (
+            <FiSearch
+              size={20}
+              className="cursor-pointer hover:text-blue-700 transition"
+              onClick={() => setSearchOpen(true)}
+            />
+          )}
 
-            {user ? (
-              <>
-                <span className="ml-4 font-medium">Hi, {user.username}</span>
-                <button
-                  onClick={handleLogout}
-                  className="ml-4 text-red-500 hover:underline transition"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <NavLink to="/login">
-                <i className="ri-user-line cursor-pointer text-xl ml-4 hover:text-blue-700 transition"></i>
-              </NavLink>
-            )}
-
-            <NavLink to="/cart">
-              <i className="ri-shopping-bag-2-line cursor-pointer text-xl ml-4 hover:text-blue-700 transition"></i>
+          {user ? (
+            <>
+              <span className="ml-4 font-medium">Hi, {user.username}</span>
+              <button
+                onClick={handleLogout}
+                className="ml-4 text-red-500 hover:underline transition"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <NavLink to="/login">
+              <FiUser
+                size={20}
+                className="cursor-pointer ml-4 hover:text-blue-700 transition"
+              />
             </NavLink>
-          </div>
+          )}
 
-          {/* Mobile search icon */}
-          <i
-            onClick={() => setSearchOpen(true)}
-            className="ri-search-line cursor-pointer text-xl md:hidden"
-          ></i>
+          {/* Desktop Cart with Counter */}
+          <NavLink to="/cart" className="relative">
+            <FiShoppingBag
+              size={20}
+              className="cursor-pointer ml-4 hover:text-blue-700 transition"
+            />
+            {cartItems && cartItems.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {cartItems.length}
+              </span>
+            )}
+          </NavLink>
         </div>
+
+        {/* Mobile search icon */}
+        <FiSearch
+          size={20}
+          className="cursor-pointer md:hidden"
+          onClick={() => setSearchOpen(true)}
+        />
       </div>
 
       {/* Mobile menu */}
       <div
-        className={`fixed top-0 left-0 w-full h-full bg-white z-40 transform transition-transform duration-300 md:hidden ${
+        className={`fixed top-0 left-0 w-full h-full bg-white z-50 transform transition-transform duration-300 md:hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full justify-between p-6">
-          <ul className="flex flex-col  font-medium text-lg">
+          <ul className="flex flex-col font-medium text-lg">
             <li>
               <NavLink
                 to="/"
@@ -212,10 +220,16 @@ const Navbar = () => {
             <NavLink
               to="/cart"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-2 text-black hover:text-blue-700 transition"
+              className="relative flex items-center gap-2 text-black hover:text-blue-700 transition"
             >
-              <i className="ri-shopping-bag-2-line text-xl"></i> Cart
+              <FiShoppingBag size={20} /> Cart
+              {cartItems && cartItems.length > 0 && (
+                <span className="absolute left-6 -top-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartItems.length}
+                </span>
+              )}
             </NavLink>
+
             {user ? (
               <button
                 onClick={() => {
@@ -232,7 +246,7 @@ const Navbar = () => {
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-2 text-black hover:text-blue-700 transition"
               >
-                <i className="ri-user-line text-xl"></i> Login
+                <FiUser size={20} /> Login
               </NavLink>
             )}
           </div>
@@ -243,17 +257,18 @@ const Navbar = () => {
       {searchOpen && (
         <div className="md:hidden fixed inset-0 bg-white z-50 flex items-start p-4">
           <div className="flex w-full items-center gap-2">
-            <i className="ri-search-line text-xl"></i>
+            <FiSearch size={20} />
             <input
               type="text"
               placeholder="Search..."
               autoFocus
               className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             />
-            <i
+            <FiX
+              size={24}
+              className="cursor-pointer"
               onClick={() => setSearchOpen(false)}
-              className="ri-close-line cursor-pointer text-2xl"
-            ></i>
+            />
           </div>
         </div>
       )}

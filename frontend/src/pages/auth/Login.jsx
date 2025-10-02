@@ -51,8 +51,8 @@ const Login = () => {
   }, [user, navigate]);
 
   return (
-    <div className="max-h-full">
-      <div className="min-h-screen flex flex-col items-center gap-5 lg:gap-0 p-6">
+    <div className="">
+      <div className="min-h-full flex flex-col items-center gap-5 lg:gap-0 p-6">
         <div className="space-y-1 px-2 py-8">
           <h1 className="text-2xl lg:text-[2rem] lg:font-bold text-center">
             Welcome Back to Skyzz.closet

@@ -1,8 +1,8 @@
-import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import cartService from "./cartServices";
 
 const initialState = {
-  cartItems: [],
+  cartItems: JSON.parse(localStorage.getItem("cart")) || [],
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -20,9 +20,21 @@ export const addCartItems = createAsyncThunk(
       return await cartService.addCartItems(cartData, token);
     } catch (error) {
       const message =
-        error.response?.data?.message ||
-        error.message ||
-        "Something went wrong";
+        error.response?.data?.message || error.message || "Something went wrong";
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const getCartItems = createAsyncThunk(
+  "cart/getItems",
+  async (_, thunkAPI) => {
+    try {
+      const token = getToken(thunkAPI);
+      return await cartService.getCartItems(token);
+    } catch (error) {
+      const message =
+        error.response?.data?.message || error.message || "Something went wrong";
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -38,20 +50,40 @@ const cartSlice = createSlice({
       state.isSuccess = false;
       state.message = "";
     },
+    clearCart: (state) => {
+      state.cartItems = [];
+      localStorage.removeItem("cart");
+    },
+    loadCartFromStorage: (state) => {
+      state.cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    },
   },
   extraReducers: (builder) => {
     builder
-
       .addCase(addCartItems.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(addCartItems.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.cartItems.push(action.payload.cart);
+        state.cartItems = action.payload.cart.items;
+        localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
-
       .addCase(addCartItems.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(getCartItems.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getCartItems.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.cartItems = action.payload.cart.items;
+        localStorage.setItem("cart", JSON.stringify(state.cartItems));
+      })
+      .addCase(getCartItems.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
@@ -59,5 +91,5 @@ const cartSlice = createSlice({
   },
 });
 
-export const {reset} = cartSlice.actions;
+export const { reset, clearCart, loadCartFromStorage } = cartSlice.actions;
 export default cartSlice.reducer;

@@ -33,8 +33,8 @@ if (container) {
         <App />
       </Provider>
       <ToastContainer
-        position="top-right"
-        autoClose={3000}
+        position="top-center"
+        autoClose={1000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

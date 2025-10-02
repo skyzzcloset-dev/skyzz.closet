@@ -1,66 +1,67 @@
-import React from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { loadCartFromStorage, getCartItems } from "./features/cart/cartSlice";
 
-// Layouts & Pages
-import MainLayout from "./layout/MainLayout";
-import { Home, Login, Register } from "./pages";
-import ErrorPage from "./pages/ErrorPage";
-import Contact from "./pages/home/Contact";
-import NewDrop from "./pages/home/NewDrop";
-import AdminRoutes from "./routes/AdminRoutes";
-import ProductLayout from "./ui/ProductLayout";
+// Lazy-loaded components
+const MainLayout = lazy(() => import("./layout/MainLayout"));
+const Home = lazy(() => import("./pages/home/Home"));
+const Login = lazy(() => import("./pages/auth/Login"));
+const Register = lazy(() => import("./pages/auth/Register"));
+const ErrorPage = lazy(() => import("./pages/ErrorPage"));
+const Contact = lazy(() => import("./pages/home/Contact"));
+const NewDrop = lazy(() => import("./pages/home/NewDrop"));
+const AdminRoutes = lazy(() => import("./routes/AdminRoutes"));
+const ProductLayout = lazy(() => import("./pages/home/ProductLayout"));
+const Cart = lazy(() => import("./pages/shop/Cart"));
 
 function App() {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth || {});
+
+  useEffect(() => {
+    dispatch(loadCartFromStorage());
+    if (user) dispatch(getCartItems());
+  }, [dispatch, user]);
 
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Main Layout */}
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
 
-          {/* Auth */}
-          {!user ? (
-            <>
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Register />} />
-            </>
-          ) : user?.role === "admin" ? (
-            <>
-              <Route
-                path="login"
-                element={<Navigate to="/admin/dashboard" replace />}
-              />
-              <Route
-                path="register"
-                element={<Navigate to="/admin/dashboard" replace />}
-              />
-            </>
+            {!user ? (
+              <>
+                <Route path="login" element={<Login />} />
+                <Route path="register" element={<Register />} />
+              </>
+            ) : user?.role === "admin" ? (
+              <>
+                <Route path="login" element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="register" element={<Navigate to="/admin/dashboard" replace />} />
+              </>
+            ) : (
+              <>
+                <Route path="login" element={<Navigate to="/" replace />} />
+                <Route path="register" element={<Navigate to="/" replace />} />
+              </>
+            )}
+
+            <Route path="new" element={<NewDrop />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="cart" element={<Cart />} />
+            <Route path="product/:id" element={<ProductLayout />} />
+            <Route path="*" element={<ErrorPage />} />
+          </Route>
+
+          {user?.role === "admin" ? (
+            <Route path="/admin/*" element={<AdminRoutes />} />
           ) : (
-            <>
-              <Route path="login" element={<Navigate to="/" replace />} />
-              <Route path="register" element={<Navigate to="/" replace />} />
-            </>
+            <Route path="/admin/*" element={<Navigate to="/login" replace />} />
           )}
-
-          {/* Public pages */}
-          <Route path="new" element={<NewDrop />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="product/:id" element={<ProductLayout />} />
-
-          {/* Catch-all */}
-          <Route path="*" element={<ErrorPage />} />
-        </Route>
-
-        {/* Admin Layout */}
-        {user?.role === "admin" ? (
-          <Route path="/admin/*" element={<AdminRoutes />} />
-        ) : (
-          <Route path="/admin/*" element={<Navigate to="/login" replace />} />
-        )}
-      </Routes>
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }
