@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
-
+import React, {useState, useEffect} from "react";
+import {motion} from "framer-motion";
+import {NavLink} from "react-router-dom";
+import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 
 // Hook: slides per view depending on screen size
 const useSlidesPerView = () => {
@@ -37,10 +37,10 @@ const Carousel = ({products}) => {
       {/* Carousel */}
       <motion.div
         className="flex"
-        animate={{ x: `-${(index * 100) / slidesPerView}%` }}
-        transition={{ type: "spring", stiffness: 120, damping: 25 }}
+        animate={{x: `-${(index * 100) / slidesPerView}%`}}
+        transition={{type: "spring", stiffness: 120, damping: 25}}
         drag="x"
-        dragConstraints={{ left: 0, right: 0 }}
+        dragConstraints={{left: 0, right: 0}}
         onDragEnd={(_, info) => {
           if (info.offset.x < -50) next();
           if (info.offset.x > 50) prev();
@@ -71,7 +71,7 @@ const Carousel = ({products}) => {
         disabled={index === 0}
         className="absolute top-1/2 left-3 -translate-y-1/2 bg-white p-3 border rounded-full shadow hover:scale-110 transition disabled:opacity-30"
       >
-        <i className="ri-arrow-left-line text-2xl"></i>
+        <FaArrowLeft />
       </button>
 
       {/* Right Arrow */}
@@ -80,11 +80,10 @@ const Carousel = ({products}) => {
         disabled={index >= products.length - slidesPerView}
         className="absolute top-1/2 right-3 -translate-y-1/2 bg-white p-3 border rounded-full shadow hover:scale-110 transition disabled:opacity-30"
       >
-        <i className="ri-arrow-right-line text-2xl"></i>
+        <FaArrowRight />
       </button>
     </div>
   );
 };
 
 export default Carousel;
-

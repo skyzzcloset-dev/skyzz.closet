@@ -47,7 +47,7 @@ router.patch(
 router.get(
   "/:id",
   getOrderByIdValidations,
-  createAuthMiddleware(["admin", "customer"]),
+  createAuthMiddleware(["admin"]),
   getOrderById
 );
 

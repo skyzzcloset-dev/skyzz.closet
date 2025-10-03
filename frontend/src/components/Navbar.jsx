@@ -1,22 +1,28 @@
-import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { logout, reset } from "../features/auth/authSlice";
-import { Logo } from "./index";
-import { toast } from "react-toastify";
-
-// React Icons
-import { FiMenu, FiX, FiSearch, FiUser, FiShoppingBag } from "react-icons/fi";
+import React, {useState} from "react";
+import {NavLink, useNavigate} from "react-router-dom";
+import {useSelector, useDispatch} from "react-redux";
+import {logout, reset} from "../features/auth/authSlice";
+import {Logo} from "./index";
+import {toast} from "react-toastify";
+import {
+  FiMenu,
+  FiX,
+  FiSearch,
+  FiUser,
+  FiShoppingBag,
+  FiChevronDown,
+} from "react-icons/fi";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [active, setActive] = useState("home");
+  const [shopOpen, setShopOpen] = useState(false); // 👈 NEW STATE for dropdown
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  const { cartItems } = useSelector((state) => state.cart);
+  const {user} = useSelector((state) => state.auth);
+  const {cartItems} = useSelector((state) => state.cart);
 
   const handleLogout = async () => {
     try {
@@ -47,7 +53,8 @@ const Navbar = () => {
             {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
 
-          <ul className="hidden md:flex md:space-x-5 font-medium">
+          {/* Desktop Menu */}
+          <ul className="hidden md:flex md:space-x-5 font-medium relative">
             <li>
               <NavLink
                 to="/"
@@ -57,15 +64,63 @@ const Navbar = () => {
                 Home
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to="/shop"
-                onClick={() => setActive("shop")}
-                className={linkClasses("shop")}
+
+            {/* 👇 SHOP with dropdown */}
+            <li className="relative">
+              <button
+                onClick={() => setShopOpen((prev) => !prev)}
+                className="flex items-center gap-1 py-2 px-3 rounded hover:text-blue-700 transition"
               >
-                Shop
-              </NavLink>
+                Shop <FiChevronDown size={16} />
+              </button>
+
+              {shopOpen && (
+                <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-200">
+                   <NavLink
+                    to="/shop/accessories"
+                    onClick={() => {
+                      setActive("shop");
+                      setShopOpen(false);
+                    }}
+                    className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                   Dress
+                  </NavLink>
+                  <NavLink
+                    to="/shop/men"
+                    onClick={() => {
+                      setActive("shop");
+                      setShopOpen(false);
+                    }}
+                    className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                   Tops
+                  </NavLink>
+                  <NavLink
+                    to="/shop/women"
+                    onClick={() => {
+                      setActive("shop");
+                      setShopOpen(false);
+                    }}
+                    className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                   Bottoms
+                  </NavLink>
+                  <NavLink
+                    to="/shop/accessories"
+                    onClick={() => {
+                      setActive("shop");
+                      setShopOpen(false);
+                    }}
+                    className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                   Shirts
+                  </NavLink>
+                 
+                </div>
+              )}
             </li>
+
             <li>
               <NavLink
                 to="/new"
@@ -135,7 +190,6 @@ const Navbar = () => {
             </NavLink>
           )}
 
-          {/* Desktop Cart with Counter */}
           <NavLink to="/cart" className="relative">
             <FiShoppingBag
               size={20}
@@ -157,14 +211,14 @@ const Navbar = () => {
         />
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile Menu */}
       <div
         className={`fixed top-0 left-0 w-full h-full bg-white z-50 transform transition-transform duration-300 md:hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full justify-between p-6">
-          <ul className="flex flex-col font-medium text-lg">
+          <ul className="flex flex-col font-medium text-lg space-y-3">
             <li>
               <NavLink
                 to="/"
@@ -177,18 +231,66 @@ const Navbar = () => {
                 Home
               </NavLink>
             </li>
+
+            {/* 👇 Mobile SHOP Dropdown */}
             <li>
-              <NavLink
-                to="/shop"
-                onClick={() => {
-                  setActive("shop");
-                  setIsOpen(false);
-                }}
-                className={linkClasses("shop")}
+              <button
+                onClick={() => setShopOpen((prev) => !prev)}
+                className="flex items-center justify-between px-3  text-left py-2"
               >
-                Shop
-              </NavLink>
+                <span>Shop</span>
+                <FiChevronDown
+                  className={`transition-transform ${
+                    shopOpen ? "rotate-180" : "rotate-0"
+                  }`}
+                />
+              </button>
+              {shopOpen && (
+                <div className="text-left px-5 flex flex-col space-y-3">
+                  <NavLink
+                    to="/shop/men"
+                    onClick={() => {
+                      setIsOpen(false);
+                      setShopOpen(false);
+                    }}
+                    className="block text-sm"
+                  >
+                    Dress
+                  </NavLink>
+                  <NavLink
+                    to="/shop/women"
+                    onClick={() => {
+                      setIsOpen(false);
+                      setShopOpen(false);
+                    }}
+                    className="block text-sm"
+                  >
+                    Tops
+                  </NavLink>
+                  <NavLink
+                    to="/shop/accessories"
+                    onClick={() => {
+                      setIsOpen(false);
+                      setShopOpen(false);
+                    }}
+                    className="block text-sm"
+                  >
+                    Bottoms
+                  </NavLink>
+                  <NavLink
+                    to="/shop/accessories"
+                    onClick={() => {
+                      setIsOpen(false);
+                      setShopOpen(false);
+                    }}
+                    className="block text-sm"
+                  >
+                    Shirts
+                  </NavLink>
+                </div>
+              )}
             </li>
+
             <li>
               <NavLink
                 to="/new"

@@ -9,7 +9,7 @@ const addCartItems = async (cartData, token) => {
     headers: getAuthHeader(token),
     withCredentials: true,
   });
-  return res.data; // MUST return
+  return res.data;
 };
 
 const getCartItems = async (token) => {
@@ -17,7 +17,24 @@ const getCartItems = async (token) => {
     headers: getAuthHeader(token),
     withCredentials: true,
   });
-  return res.data; // MUST return
+  return res.data;
 };
 
-export default { addCartItems, getCartItems };
+const updateCart = async (id, cartData, token) => {
+  const res = await axios.patch(API_URL + `items/${id}`, cartData, {
+    headers: getAuthHeader(token),
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+const deleteCart = async (id, token) => {
+  const res = await axios.delete(API_URL + `items/${id}` , {
+    headers: getAuthHeader(token),
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+const cartService = { addCartItems, getCartItems, updateCart, deleteCart };
+export default cartService;

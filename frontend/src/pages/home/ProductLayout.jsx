@@ -19,7 +19,7 @@ const ProductLayout = () => {
   const [liked, setLiked] = useState(false);
 
   const dispatch = useDispatch();
-  const { cartItems } = useSelector((state) => state.cart);
+
 
   const defaultSizes = ["XS", "S", "M", "L", "XL"];
 
@@ -64,7 +64,7 @@ const ProductLayout = () => {
       const result = await dispatch(addCartItems(cartData)).unwrap();
       toast.success("Item added to cart successfully!");
     } catch (err) {
-      toast.error(err?.message || "Failed to add item to cart");
+      toast.error(err?.message || "Please Login Again!!");
     }
   };
 

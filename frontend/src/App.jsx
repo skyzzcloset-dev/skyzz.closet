@@ -13,6 +13,7 @@ const Contact = lazy(() => import("./pages/home/Contact"));
 const NewDrop = lazy(() => import("./pages/home/NewDrop"));
 const AdminRoutes = lazy(() => import("./routes/AdminRoutes"));
 const ProductLayout = lazy(() => import("./pages/home/ProductLayout"));
+const Checkout = lazy(() =>import("./pages/checkout/Checkout"))
 const Cart = lazy(() => import("./pages/shop/Cart"));
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
             <Route path="contact" element={<Contact />} />
             <Route path="cart" element={<Cart />} />
             <Route path="product/:id" element={<ProductLayout />} />
+            <Route path="checkout" element={<Checkout/>} />
             <Route path="*" element={<ErrorPage />} />
           </Route>
 

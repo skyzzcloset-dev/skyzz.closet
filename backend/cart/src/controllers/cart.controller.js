@@ -182,7 +182,7 @@ async function deleteCart(req, res) {
       return res.status(400).json({message: "Invalid Product ID"});
     }
 
-    const cart = await cartModel.findOne({user: req.user._id});
+    const cart = await cartModel.findOne({user: req.user.id});
     if (!cart) {
       return res.status(404).json({message: "Cart not found"});
     }
