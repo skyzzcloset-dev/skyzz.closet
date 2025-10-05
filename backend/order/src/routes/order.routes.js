@@ -7,48 +7,17 @@ const {
   cancelOrderById,
   updateOrderAddress,
 } = require("../controllers/order.controller");
-const {
-  cancelOrderValidations,
-  createOrderValidations,
-  getMyOrdersValidations,
-  getOrderByIdValidations,
-  updateOrderAddressValidations,
-} = require("../middlewares/validate.middleware");
+
 const router = express.Router();
 
-router.post(
-  "/",
-  createOrderValidations,
-  createAuthMiddleware(["customer"]),
-  createOrder
-);
-
-router.get(
-  "/me",
-  getMyOrdersValidations,
-  createAuthMiddleware(["customer"]),
-  getMyOrders
-);
-
-router.post(
-  "/cancel/:id",
-  cancelOrderValidations,
-  createAuthMiddleware(["customer"]),
-  cancelOrderById
-);
-
+router.post("/create", createAuthMiddleware(["customer"]), createOrder);
+router.get("/me", createAuthMiddleware(["customer"]), getMyOrders);
+router.get("/:id", createAuthMiddleware(["customer"]), getOrderById);
+router.post("/cancel/:id", createAuthMiddleware(["customer"]), cancelOrderById);
 router.patch(
   "/address/:id",
-  updateOrderAddressValidations,
   createAuthMiddleware(["customer"]),
   updateOrderAddress
-);
-
-router.get(
-  "/:id",
-  getOrderByIdValidations,
-  createAuthMiddleware(["admin"]),
-  getOrderById
 );
 
 module.exports = router;

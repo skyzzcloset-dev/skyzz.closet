@@ -1,5 +1,9 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
+import {useDispatch, useSelector} from "react-redux";
+import axios from "axios";
+import {createOrder} from "../../features/orders/orderSlice";
+import {useNavigate} from "react-router-dom";
 
 const indianStates = [
   "Andhra Pradesh",
@@ -47,13 +51,77 @@ const Checkout = () => {
     formState: {errors},
   } = useForm();
 
+  const {cartItems} = useSelector((state) => state.cart);
+  const [orders, setOrders] = useState([]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const onSubmit = (data) => {
-    console.log("Form Data:", data);
+    const shippingAddress = {
+      street: data.address,
+      apartment: data.apartment,
+      city: data.city,
+      state: data.state,
+      pincode: data.pin,
+      country: "India",
+    };
+
+    const items = orders.map((item) => ({
+      productId: item._id,
+      quantity: item.quantity,
+      price: {
+        amount: item.price,
+        currency: "INR",
+      },
+    }));
+
+    const totalAmount = items.reduce(
+      (acc, item) => acc + item.price.amount * item.quantity,
+      0
+    );
+
+    const payload = {
+      items,
+      shippingAddress,
+      totalAmount: {
+        price: totalAmount,
+        currency: "INR",
+      },
+    };
+
+    dispatch(createOrder(payload))
+      .then(() => navigate("/payment"))
+      .catch((err) => {
+        console.error("Order creation failed:", err);
+      });
   };
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const singleOrders = cartItems.map((item) =>
+          axios.get(`http://localhost:8000/api/product/get/${item.productId}`)
+        );
+
+        const response = await Promise.all(singleOrders);
+
+        const fetchedOrders = response.map((res, idx) => ({
+          ...res.data.product,
+          quantity: cartItems[idx].quantity,
+          sizes: cartItems[idx].sizes,
+        }));
+
+        setOrders(fetchedOrders);
+      } catch (error) {
+        console.error("Error fetching cart products:", error);
+      }
+    };
+    if (cartItems.length > 0) fetchOrders();
+  }, [cartItems]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-start px-4 py-8">
-      <div className="w-full max-w-5xl flex flex-col lg:flex-row gap-6">
+      <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-6">
         {/* Left Section - Form */}
         <div className="w-full lg:w-3/5 px-6 py-8 bg-white shadow-sm rounded-lg">
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -75,7 +143,7 @@ const Checkout = () => {
             </div>
 
             <h2 className="text-xl font-semibold mb-6">Delivery</h2>
-            <div className="grid grid-cols-2 gap-3 mb-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
               <input
                 type="text"
                 placeholder="First name"
@@ -119,7 +187,7 @@ const Checkout = () => {
               className="w-full border p-3 mb-3 rounded"
             />
 
-            <div className="grid grid-cols-3 gap-3 mb-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
               <input
                 type="text"
                 placeholder="City"
@@ -188,41 +256,74 @@ const Checkout = () => {
         </div>
 
         {/* Right Section - Order Summary */}
-        <div className="w-full lg:w-2/5 px-6 py-8 bg-gray-100 rounded-lg">
+        <div className="w-full lg:w-2/5 px-10 py-8 bg-gray-100 rounded-lg">
           <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
-          <div className="flex justify-between mb-2">
-            <div className="flex gap-2 items-center">
-              <img
-                src="https://via.placeholder.com/60"
-                alt="product"
-                className="w-14 h-14 object-cover rounded"
-              />
-              <span>Shirt</span>
+
+          {orders.length > 0 ? (
+            <div className="space-y-4">
+              {orders.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex justify-between items-center  pb-2"
+                >
+                  <div className="flex gap-3 items-center">
+                    <img
+                      src={item.images?.[0]?.url || "https://placehold.co/60"}
+                      alt={item.name}
+                      className="w-14 h-14 object-cover rounded"
+                    />
+                    <div>
+                      <p className="font-medium">{item.name}</p>
+                      <p className="text-sm text-gray-600">
+                        Qty: {item.quantity} | Size: {item.sizes}
+                      </p>
+                    </div>
+                  </div>
+                  <span>₹{item.price * item.quantity}</span>
+                </div>
+              ))}
+
+              {/* Discount Input */}
+              <div>
+                <input
+                  type="text"
+                  placeholder="Discount code"
+                  className="w-full border p-2 rounded mb-2"
+                />
+                <button className="w-full bg-gray-200 py-2 rounded mb-4 hover:bg-gray-300">
+                  Apply
+                </button>
+              </div>
+
+              {/* Totals */}
+              <div className="flex justify-between mb-2">
+                <span>Subtotal</span>
+                <span>
+                  ₹
+                  {orders.reduce(
+                    (acc, item) => acc + item.price * item.quantity,
+                    0
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span>Shipping</span>
+                <span>Enter shipping address</span>
+              </div>
+              <div className="flex justify-between font-semibold text-lg">
+                <span>Total</span>
+                <span>
+                  ₹
+                  {orders.reduce(
+                    (acc, item) => acc + item.price * item.quantity,
+                    0
+                  )}
+                </span>
+              </div>
             </div>
-            <span>₹499.00</span>
-          </div>
-
-          <input
-            type="text"
-            placeholder="Discount code"
-            className="w-full border p-2 rounded mb-2"
-          />
-          <button className="w-full bg-gray-200 py-2 rounded mb-4">
-            Apply
-          </button>
-
-          <div className="flex justify-between mb-2">
-            <span>Subtotal</span>
-            <span>₹499.00</span>
-          </div>
-          <div className="flex justify-between mb-2">
-            <span>Shipping</span>
-            <span>Enter shipping address</span>
-          </div>
-          <div className="flex justify-between font-semibold text-lg">
-            <span>Total</span>
-            <span>₹499.00</span>
-          </div>
+          ) : (
+            <p className="text-gray-500">No items in cart.</p>
+          )}
         </div>
       </div>
     </div>

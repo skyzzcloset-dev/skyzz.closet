@@ -7,10 +7,10 @@ import {NavLink} from "react-router-dom";
 
 const Cart = () => {
   const {cartItems} = useSelector((state) => state.cart);
+  console.log(cartItems);
+
   const [products, setProducts] = useState([]);
   const dispatch = useDispatch();
-
-  console.log(cartItems);
 
   useEffect(() => {
     const fetchCartProducts = async () => {
@@ -29,8 +29,8 @@ const Cart = () => {
         const fetchedProducts = responses.map((res, index) => ({
           ...res.data.product,
           quantity: cartItems[index].quantity,
-          sizes: cartItems[index].sizes,
-          colors: cartItems[index].colors,
+          sizes: cartItems[index].sizes,   // ✅ fixed
+          colors: cartItems[index].colors, // ✅ already correct
         }));
 
         setProducts(fetchedProducts);
@@ -51,7 +51,7 @@ const Cart = () => {
       dispatch(deleteCart({id: productId}));
       toast.success("Cart Item Deleted!!");
     } catch (error) {
-      toast.error("Error fetching cart products");
+      toast.error("Error deleting cart item");
     }
   };
 
@@ -84,7 +84,10 @@ const Cart = () => {
                     <h2 className="text-lg font-semibold">{product.name}</h2>
                     <p className="text-gray-600 text-sm">₹{product.price}</p>
                     <p className="text-gray-500 text-xs">
-                      Size: {product.sizes?.[0] || "N/A"}
+                      Size:{" "}
+                      {Array.isArray(product.sizes)
+                        ? product.sizes.join(", ")
+                        : product.sizes || "N/A"}
                     </p>
                     <p className="text-gray-500 text-xs">
                       Color: {product.colors?.[0] || "N/A"}
