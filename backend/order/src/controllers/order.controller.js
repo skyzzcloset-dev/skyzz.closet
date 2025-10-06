@@ -56,7 +56,7 @@ async function createOrder(req, res) {
       !shipping?.street ||
       !shipping?.city ||
       !shipping?.state ||
-      !shipping?.pincode ||
+      !shipping?.zip || // <-- match schema
       !shipping?.country
     )
       return res
@@ -72,8 +72,9 @@ async function createOrder(req, res) {
         street: shipping.street,
         city: shipping.city,
         state: shipping.state,
-        zip: shipping.pincode,
+        zip: shipping.zip, // <-- use zip here
         country: shipping.country,
+        phone: shipping.phone, // optional if schema allows
       },
     });
 

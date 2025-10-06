@@ -1,84 +1,88 @@
 const paymentModel = require("../models/payment.model");
-const axios = require("axios");
 const Razorpay = require("razorpay");
+const axios = require("axios");
+const crypto = require("crypto");
+
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+// Create Razorpay order
 async function createPayment(req, res) {
-  const token =
-    req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
-
   try {
+    const token =
+      req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) return res.status(401).json({message: "Unauthorized"});
+
     const orderId = req.params.orderId;
 
-    // Fetch order from your order service
+    // Fetch your order from backend
     const orderResponse = await axios.get(
       `http://localhost:3003/api/order/${orderId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      {headers: {Authorization: `Bearer ${token}`}}
     );
-
     const totalAmount = orderResponse.data.order.totalAmount;
 
-    // Prepare Razorpay order options
+    // Razorpay order options
     const options = {
-      amount: totalAmount.price * 100, // convert to paise
-      currency: totalAmount.currency,
+      amount: totalAmount.price * 100, // in paise
+      currency: totalAmount.currency || "INR",
       receipt: orderId,
       payment_capture: 1,
     };
 
     // Create Razorpay order
-    const order = await razorpay.orders.create(options);
+    const razorpayOrder = await razorpay.orders.create(options);
 
-    // Save payment record in DB
+    // Save payment record
     const payment = await paymentModel.create({
       order: orderId,
-      razorpayOrderId: order.id,
+      razorpayOrderId: razorpayOrder.id,
       user: req.user.id,
       price: {
         amount: totalAmount.price,
-        currency: totalAmount.currency,
+        currency: totalAmount.currency || "INR",
       },
     });
 
-    return res
-      .status(201)
-      .json({ message: "Payment initiated", payment });
+    res.status(201).json({
+      message: "Payment order created",
+      razorpayOrderId: razorpayOrder.id,
+      payment,
+    });
   } catch (error) {
-    console.error("Error creating payment:", error.response?.data || error.message);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error(
+      "Payment creation error:",
+      error.response?.data || error.message
+    );
+    res.status(500).json({message: "Internal Server Error"});
   }
 }
 
+// Verify Razorpay payment
 async function verifyPayment(req, res) {
-  const { razorpayOrderId, paymentId, signature } = req.body;
-  const secret = process.env.RAZORPAY_KEY_SECRET;
+  const {razorpayOrderId, paymentId, signature} = req.body;
 
   try {
-   const { validatePaymentVerification, } = require("../../node_modules/razorpay/dist/utils/razorpay-utils.js");
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(`${razorpayOrderId}|${paymentId}`)
+      .digest("hex");
 
-    const isValid = validatePaymentVerification(
-      { order_id: razorpayOrderId, payment_id: paymentId },
-      signature,
-      secret
-    );
-
-    if (!isValid) {
-      return res.status(400).json({ message: "Invalid signature" });
+    if (expectedSignature !== signature) {
+      return res.status(400).json({message: "Invalid signature"});
     }
 
+    // Find the payment in DB
     const payment = await paymentModel.findOne({
       razorpayOrderId,
       status: "PENDING",
     });
 
     if (!payment) {
-      return res.status(404).json({ message: "Payment not found" });
+      return res.status(404).json({message: "Payment not found"});
     }
 
     payment.paymentId = paymentId;
@@ -87,14 +91,11 @@ async function verifyPayment(req, res) {
 
     await payment.save();
 
-    res.status(200).json({ message: "Payment verified successfully", payment });
+    res.status(200).json({message: "Payment verified successfully", payment});
   } catch (error) {
-    console.error("Error verifying payment:", error.message);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error verifying payment:", error);
+    res.status(500).json({message: "Internal Server Error"});
   }
 }
-
-
-
 
 module.exports = {createPayment, verifyPayment};

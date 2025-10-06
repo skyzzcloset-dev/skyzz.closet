@@ -1,11 +1,11 @@
-const express = require("express")
-const {createAuthMiddleware} = require("../middlewares/auth.middleware")
-const {createPayment , verifyPayment} = require("../controllers/payment.controller")
+const express = require("express");
+const { createAuthMiddleware } = require("../middlewares/auth.middleware");
+const { createPayment, verifyPayment } = require("../controllers/payment.controller");
 
-const router = express.Router()
+const router = express.Router();
 
-router.post("/create/:orderId" , createAuthMiddleware(["customer"]) , createPayment)
-router.post("/verify" , createAuthMiddleware(["customer"]) , verifyPayment)
+// Only logged-in customers can create/verify payment
+router.post("/create/:orderId", createAuthMiddleware(["customer"]), createPayment);
+router.post("/verify", createAuthMiddleware(["customer"]), verifyPayment);
 
-
-module.exports = router
+module.exports = router;

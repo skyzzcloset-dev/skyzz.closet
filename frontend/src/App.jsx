@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { loadCartFromStorage, getCartItems } from "./features/cart/cartSlice";
 
+
 // Lazy-loaded components
 const MainLayout = lazy(() => import("./layout/MainLayout"));
 const Home = lazy(() => import("./pages/home/Home"));
@@ -54,6 +55,8 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="product/:id" element={<ProductLayout />} />
             <Route path="checkout" element={<Checkout/>} />
+            
+            
             <Route path="*" element={<ErrorPage />} />
           </Route>
 
