@@ -24,9 +24,9 @@ const NewDrop = () => {
   const currentPosts = revArr.slice(firstPostIndex, lastPostIndex);
 
   return (
-    <div className="lg:px-20 p-5 px-5">
-      <div className="w-full p-5">
-        <h1 className="text-center font-bold text-2xl pb-15 lg:text-4xl">
+    <div className="lg:px-20  px-5">
+      <div className="w-full py-10">
+        <h1 className="text-center font-bold text-2xl pb-15  lg:text-4xl">
           New Drop
         </h1>
 

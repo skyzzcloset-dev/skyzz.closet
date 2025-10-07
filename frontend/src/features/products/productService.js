@@ -17,8 +17,10 @@ const addProduct = async (formData) => {
 };
 
 // Get all products
-const getAllProduct = async () => {
-  const res = await axios.get(API_URL + "getAll", {
+// features/products/productService.js
+const getAllProduct = async (filters = {}) => {
+  const query = new URLSearchParams(filters).toString();
+  const res = await axios.get(`${API_URL}getAll?${query}`, {
     headers: getAuthHeader(),
   });
   return res.data;

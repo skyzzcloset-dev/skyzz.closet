@@ -12,9 +12,9 @@ const Collections = () => {
    
   ];
   return (
-    <div className=" lg:px-12">
+    <div className=" ">
       <ScrollAnimate direction="up" duration={0.6}>
-        <h2 className="text-center font-bold py-8 text-2xl lg:text-4xl">
+        <h2 className="text-center font-bold py-10 text-2xl lg:text-4xl">
           Featured Collections
         </h2>
       </ScrollAnimate>

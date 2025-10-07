@@ -4,20 +4,14 @@ import {useSelector, useDispatch} from "react-redux";
 import {logout, reset} from "../features/auth/authSlice";
 import {Logo} from "./index";
 import {toast} from "react-toastify";
-import {
-  FiMenu,
-  FiX,
-  FiSearch,
-  FiUser,
-  FiShoppingBag,
-  FiChevronDown,
-} from "react-icons/fi";
+import {FiMenu, FiX, FiSearch, FiUser, FiChevronDown} from "react-icons/fi";
+import { HiOutlineShoppingCart } from "react-icons/hi";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [active, setActive] = useState("home");
-  const [shopOpen, setShopOpen] = useState(false); // 👈 NEW STATE for dropdown
+  const [shopOpen, setShopOpen] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -43,7 +37,7 @@ const Navbar = () => {
   return (
     <nav className="bg-white text-black border-b border-gray-200 shadow-sm fixed w-full z-50 px-5 md:px-20">
       <div className="relative flex items-center justify-between py-5">
-        {/* Left side - Hamburger and Links */}
+        {/* Left side - Hamburger */}
         <div className="flex items-center space-x-4">
           <button
             type="button"
@@ -65,7 +59,7 @@ const Navbar = () => {
               </NavLink>
             </li>
 
-            {/* 👇 SHOP with dropdown */}
+            {/* Shop dropdown */}
             <li className="relative">
               <button
                 onClick={() => setShopOpen((prev) => !prev)}
@@ -73,50 +67,21 @@ const Navbar = () => {
               >
                 Shop <FiChevronDown size={16} />
               </button>
-
               {shopOpen && (
                 <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-200">
-                   <NavLink
-                    to="/shop/accessories"
-                    onClick={() => {
-                      setActive("shop");
-                      setShopOpen(false);
-                    }}
-                    className="block px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                   Dress
-                  </NavLink>
-                  <NavLink
-                    to="/shop/men"
-                    onClick={() => {
-                      setActive("shop");
-                      setShopOpen(false);
-                    }}
-                    className="block px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                   Tops
-                  </NavLink>
-                  <NavLink
-                    to="/shop/women"
-                    onClick={() => {
-                      setActive("shop");
-                      setShopOpen(false);
-                    }}
-                    className="block px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                   Bottoms
-                  </NavLink>
-                  <NavLink
-                    to="/shop/accessories"
-                    onClick={() => {
-                      setActive("shop");
-                      setShopOpen(false);
-                    }}
-                    className="block px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                   Shirts
-                  </NavLink>
-                 
+                  {["Dress", "Tops", "Bottoms", "Shirts"].map((cat) => (
+                    <NavLink
+                      key={cat}
+                      to={`/shop?category=${cat}`}
+                      onClick={() => {
+                        setActive("shop");
+                        setShopOpen(false);
+                      }}
+                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                    >
+                      {cat}
+                    </NavLink>
+                  ))}
                 </div>
               )}
             </li>
@@ -147,7 +112,7 @@ const Navbar = () => {
           <Logo />
         </div>
 
-        {/* Right side - Search, Auth, Cart */}
+        {/* Right side - Desktop */}
         <div className="hidden md:flex items-center gap-4 ml-auto z-20 relative">
           {searchOpen ? (
             <div className="flex items-center gap-2 transition-all duration-300">
@@ -191,7 +156,7 @@ const Navbar = () => {
           )}
 
           <NavLink to="/cart" className="relative">
-            <FiShoppingBag
+            <HiOutlineShoppingCart
               size={20}
               className="cursor-pointer ml-4 hover:text-blue-700 transition"
             />
@@ -203,12 +168,22 @@ const Navbar = () => {
           </NavLink>
         </div>
 
-        {/* Mobile search icon */}
-        <FiSearch
-          size={20}
-          className="cursor-pointer md:hidden"
-          onClick={() => setSearchOpen(true)}
-        />
+        {/* Mobile icons - Search + Cart */}
+        <div className="flex md:hidden items-center gap-4 ml-auto z-20">
+          <NavLink to="/cart" className="relative">
+            <HiOutlineShoppingCart size={20} />
+            {cartItems && cartItems.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {cartItems.length}
+              </span>
+            )}
+          </NavLink>
+          <FiSearch
+            size={24}
+            className="cursor-pointer"
+            onClick={() => setSearchOpen(true)}
+          />
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -232,11 +207,11 @@ const Navbar = () => {
               </NavLink>
             </li>
 
-            {/* 👇 Mobile SHOP Dropdown */}
+            {/* Mobile SHOP Dropdown */}
             <li>
               <button
                 onClick={() => setShopOpen((prev) => !prev)}
-                className="flex items-center justify-between px-3  text-left py-2"
+                className="flex items-center justify-between px-3 text-left py-2"
               >
                 <span>Shop</span>
                 <FiChevronDown
@@ -247,46 +222,19 @@ const Navbar = () => {
               </button>
               {shopOpen && (
                 <div className="text-left px-5 flex flex-col space-y-3">
-                  <NavLink
-                    to="/shop/men"
-                    onClick={() => {
-                      setIsOpen(false);
-                      setShopOpen(false);
-                    }}
-                    className="block text-sm"
-                  >
-                    Dress
-                  </NavLink>
-                  <NavLink
-                    to="/shop/women"
-                    onClick={() => {
-                      setIsOpen(false);
-                      setShopOpen(false);
-                    }}
-                    className="block text-sm"
-                  >
-                    Tops
-                  </NavLink>
-                  <NavLink
-                    to="/shop/accessories"
-                    onClick={() => {
-                      setIsOpen(false);
-                      setShopOpen(false);
-                    }}
-                    className="block text-sm"
-                  >
-                    Bottoms
-                  </NavLink>
-                  <NavLink
-                    to="/shop/accessories"
-                    onClick={() => {
-                      setIsOpen(false);
-                      setShopOpen(false);
-                    }}
-                    className="block text-sm"
-                  >
-                    Shirts
-                  </NavLink>
+                  {["Dress", "Tops", "Bottoms", "Shirts"].map((cat) => (
+                    <NavLink
+                      key={cat}
+                      to={`/shop?category=${cat}`}
+                      onClick={() => {
+                        setIsOpen(false);
+                        setShopOpen(false);
+                      }}
+                      className="block text-sm"
+                    >
+                      {cat}
+                    </NavLink>
+                  ))}
                 </div>
               )}
             </li>
@@ -315,43 +263,30 @@ const Navbar = () => {
                 Contact
               </NavLink>
             </li>
-          </ul>
 
-          {/* Bottom section: Cart + Auth */}
-          <div className="flex flex-col space-y-4 mt-6">
-            <NavLink
-              to="/cart"
-              onClick={() => setIsOpen(false)}
-              className="relative flex items-center gap-2 text-black hover:text-blue-700 transition"
-            >
-              <FiShoppingBag size={20} /> Cart
-              {cartItems && cartItems.length > 0 && (
-                <span className="absolute left-6 -top-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartItems.length}
-                </span>
+            {/* Mobile Auth */}
+            <li>
+              {user ? (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsOpen(false);
+                  }}
+                  className="text-red-500 hover:underline text-left absolute bottom-10 transition"
+                >
+                  Logout
+                </button>
+              ) : (
+                <NavLink
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-2 text-black hover:text-blue-700 transition"
+                >
+                  <FiUser size={20} /> Login
+                </NavLink>
               )}
-            </NavLink>
-
-            {user ? (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsOpen(false);
-                }}
-                className="text-red-500 hover:underline text-left transition"
-              >
-                Logout
-              </button>
-            ) : (
-              <NavLink
-                to="/login"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 text-black hover:text-blue-700 transition"
-              >
-                <FiUser size={20} /> Login
-              </NavLink>
-            )}
-          </div>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -359,17 +294,16 @@ const Navbar = () => {
       {searchOpen && (
         <div className="md:hidden fixed inset-0 bg-white z-50 flex items-start p-4">
           <div className="flex w-full items-center gap-2">
-            <FiSearch size={20} />
+            <FiX
+              size={20}
+              className="cursor-pointer"
+              onClick={() => setSearchOpen(false)}
+            />
             <input
               type="text"
               placeholder="Search..."
               autoFocus
               className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            />
-            <FiX
-              size={24}
-              className="cursor-pointer"
-              onClick={() => setSearchOpen(false)}
             />
           </div>
         </div>

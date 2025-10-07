@@ -54,11 +54,14 @@ async function addProduct(req, res) {
 }
 
 // ✅ Get all products
+// controllers/product.controller.js
 async function allProducts(req, res) {
-  const { q, maxPrice, minPrice, skip = 0, limit = 20 } = req.query;
+  const { q, maxPrice, minPrice, category, skip = 0, limit = 20 } = req.query;
   try {
     const filter = {};
+    
     if (q) filter.$text = { $search: q };
+    if (category) filter.category = category; // ✅ filter by category
 
     if (minPrice) {
       filter["price.amount"] = { ...filter["price.amount"], $gte: Number(minPrice) };
@@ -77,6 +80,7 @@ async function allProducts(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
 
 // ✅ Get single product
 async function singleProduct(req, res) {

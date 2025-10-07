@@ -8,7 +8,7 @@ const Pagination = ({ totalPosts, postsPerPage, currentPage, setCurrentPage }) =
   }
 
   return (
-    <div className="flex justify-center mt-8 gap-2">
+    <div className="flex justify-center mt-8 mb-5 gap-2">
       {pageNumbers.map((num) => (
         <button
           key={num}

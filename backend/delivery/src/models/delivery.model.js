@@ -1,24 +1,28 @@
 const mongoose = require("mongoose");
 
 const addressSchema = new mongoose.Schema({
-  street: { type: String, required: true },
-  city: { type: String, required: true },
-  state: { type: String, required: true },
-  zip: { type: String, required: true },
-  country: { type: String, required: true },
+  street: {type: String, required: true},
+  city: {type: String, required: true},
+  state: {type: String, required: true},
+  zip: {type: String, required: true},
+  country: {type: String, required: true},
 });
 
 const deliverySchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
     orderId: {
-      type: mongoose.Schema.Types.ObjectId, 
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     items: [
       {
-        productId: { type: mongoose.Schema.Types.ObjectId, required: true },
-        quantity: { type: Number, default: 1, min: 1 },
-        price: { type: Number, required: true },
+        productId: {type: mongoose.Schema.Types.ObjectId, required: true},
+        quantity: {type: Number, default: 1, min: 1},
+        price: {type: Number, required: true},
         currency: {
           type: String,
           required: true,
@@ -51,8 +55,8 @@ const deliverySchema = new mongoose.Schema(
       ],
       default: "Created",
     },
-    estimatedDeliveryDate: { type: Date },
-    deliveredDate: { type: Date },
+    estimatedDeliveryDate: {type: Date},
+    deliveredDate: {type: Date},
     statusHistory: [
       {
         status: String,
@@ -60,9 +64,9 @@ const deliverySchema = new mongoose.Schema(
         dateTime: Date,
       },
     ],
-    lastUpdated: { type: Date, default: Date.now },
+    lastUpdated: {type: Date, default: Date.now},
   },
-  { timestamps: true }
+  {timestamps: true}
 );
 
 const deliveryModel = mongoose.model("delivery", deliverySchema);

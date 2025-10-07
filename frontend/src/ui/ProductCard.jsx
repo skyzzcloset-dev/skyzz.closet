@@ -7,18 +7,18 @@ const ProductCard = ({ product }) => {
   const imageUrl = product.img || product.images?.[0]?.url;
 
   return (
-    <NavLink to={`/product/${product._id}`} className="flex justify-center">
-      <div className="w-full max-w-[280px] sm:max-w-[300px] md:max-w-[280px] lg:max-w-[300px] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-transform transform hover:scale-105 bg-white">
+    <NavLink to={`/product/${product._id}`} className="flex justify-center w-full">
+      <div className="w-full max-w-[300px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-[300px] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-transform transform hover:scale-105 bg-white">
         <LazyLoadImage
           src={imageUrl}
           alt={product.name}
-          effect="blur" // lazy load blur effect
-          className="w-full object-cover h-75"
+          effect="blur"
+          className="w-full  object-cover"
         />
-        <div className="p-4 text-center">
-          <h2 className="font-semibold text-lg">{product.name}</h2>
-          {product.brand && <p className="text-gray-500 mt-1">{product.brand}</p>}
-          {product.price && <p className="font-bold mt-2">₹{product.price}</p>}
+        <div className="p-2 sm:p-3 text-center">
+          <h2 className="font-semibold text-sm sm:text-md md:text-md lg:text-lg truncate">{product.name}</h2>
+          {product.brand && <p className="text-gray-500 text-xs sm:text-sm truncate">{product.brand}</p>}
+          {product.price && <p className="font-bold text-sm sm:text-md md:text-md lg:text-md mt-1">₹{product.price}</p>}
         </div>
       </div>
     </NavLink>
