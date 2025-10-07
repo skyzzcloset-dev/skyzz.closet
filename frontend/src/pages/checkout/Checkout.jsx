@@ -25,7 +25,7 @@ const Checkout = () => {
       try {
         const responses = await Promise.all(
           cartItems.map((item) =>
-            axios.get(`http://localhost:8000/api/product/get/${item.productId}`)
+            axios.get(`https://product-kquj.onrender.com/api/product/get/${item.productId}`)
           )
         );
         const fetchedOrders = responses.map((res, idx) => ({
@@ -76,7 +76,7 @@ const Checkout = () => {
       handler: async function (response) {
         try {
           const { data } = await axios.post(
-            "http://localhost:3004/api/payment/verify",
+            "https://payment-njni.onrender.com/api/payment/verify",
             {
               razorpayOrderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,
@@ -147,7 +147,7 @@ const Checkout = () => {
 
       const token = localStorage.getItem("token");
       const { data: paymentData } = await axios.post(
-        `http://localhost:3004/api/payment/create/${orderId}`,
+        `https://payment-njni.onrender.com/api/payment/create/${orderId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

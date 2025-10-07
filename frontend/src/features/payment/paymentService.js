@@ -1,7 +1,7 @@
 // src/features/payment/paymentService.js
 import axios from "axios";
 
-const API_URL = "http://localhost:3004/api/payment/";
+const API_URL = "https://payment-njni.onrender.com/api/payment/";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");

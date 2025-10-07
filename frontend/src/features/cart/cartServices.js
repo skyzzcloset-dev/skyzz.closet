@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3001/api/cart/";
+const API_URL = "https://cart-fm4h.onrender.com/api/cart/";
 
 const getAuthHeader = (token) => ({ Authorization: `Bearer ${token}` });
 

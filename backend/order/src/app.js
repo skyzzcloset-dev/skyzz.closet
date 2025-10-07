@@ -11,7 +11,7 @@ app.use(express.json());
 // ✅ CORS should be on top, before routes
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["https://www.skyzzcloset.shop", "http://localhost:5173"],
     credentials: true,
   })
 );
