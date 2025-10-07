@@ -64,7 +64,7 @@ const ProductLayout = () => {
       const result = await dispatch(addCartItems(cartData)).unwrap();
       toast.success("Item added to cart successfully!");
     } catch (err) {
-      toast.error(err?.message || "Please Login Again!!");
+      toast.error(err?.message || "Please Login to add items");
     }
   };
 
