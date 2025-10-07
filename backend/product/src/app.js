@@ -14,7 +14,7 @@ app.use(cookieParser());
 // ✅ CORS setup
 app.use(
   cors({
-    origin: ["https://www.skyzzcloset.shop", "http://localhost:5173"], // Allowed frontends
+     origin: ["https://www.skyzzcloset.shop", "http://localhost:5173"], // Allowed frontends
     credentials: true, // Allow cookies
     optionsSuccessStatus: 200,
   })
