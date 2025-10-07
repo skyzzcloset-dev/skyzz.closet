@@ -5,10 +5,10 @@ import Carousel from "../../ui/Carousel";
 
 const Collections = () => {
   const products = [
-    {id: 1, name: "Dress", img: "/dress.png", link: "/product/1"},
-    {id: 2, name: "Tops", img: "/tops.png", link: "/product/2"},
-    {id: 3, name: "Bottoms", img: "/bottoms.png", link: "/product/3"},
-    {id: 4, name: "Shirts", img: "/shirts.png", link: "/product/3"},
+    {id: 1, name: "Dress", img: "/dress.png", link: "/shop?category=Dress"},
+    {id: 2, name: "Tops", img: "/tops.png", link: "/shop?category=Tops"},
+    {id: 3, name: "Bottoms", img: "/bottoms.png", link: "/shop?category=Bottoms"},
+    {id: 4, name: "Shirts", img: "/shirts.png", link: "/shop?category=Shirts"},
    
   ];
   return (

@@ -186,13 +186,11 @@ const ProductLayout = () => {
           <div className="mt-6 flex flex-col gap-3">
             <button
               onClick={handleAddToCart}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 rounded-lg shadow-md transition text-sm"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg shadow-md transition text-sm lg:text-xl"
             >
               Add to Cart
             </button>
-            <button className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-2.5 rounded-lg shadow-md transition text-sm">
-              Buy it now
-            </button>
+           
           </div>
         </div>
       </div>
