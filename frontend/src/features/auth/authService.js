@@ -1,7 +1,7 @@
 // src/features/auth/authService.js
 import axios from "axios";
 
-const API_URL = "https://skyzz-closet-2.onrender.com/api/auth/";
+const API_URL = "https://auth-65vs.onrender.com/api/auth/";
 
 // login user
 const login = async (userData) => {
