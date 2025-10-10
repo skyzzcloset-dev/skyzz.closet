@@ -15,15 +15,12 @@ function createAuthMiddleware(roles = ["customer"]) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       if (!roles.includes(decoded.role)) {
-        return res.status(403).json({
-          success: false,
-          message: "Insufficient permissions",
-        });
+        return res.status(403).json({ success: false, message: "Insufficient permissions" });
       }
 
       req.user = decoded;
       next();
-    } catch (error) {
+    } catch {
       return res
         .status(401)
         .json({ success: false, message: "Unauthorized: Invalid token" });

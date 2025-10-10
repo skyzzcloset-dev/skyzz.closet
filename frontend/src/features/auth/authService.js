@@ -1,7 +1,7 @@
 // src/features/auth/authService.js
 import axios from "axios";
 
-const API_URL = "https://auth-65vs.onrender.com/api/auth/";
+const API_URL = "http://localhost:3000/api/auth/";
 
 // login user
 const login = async (userData) => {

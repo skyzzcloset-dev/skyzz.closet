@@ -27,7 +27,7 @@ const ProductLayout = () => {
   useEffect(() => {
     const fetchSingleProduct = async () => {
       try {
-        const res = await axios.get(`https://product-kquj.onrender.com/api/product/get/${id}`);
+        const res = await axios.get(`http://localhost:8000/api/product/get/${id}`);
         const product = res.data.product;
         setItem(product);
         if (product.images?.length > 0) setSelectedImage(product.images[0].url);

@@ -1,42 +1,44 @@
 const orderModel = require("../models/order.model");
 const axios = require("axios");
 
+// ✅ Create Order
 async function createOrder(req, res) {
   try {
     const user = req.user;
     const token =
       req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
     if (!token)
-      return res.status(401).json({success: false, message: "Unauthorized"});
+      return res.status(401).json({ success: false, message: "Unauthorized" });
 
     // Fetch Cart
-    const {data: cartData} = await axios.get(
-      "https://cart-fm4h.onrender.com/api/cart/getItems",
-      {headers: {Authorization: `Bearer ${token}`}}
+    const { data: cartData } = await axios.get(
+      "http://localhost:3001/api/cart/getItems",
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
     const items = cartData?.cart?.items || [];
     if (!items.length)
-      return res.status(400).json({success: false, message: "Cart is empty"});
+      return res.status(400).json({ success: false, message: "Cart is empty" });
 
-    // Fetch products
+    // Fetch Products
     const products = await Promise.all(
       items.map((item) =>
         axios
-          .get(`https://product-kquj.onrender.com/api/product/get/${item.productId}`, {
-            headers: {Authorization: `Bearer ${token}`},
+          .get(`http://localhost:8000/api/product/get/${item.productId}`, {
+            headers: { Authorization: `Bearer ${token}` },
           })
           .then((r) => r.data.product)
+          .catch(() => null)
       )
     );
 
-    // Build order
+    // Build Order Items
     let totalAmountValue = 0;
     const orderItems = items.map((item) => {
       const product = products.find(
-        (p) => p._id.toString() === item.productId.toString()
+        (p) => p && p._id.toString() === item.productId.toString()
       );
-      if (!product) throw new Error(`Product ${item.productId} not found`);
+      if (!product) throw new Error(`Product not found`);
       if (product.stock < item.quantity)
         throw new Error(`Insufficient stock for ${product.name}`);
 
@@ -46,44 +48,56 @@ async function createOrder(req, res) {
       return {
         productId: item.productId,
         quantity: item.quantity,
-        price: {amount: itemTotal, currency: "INR"},
+        price: { amount: itemTotal, currency: "INR" },
       };
     });
 
-    // Shipping validation
+    // Shipping Validation
     const shipping = req.body.shippingAddress;
-    if (
-      !shipping?.street ||
-      !shipping?.city ||
-      !shipping?.state ||
-      !shipping?.zip || // <-- match schema
-      !shipping?.country
-    )
-      return res
-        .status(400)
-        .json({success: false, message: "Shipping address is required"});
+  
 
+    if (
+      !shipping ||
+      !shipping.firstName ||
+      !shipping.lastName ||
+      !shipping.phone ||
+      !shipping.street ||
+      !shipping.city ||
+      !shipping.state ||
+      !shipping.zip ||
+      !shipping.country
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Complete shipping address is required",
+      });
+    }
+
+    // Create Order
     const order = await orderModel.create({
       user: user.id,
       items: orderItems,
       status: "PENDING",
-      totalAmount: {price: totalAmountValue, currency: "INR"},
+      totalAmount: { price: totalAmountValue, currency: "INR" },
       shippingAddress: {
+        firstName: shipping.firstName,
+        lastName: shipping.lastName,
+        phone: shipping.phone,
         street: shipping.street,
+        apartment: shipping.apartment || "",
         city: shipping.city,
         state: shipping.state,
-        zip: shipping.zip, // <-- use zip here
+        zip: shipping.zip,
         country: shipping.country,
-        phone: shipping.phone, // optional if schema allows
       },
     });
 
     return res
       .status(201)
-      .json({success: true, message: "Order created", order});
+      .json({ success: true, message: "Order created", order });
   } catch (error) {
     console.error("Order error:", error.response?.data || error.message);
-    return res.status(500).json({success: false, message: error.message});
+    return res.status(500).json({ success: false, message: error.message });
   }
 }
 
@@ -107,6 +121,7 @@ async function getMyOrders(req, res) {
   }
 }
 
+// ✅ Get Order by ID
 async function getOrderById(req, res) {
   try {
     const {id} = req.user;
@@ -122,6 +137,7 @@ async function getOrderById(req, res) {
   }
 }
 
+// ✅ Cancel Order
 async function cancelOrderById(req, res) {
   try {
     const {id} = req.user;
@@ -142,6 +158,7 @@ async function cancelOrderById(req, res) {
   }
 }
 
+// ✅ Update Shipping Address
 async function updateOrderAddress(req, res) {
   try {
     const {id} = req.user;
@@ -152,7 +169,11 @@ async function updateOrderAddress(req, res) {
     if (order.status !== "PENDING")
       return res.status(409).json({message: "Cannot update at this stage"});
 
-    order.shippingAddress = req.body.shippingAddress;
+    order.shippingAddress = {
+      ...order.shippingAddress,
+      ...req.body.shippingAddress,
+    };
+
     await order.save();
     res.status(200).json({order});
   } catch (error) {

@@ -1,10 +1,10 @@
-const express = require("express")
-const router = express.Router()
+const express = require("express");
+const { createShippingOrder, trackShipment } = require("../controllers/delivery.controller");
+const { createAuthMiddleware } = require("../middlewares/auth.middleware");
 
-router.post("/")
-router.post("/:orderId")
-router.get("/track/:awbCode")
+const router = express.Router();
 
+router.post("/create/:orderId", createAuthMiddleware(["customer"]), createShippingOrder);
+router.get("/track/:shippingId", createAuthMiddleware(["customer"]), trackShipment);
 
-
-module.exports = router
+module.exports = router;

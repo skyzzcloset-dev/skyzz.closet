@@ -3,7 +3,6 @@ const Razorpay = require("razorpay");
 const axios = require("axios");
 const crypto = require("crypto");
 
-
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -20,7 +19,7 @@ async function createPayment(req, res) {
 
     // Fetch your order from backend
     const orderResponse = await axios.get(
-      `https://order-pvnb.onrender.com/api/order/${orderId}`,
+      `http://localhost:3003/api/order/${orderId}`,
       {headers: {Authorization: `Bearer ${token}`}}
     );
     const totalAmount = orderResponse.data.order.totalAmount;
@@ -94,6 +93,20 @@ async function verifyPayment(req, res) {
     res.status(200).json({message: "Payment verified successfully", payment});
   } catch (error) {
     console.error("Error verifying payment:", error);
+    res.status(500).json({message: "Internal Server Error"});
+  }
+}
+
+async function getPayment(req, res) {
+  try {
+    const payment = await paymentModel.findById(req.params.paymentId);
+    if (payment.status !== "COMPLETED") {
+      return res.status(400).json({message: "Payment not completed"});
+    }
+    if (!payment) return res.status(404).json({message: "Payment not found"});
+    res.status(200).json({payment});
+  } catch (error) {
+    console.error("Error fetching payment:", error);
     res.status(500).json({message: "Internal Server Error"});
   }
 }
