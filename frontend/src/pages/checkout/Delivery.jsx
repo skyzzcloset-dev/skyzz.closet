@@ -3,7 +3,7 @@ import React from 'react'
 const Delivery = () => {
   return (
     <div>
-      
+      hello
     </div>
   )
 }
