@@ -195,7 +195,7 @@ const Checkout = () => {
 
       const token = localStorage.getItem("token");
       const {data: paymentData} = await axios.post(
-        `http://localhost:3004/api/payment/create/${orderId}`,
+        `https://payment-production-c37c.up.railway.app/api/payment/create/${orderId}`,
         {},
         {
           headers: {Authorization: `Bearer ${token}`},
