@@ -12,25 +12,34 @@ async function createOrder(req, res) {
 
     // Fetch Cart
     const { data: cartData } = await axios.get(
-      "https://cart-production-72ab.up.railway.app/api/cart/getItems",
+      "http://cart-production-72ab.up.railway.app/api/cart/getItems",
       { headers: { Authorization: `Bearer ${token}` } }
     );
+    console.log( cartData?.cart?.items);
+    
 
     const items = cartData?.cart?.items || [];
     if (!items.length)
       return res.status(400).json({ success: false, message: "Cart is empty" });
 
     // Fetch Products
-    const products = await Promise.all(
-      items.map((item) =>
-        axios
-          .get(`https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .then((r) => r.data.product)
-          .catch(() => null)
-      )
-    );
+   const products = await Promise.all(
+  items.map(async (item) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/product/get/${item.productId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return res.data.product;
+    } catch (err) {
+      console.error("Product fetch failed for:", item.productId, err.response?.data || err.message);
+      return null;
+    }
+  })
+);
+
+
+    console.log(items.map(item => item.productId), products);
 
     // Build Order Items
     let totalAmountValue = 0;

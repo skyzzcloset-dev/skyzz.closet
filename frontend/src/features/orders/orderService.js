@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://order-production-3539.up.railway.app/api/order/";
+const API_URL = "https://order-pvnb.onrender.com/api/order/";
 
 const getAuthHeader = (token) => ({Authorization: `Bearer ${token}`});
 

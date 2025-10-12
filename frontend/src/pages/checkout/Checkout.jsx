@@ -159,52 +159,64 @@ const Checkout = () => {
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
+  const onSubmit = async (data) => {
+    if (isProcessing) return; // ✅ prevent double submit
+    setIsProcessing(true);
 
- const onSubmit = async (data) => {
-  if (isProcessing) return;
-  setIsProcessing(true);
+    try {
+      const shippingAddress = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone,
+        street: data.address,
+        apartment: data.apartment,
+        city: data.city,
+        state: data.state,
+        zip: data.zip,
+        country: "India",
+      };
 
-  try {
-    const shippingAddress = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      phone: data.phone,
-      street: data.address,
-      apartment: data.apartment,
-      city: data.city,
-      state: data.state,
-      zip: data.zip,
-      country: "India",
-    };
+      const items = cartItems.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: {
+          amount: item.price,
+          currency: "INR",
+        },
+      }));
 
-    const items = cartItems.map((item) => ({
-      productId: item.productId,
-      quantity: item.quantity,
-      price: { amount: item.price, currency: "INR" },
-    }));
+      const payload = {
+        items,
+        shippingAddress,
+        totalAmount: {
+          price: total,
+          currency: "INR",
+        },
+      };
 
-    const payload = {
-      items,
-      shippingAddress,
-      totalAmount: { price: total, currency: "INR" },
-    };
+      const response = await dispatch(createOrder(payload)).unwrap();
+      const orderId = response.order._id;
+      console.log("Order ID:", orderId);
 
-    const orderResponse = await dispatch(createOrder(payload)).unwrap();
-    const orderId = orderResponse.order._id;
+      const token = localStorage.getItem("token");
+      const {data: paymentData} = await axios.post(
+        `https://payment-production-7bd4.up.railway.app/api/payment/create/${orderId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
 
-    // Use Redux payment thunk
-    const paymentResponse = await dispatch(
-      createPayment({ id: orderId, paymentData: {} })
-    ).unwrap();
-
-    await displayRazorpay(paymentResponse.payment.razorpayOrderId);
-  } catch (err) {
-    console.error("Checkout error:", err);
-    alert("Something went wrong while placing the order.");
-    setIsProcessing(false);
-  }
-};
-
+      await displayRazorpay(paymentData.payment.razorpayOrderId);
+    } catch (err) {
+      console.error("Checkout error:", err);
+      alert("Something went wrong while placing the order.");
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 flex justify-center items-start px-4 py-8">
