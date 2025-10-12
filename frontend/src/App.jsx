@@ -5,6 +5,7 @@ import { loadCartFromStorage, getCartItems } from "./features/cart/cartSlice";
 
 
 
+
 // Lazy-loaded components
 const MainLayout = lazy(() => import("./layout/MainLayout"));
 const Home = lazy(() => import("./pages/home/Home"));
@@ -18,6 +19,7 @@ const ProductLayout = lazy(() => import("./pages/home/ProductLayout"));
 const Checkout = lazy(() =>import("./pages/checkout/Checkout"))
 const Cart = lazy(() => import("./pages/shop/Cart"));
 const Shop = lazy(() => import("./pages/shop/Shop"))
+const Delivery = lazy(() => import("./pages/checkout/Delivery"))
 
 function App() {
   const dispatch = useDispatch();
@@ -30,6 +32,7 @@ function App() {
 
   return (
     <BrowserRouter>
+
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/" element={<MainLayout />}>
@@ -57,6 +60,7 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="shop" element={<Shop/>} />
             <Route path="product/:id" element={<ProductLayout />} />
+            <Route path="delivery/:id"  element={<Delivery/>}/>
             <Route path="checkout" element={<Checkout/>} />
             
             

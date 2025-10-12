@@ -81,9 +81,10 @@ async function createShippingOrder(req, res) {
     // Create order in ShipRocket
     const payload = {
       order_id: orderId,
+      channel_id: 8370840, // Replace with your actual channel ID
       order_date: new Date().toISOString(),
-      pickup_location: process.env.PICKUP_LOCATION || "Default",
-      comment: "Order shipped via ShipRocket",
+      pickup_location: "sanju" || "Default",
+      comment: "Reseller: Skyzz Closet",
       billing_customer_name: firstName,
       billing_last_name: lastName,
       billing_address: street,
@@ -104,10 +105,15 @@ async function createShippingOrder(req, res) {
     };
 
     const { data: shipData } = await axios.post(
-      "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
+      "https://apiv2.shiprocket.in/v1/external/orders/create",
       payload,
       { headers: { Authorization: `Bearer ${token}` } }
     );
+
+    console.log(shipData);
+    
+    
+    
 
     // Save order in DB WITHOUT AWB
     const orderInDB = await deliveryModel.create({
@@ -116,7 +122,7 @@ async function createShippingOrder(req, res) {
       items,
       trackingId: shipData.shipment_id,
       awbCode: null, // AWB can be generated later
-      deliveryStatus: "Created",
+      deliveryStatus: "New",
     });
 
     res.status(200).json({

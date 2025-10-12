@@ -1,0 +1,43 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "services": [
+    {
+      "name": "auth",
+      "rootDir": "backend/auth",
+      "startCommand": "npm start"
+    },
+    {
+      "name": "cart",
+      "rootDir": "backend/cart",
+      "startCommand": "npm start"
+    },
+    {
+      "name": "delivery",
+      "rootDir": "backend/delivery",
+      "startCommand": "npm start"
+    },
+    {
+      "name": "order",
+      "rootDir": "backend/order",
+      "startCommand": "npm start"
+    },
+    {
+      "name": "payment",
+      "rootDir": "backend/payment",
+      "startCommand": "npm start"
+    },
+    {
+      "name": "product",
+      "rootDir": "backend/product",
+      "startCommand": "npm start"
+    },
+    {
+      "name": "seller-dashboard",
+      "rootDir": "backend/seller-dashboard",
+      "startCommand": "npm start"
+    }
+  ]
+}

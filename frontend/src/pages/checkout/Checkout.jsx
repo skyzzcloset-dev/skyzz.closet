@@ -134,7 +134,7 @@ const Checkout = () => {
           );
           alert("Payment Successful!");
           console.log(data.payment);
-          navigate("/order-success");
+          navigate("/");
         } catch (err) {
           console.error("Payment verification failed:", err);
           alert("Payment verification failed!");
