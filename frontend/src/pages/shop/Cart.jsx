@@ -21,7 +21,9 @@ const Cart = () => {
         }
 
         const productRequests = cartItems.map((item) =>
-          axios.get(`https://skyzzcloset-product.up.railway.app/api/product/get/${item.productId}`)
+          axios.get(
+            `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`
+          )
         );
 
         const responses = await Promise.all(productRequests);
@@ -29,7 +31,7 @@ const Cart = () => {
         const fetchedProducts = responses.map((res, index) => ({
           ...res.data.product,
           quantity: cartItems[index].quantity,
-          sizes: cartItems[index].sizes,   // ✅ fixed
+          sizes: cartItems[index].sizes, // ✅ fixed
           colors: cartItems[index].colors, // ✅ already correct
         }));
 

@@ -24,7 +24,7 @@ async function createOrder(req, res) {
     const products = await Promise.all(
       items.map((item) =>
         axios
-          .get(`https://skyzzcloset-product.up.railway.app/api/product/get/${item.productId}`, {
+          .get(`https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((r) => r.data.product)

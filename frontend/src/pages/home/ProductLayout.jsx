@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
 import axios from "axios";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import { useDispatch, useSelector } from "react-redux";
-import { addCartItems } from "../../features/cart/cartSlice";
+import {LazyLoadImage} from "react-lazy-load-image-component";
+import {useDispatch, useSelector} from "react-redux";
+import {addCartItems} from "../../features/cart/cartSlice";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { toast } from "react-toastify";
+import {FaHeart, FaRegHeart} from "react-icons/fa";
+import {toast} from "react-toastify";
 
 const ProductLayout = () => {
-  const { id } = useParams();
+  const {id} = useParams();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState("");
@@ -20,14 +20,15 @@ const ProductLayout = () => {
 
   const dispatch = useDispatch();
 
-
   const defaultSizes = ["XS", "S", "M", "L", "XL"];
 
   // Fetch product data
   useEffect(() => {
     const fetchSingleProduct = async () => {
       try {
-        const res = await axios.get(`https://skyzzcloset-product.up.railway.app/api/product/get/${id}`);
+        const res = await axios.get(
+          `https://product-production-4bd9.up.railway.app/api/product/get/${id}`
+        );
         const product = res.data.product;
         setItem(product);
         if (product.images?.length > 0) setSelectedImage(product.images[0].url);
@@ -71,7 +72,8 @@ const ProductLayout = () => {
   const toggleLike = () => setLiked((prev) => !prev);
 
   if (loading) return <p className="p-6 text-center">Loading product...</p>;
-  if (!item) return <p className="p-6 text-center text-red-500">Product not found</p>;
+  if (!item)
+    return <p className="p-6 text-center text-red-500">Product not found</p>;
 
   return (
     <div className="lg:py-14 py-8 p-4 md:px-8 lg:px-16">
@@ -93,7 +95,9 @@ const ProductLayout = () => {
                 effect="blur"
                 onClick={() => setSelectedImage(img.url)}
                 className={`w-14 h-14 object-cover rounded-md cursor-pointer border ${
-                  selectedImage === img.url ? "border-orange-500" : "border-gray-300"
+                  selectedImage === img.url
+                    ? "border-orange-500"
+                    : "border-gray-300"
                 }`}
               />
             ))}
@@ -113,8 +117,12 @@ const ProductLayout = () => {
           </div>
           <p className="text-gray-500 text-xs mt-1">Item #{item.sku}</p>
 
-          <p className="text-xl font-semibold text-orange-600 mt-3">₹{item.price}</p>
-          <p className="mt-3 text-gray-700 text-sm leading-relaxed">{item.description}</p>
+          <p className="text-xl font-semibold text-orange-600 mt-3">
+            ₹{item.price}
+          </p>
+          <p className="mt-3 text-gray-700 text-sm leading-relaxed">
+            {item.description}
+          </p>
 
           {/* Colors */}
           {item.colors?.length > 0 && (
@@ -190,7 +198,6 @@ const ProductLayout = () => {
             >
               Add to Cart
             </button>
-           
           </div>
         </div>
       </div>

@@ -95,7 +95,7 @@ async function createShippingOrder(req, res) {
     const orderItems = await Promise.all(
       items.map(async (item) => {
         const {data} = await axios.get(
-          `https://skyzzcloset-product.up.railway.app/api/product/get/${item.productId}`
+          `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`
         );
         if (!data.product)
           throw new Error(`Product not found: ${item.productId}`);
