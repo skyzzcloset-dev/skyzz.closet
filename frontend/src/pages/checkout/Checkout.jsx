@@ -65,7 +65,7 @@ const Checkout = () => {
         const responses = await Promise.all(
           cartItems.map((item) =>
             axios.get(
-              `https://skyzzcloset-product.up.railway.app/api/product/get/${item.productId}`
+              `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`
             )
           )
         );
