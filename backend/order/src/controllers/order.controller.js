@@ -27,7 +27,7 @@ async function createOrder(req, res) {
   items.map(async (item) => {
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/product/get/${item.productId}`,
+        `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       return res.data.product;
