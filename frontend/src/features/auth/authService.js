@@ -1,7 +1,7 @@
 // src/features/auth/authService.js
 import axios from "axios";
 
-const API_URL = "auth-production-0d7a.up.railway.app/api/auth/";
+const API_URL = "https://auth-production-547e.up.railway.app/api/auth/";
 
 // login user
 const login = async (userData) => {

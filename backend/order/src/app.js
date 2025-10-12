@@ -13,6 +13,7 @@ app.use(
   cors({
     origin: ["https://www.skyzzcloset.shop", "http://localhost:5173"],
     credentials: true,
+    optionsSuccessStatus: 200,
   })
 );
 
