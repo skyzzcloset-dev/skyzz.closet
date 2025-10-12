@@ -64,7 +64,9 @@ const Checkout = () => {
       try {
         const responses = await Promise.all(
           cartItems.map((item) =>
-            axios.get(`http://localhost:8000/api/product/get/${item.productId}`)
+            axios.get(
+              `https://skyzzcloset-product.up.railway.app/api/product/get/${item.productId}`
+            )
           )
         );
         const fetchedOrders = responses.map((res, idx) => ({
@@ -120,7 +122,7 @@ const Checkout = () => {
       handler: async function (response) {
         try {
           const {data} = await axios.post(
-            "http://localhost:3004/api/payment/verify",
+            "https://payment-production-c37c.up.railway.app/api/payment/verify",
             {
               razorpayOrderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,

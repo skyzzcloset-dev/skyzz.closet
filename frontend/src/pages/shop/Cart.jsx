@@ -21,7 +21,7 @@ const Cart = () => {
         }
 
         const productRequests = cartItems.map((item) =>
-          axios.get(`http://localhost:8000/api/product/get/${item.productId}`)
+          axios.get(`https://skyzzcloset-product.up.railway.app/api/product/get/${item.productId}`)
         );
 
         const responses = await Promise.all(productRequests);

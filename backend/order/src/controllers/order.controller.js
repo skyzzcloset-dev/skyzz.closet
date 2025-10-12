@@ -12,7 +12,7 @@ async function createOrder(req, res) {
 
     // Fetch Cart
     const { data: cartData } = await axios.get(
-      "http://localhost:3001/api/cart/getItems",
+      "https://cart-production-df53.up.railway.app/api/cart/getItems",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -24,7 +24,7 @@ async function createOrder(req, res) {
     const products = await Promise.all(
       items.map((item) =>
         axios
-          .get(`http://localhost:8000/api/product/get/${item.productId}`, {
+          .get(`https://skyzzcloset-product.up.railway.app/api/product/get/${item.productId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((r) => r.data.product)

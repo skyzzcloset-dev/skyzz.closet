@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3001/api/cart/";
+const API_URL = "https://cart-production-df53.up.railway.app/api/cart/";
 
 const getAuthHeader = (token) => ({ Authorization: `Bearer ${token}` });
 
