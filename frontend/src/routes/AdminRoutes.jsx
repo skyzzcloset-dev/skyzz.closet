@@ -1,6 +1,7 @@
 import React, {Suspense, lazy} from "react";
 import {Routes, Route} from "react-router-dom";
 import AdminLayout from "../layout/AdminLayout";
+import Orders from "../pages/admin/Orders";
 
 const Dashboard = lazy(() => import("../pages/admin/Dashboard"));
 const AddProducts = lazy(() => import("../pages/admin/AddProducts"));
@@ -16,7 +17,8 @@ const AdminRoutes = () => {
         <Route path="products" element={<Products />} />
         <Route path="add" element={<AddProducts />} />
         <Route path="users" element={<Users />} />
-
+        <Route path="orders" element={<Orders/>} />
+        
         <Route path="*" element={<ErrorPage />} />
       </Route>
     </Routes>
