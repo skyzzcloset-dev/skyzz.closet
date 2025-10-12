@@ -19,4 +19,8 @@ app.use(
 // ✅ Routes after middleware
 app.use("/api/order", router);
 
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
+
 module.exports = app;

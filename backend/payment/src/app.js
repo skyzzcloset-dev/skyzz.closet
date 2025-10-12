@@ -16,4 +16,8 @@ app.use(
 );
 app.use("/api/payment", router);
 
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
+
 module.exports = app;
