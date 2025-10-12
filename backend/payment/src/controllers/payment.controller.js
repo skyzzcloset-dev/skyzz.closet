@@ -19,7 +19,7 @@ async function createPayment(req, res) {
 
     // Fetch your order from backend
     const orderResponse = await axios.get(
-      `https://order-production-044d.up.railway.app/api/order/${orderId}`,
+      `https://order-production-3539.up.railway.app/api/order/${orderId}`,
       {headers: {Authorization: `Bearer ${token}`}}
     );
     const totalAmount = orderResponse.data.order.totalAmount;
