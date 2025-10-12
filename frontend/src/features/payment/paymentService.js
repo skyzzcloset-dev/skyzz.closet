@@ -1,7 +1,7 @@
 // src/features/payment/paymentService.js
 import axios from "axios";
 
-const API_URL = "https://payment-production-c37c.up.railway.app/api/payment/";
+const API_URL = "https://payment-production-7bd4.up.railway.app/api/payment/";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");

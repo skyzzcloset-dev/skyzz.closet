@@ -122,7 +122,7 @@ const Checkout = () => {
       handler: async function (response) {
         try {
           const {data} = await axios.post(
-            "https://payment-production-c37c.up.railway.app/api/payment/verify",
+            "https://payment-production-7bd4.up.railway.app/api/payment/verify",
             {
               razorpayOrderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,
@@ -195,7 +195,7 @@ const Checkout = () => {
 
       const token = localStorage.getItem("token");
       const {data: paymentData} = await axios.post(
-        `https://payment-production-c37c.up.railway.app/api/payment/create/${orderId}`,
+        `https://payment-production-7bd4.up.railway.app/api/payment/create/${orderId}`,
         {},
         {
           headers: {Authorization: `Bearer ${token}`},
