@@ -1,74 +1,64 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getAllProduct } from "../../features/products/productSlice";
+import { getAllProduct, updateProduct, deleteProduct } from "../../features/products/productSlice";
+import Table from "../../ui/Tables";
 
 const Products = () => {
   const navigate = useNavigate();
   const { items } = useSelector((state) => state.products);
-  const dispatch =  useDispatch()
-  useEffect(() =>{
-     dispatch(getAllProduct())
-  },[dispatch])
+  const dispatch = useDispatch();
+
+  useEffect(() => { dispatch(getAllProduct()); }, [dispatch]);
+
+  const handleUpdate = (row) => {
+   const updatedData = {
+    name: row.product,
+    stock: row.inventory,
+    brand: row.brand,
+    category: row.category,
+    images: row.image ? [row.image.props.src] : [],
+  };
+
+  dispatch(updateProduct({ id: row.id, productData: updatedData }));
+  };
+
+  const handleDelete = (row) => {
+    console.log("Delete", row);
+  };
+
+  const columns = ["Image", "Product", "Inventory", "Status", "Brand", "Category"];
+  const data = items.map((p) => ({
+    image: <img className="w-12 h-12 object-cover rounded" src={p.images?.[0]?.url} />,
+    product: p.name,
+    inventory: p.stock,
+    status: p.stock > 0 ? "In Stock" : "Out of Stock",
+    brand: p.brand,
+    category: p.category,
+  }));
 
   return (
     <>
-      <nav>
+      <nav className="flex justify-between items-center  lg:mr-65 p-5">
+
+      
+        <h1 className="text-2xl font-semibold">Products</h1>
         <button
           onClick={() => navigate("/admin/add")}
-          className="border rounded-xl p-5"
+          className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
         >
-          Add Products
+          Add Product
         </button>
+    
       </nav>
 
-      <main>
-        <div className="overflow-x-auto my-5 rounded p-10 lg:mr-65">
-          <table className="min-w-full border border-gray-200 text-left text-sm">
-            <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
-              <tr>
-                <th className="px-6 py-3">Product</th>
-                <th className="px-6 py-3">Inventory</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Brand</th>
-                <th className="px-6 py-3">Category</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {items.length > 0 ? (
-                items.map((product) => (
-                  <tr key={product._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 flex items-center gap-2">
-                      {product.images?.[0] && (
-                        <img
-                          src={product.images[0].url || product.images[0]}
-                          alt={product.name}
-                          className="w-12 h-12 object-cover rounded"
-                        />
-                      )}
-                      {product.name}
-                    </td>
-                    <td className="px-6 py-4">{product.stock}</td>
-                    <td className="px-6 py-4">
-                      {product.stock > 0 ? "In Stock" : "Out of Stock"}
-                    </td>
-                    <td className="px-6 py-4">{product.brand}</td>
-                    <td className="px-6 py-4">{product.category}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="5"
-                    className="text-center py-6 text-gray-500 font-medium"
-                  >
-                    No products found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      <main className="p-4">
+        <Table
+          columns={columns}
+          data={data}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
       </main>
     </>
   );

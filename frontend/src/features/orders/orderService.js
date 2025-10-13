@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://order-pvnb.onrender.com/api/order/";
+const API_URL = import.meta.env.VITE_ORDER_API;
 
 const getAuthHeader = (token) => ({Authorization: `Bearer ${token}`});
 

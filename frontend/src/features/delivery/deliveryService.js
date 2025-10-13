@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3006/api/deliver/";
+const API_URL =import.meta.env.VITE_DELIVER_API;
 
 const getAuthHeader = (token) => ({
   Authorization: `Bearer ${token}`,

@@ -9,45 +9,55 @@ const initialState = {
   message: "",
 };
 
-// ✅ Get token helper
 const getToken = (thunkAPI) =>
   thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
 
-// Add product
+// Async actions
 export const addProduct = createAsyncThunk(
   "product/add",
   async (productData, thunkAPI) => {
     try {
-      const token = getToken(thunkAPI);
-      return await productService.addProduct(productData, token);
+      return await productService.addProduct(productData);
     } catch (error) {
-      const message =
-        error.response?.data?.message ||
-        error.message ||
-        "Something went wrong";
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
 
-// Get all products
 export const getAllProduct = createAsyncThunk(
   "product/getAll",
   async (_, thunkAPI) => {
     try {
-      const token = getToken(thunkAPI);
-      return await productService.getAllProduct(token);
+      return await productService.getAllProduct();
     } catch (error) {
-      const message =
-        error.response?.data?.message ||
-        error.message ||
-        "Something went wrong";
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
 
-const productsSlice = createSlice({
+export const updateProduct = createAsyncThunk(
+  "product/update",
+  async ({ id, productData }, thunkAPI) => {
+    try {
+      return await productService.updateProduct(id, productData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const deleteProduct = createAsyncThunk(
+  "product/delete",
+  async (id, thunkAPI) => {
+    try {
+      return await productService.deleteProduct(id);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+const productSlice = createSlice({
   name: "products",
   initialState,
   reducers: {
@@ -61,24 +71,19 @@ const productsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // addProduct
-      .addCase(addProduct.pending, (state) => {
-        state.isLoading = true;
-      })
+      .addCase(addProduct.pending, (state) => { state.isLoading = true; })
       .addCase(addProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.items.push(action.payload.product); // ✅ matches controller
+        state.items.push(action.payload.product);
       })
       .addCase(addProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-
       // getAllProduct
-      .addCase(getAllProduct.pending, (state) => {
-        state.isLoading = true;
-      })
+      .addCase(getAllProduct.pending, (state) => { state.isLoading = true; })
       .addCase(getAllProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
@@ -87,11 +92,11 @@ const productsSlice = createSlice({
       .addCase(getAllProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.payload;
         state.items = [];
+        state.message = action.payload;
       });
   },
 });
 
-export const { reset } = productsSlice.actions;
-export default productsSlice.reducer;
+export const { reset } = productSlice.actions;
+export default productSlice.reducer;

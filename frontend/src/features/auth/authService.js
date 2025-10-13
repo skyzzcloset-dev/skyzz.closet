@@ -1,7 +1,7 @@
 // src/features/auth/authService.js
 import axios from "axios";
 
-const API_URL = "https://auth-production-547e.up.railway.app/api/auth/";
+const API_URL = import.meta.env.VITE_AUTH_API;
 
 // login user
 const login = async (userData) => {

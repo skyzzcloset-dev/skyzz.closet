@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://cart-production-72ab.up.railway.app/api/cart/";
+const API_URL = import.meta.env.VITE_CART_API;
 
 const getAuthHeader = (token) => ({ Authorization: `Bearer ${token}` });
 
