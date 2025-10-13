@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://product-production-4bd9.up.railway.app/api/product/";
+const API_URL = import.meta.env.VITE_PRODUCT_API;
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
