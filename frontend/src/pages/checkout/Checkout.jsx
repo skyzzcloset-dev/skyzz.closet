@@ -122,7 +122,7 @@ const Checkout = () => {
       handler: async function (response) {
         try {
           const {data} = await axios.post(
-            "http://localhost:3004/api/payment/verify",
+            "http://payment-production-7bd4.up.railway.app/api/payment/verify",
             {
               razorpayOrderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,
