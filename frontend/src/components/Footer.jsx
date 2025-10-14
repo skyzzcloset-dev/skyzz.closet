@@ -20,100 +20,90 @@ const Footer = () => {
           <div className="flex flex-col items-center justify-center lg:items-start mb-10">
             <Logo className="h-20 w-auto mb-1" text="text-2xl" />
             <p className="text-gray-600 text-sm ">
-             Because Ordinary Was Never Your Thing.
+              Because Ordinary Was Never Your Thing.
             </p>
           </div>
 
           {/* Quick Links */}
 
           <div className="flex justify-center gap-10 lg:grid lg:grid-cols-2 ">
-             <div className="flex flex-col items-center lg:items-start">
-            <h2 className="font-semibold text-xl mb-3">Quick Links</h2>
-            <ul className="space-y-1">
-              <li>
-                <NavLink
-                  to="/"
-                  onClick={() => setActive("home")}
-                  className={linkClasses("home")}
-                >
-                  Home
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/shop"
-                  onClick={() => setActive("shop")}
-                  className={linkClasses("shop")}
-                >
-                  Shop
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/new"
-                  onClick={() => setActive("newdrop")}
-                  className={linkClasses("newdrop")}
-                >
-                  New Drop
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/contact"
-                  onClick={() => setActive("contact")}
-                  className={linkClasses("contact")}
-                >
-                  Contact
-                </NavLink>
-              </li>
-            </ul>
-          </div>
+            <div className="flex flex-col items-center lg:items-start">
+              <h2 className="font-semibold text-xl mb-3">Quick Links</h2>
+              <ul className="space-y-1">
+                <li>
+                  <NavLink
+                    to="/"
+                    onClick={() => setActive("home")}
+                    className={linkClasses("home")}
+                  >
+                    Home
+                  </NavLink>
+                </li>
 
-          {/* Company */}
-          <div className="flex flex-col items-center lg:items-start">
-            <h2 className="font-semibold text-xl mb-3">Company</h2>
-            <ul className="space-y-1">
-              <li>
-                <NavLink
-                  to="/contact"
-                  onClick={() => setActive("contactus")}
-                  className={linkClasses("contactus")}
-                >
-                  Contact Us
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/shipping-policy"
-                  onClick={() => setActive("shipping")}
-                  className={linkClasses("shipping")}
-                >
-                  Shipping Policy
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/refund-policy"
-                  onClick={() => setActive("refund")}
-                  className={linkClasses("refund")}
-                >
-                  Refund Policy
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/terms-of-service"
-                  onClick={() => setActive("terms")}
-                  className={linkClasses("terms")}
-                >
-                  Terms of Service
-                </NavLink>
-              </li>
-            </ul>
+                <li>
+                  <NavLink
+                    to="/new"
+                    onClick={() => setActive("newdrop")}
+                    className={linkClasses("newdrop")}
+                  >
+                    New Drop
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/contact"
+                    onClick={() => setActive("contact")}
+                    className={linkClasses("contact")}
+                  >
+                    Contact
+                  </NavLink>
+                </li>
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div className="flex flex-col items-center lg:items-start">
+              <h2 className="font-semibold text-xl mb-3">Company</h2>
+              <ul className="space-y-1">
+                <li>
+                  <NavLink
+                    to="/contact"
+                    onClick={() => setActive("contactus")}
+                    className={linkClasses("contactus")}
+                  >
+                    Contact Us
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="policy/shipping-policy"
+                    onClick={() => setActive("shipping")}
+                    className={linkClasses("shipping")}
+                  >
+                    Shipping Policy
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="policy/refund-policy"
+                    onClick={() => setActive("refund")}
+                    className={linkClasses("refund")}
+                  >
+                    Refund Policy
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="policy/terms"
+                    onClick={() => setActive("terms")}
+                    className={linkClasses("terms")}
+                  >
+                    Terms of Service
+                  </NavLink>
+                </li>
+              </ul>
+            </div>
           </div>
-      
-          </div> 
-         
         </div>
         {/* Footer Bottom */}
         <div className="mt-10 text-center text-gray-500 text-sm">

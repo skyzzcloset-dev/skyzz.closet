@@ -1,9 +1,7 @@
-import React, { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { loadCartFromStorage, getCartItems } from "./features/cart/cartSlice";
-
-
+import React, {lazy, Suspense, useEffect} from "react";
+import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
+import {useSelector, useDispatch} from "react-redux";
+import {loadCartFromStorage, getCartItems} from "./features/cart/cartSlice";
 
 
 // Lazy-loaded components
@@ -16,14 +14,18 @@ const Contact = lazy(() => import("./pages/home/Contact"));
 const NewDrop = lazy(() => import("./pages/home/NewDrop"));
 const AdminRoutes = lazy(() => import("./routes/AdminRoutes"));
 const ProductLayout = lazy(() => import("./pages/home/ProductLayout"));
-const Checkout = lazy(() =>import("./pages/checkout/Checkout"))
+const Checkout = lazy(() => import("./pages/checkout/Checkout"));
 const Cart = lazy(() => import("./pages/shop/Cart"));
-const Shop = lazy(() => import("./pages/shop/Shop"))
-const Delivery = lazy(() => import("./pages/checkout/Delivery"))
+const Shop = lazy(() => import("./pages/shop/Shop"));
+const Delivery = lazy(() => import("./pages/checkout/Delivery"));
+const ShippingPolicy = lazy(()=> import("./pages/home/ShippingPolicy"))
+const RefundPolicy = lazy(()=> import("./pages/home/RefundPolicy"))
+const Terms = lazy(()=> import("./pages/home/Terms"))
+
 
 function App() {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth || {});
+  const {user} = useSelector((state) => state.auth || {});
 
   useEffect(() => {
     dispatch(loadCartFromStorage());
@@ -32,7 +34,6 @@ function App() {
 
   return (
     <BrowserRouter>
-
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/" element={<MainLayout />}>
@@ -45,8 +46,14 @@ function App() {
               </>
             ) : user?.role === "admin" ? (
               <>
-                <Route path="login" element={<Navigate to="/admin/dashboard" replace />} />
-                <Route path="register" element={<Navigate to="/admin/dashboard" replace />} />
+                <Route
+                  path="login"
+                  element={<Navigate to="/admin/dashboard" replace />}
+                />
+                <Route
+                  path="register"
+                  element={<Navigate to="/admin/dashboard" replace />}
+                />
               </>
             ) : (
               <>
@@ -58,12 +65,14 @@ function App() {
             <Route path="new" element={<NewDrop />} />
             <Route path="contact" element={<Contact />} />
             <Route path="cart" element={<Cart />} />
-            <Route path="shop" element={<Shop/>} />
+            <Route path="shop" element={<Shop />} />
             <Route path="product/:id" element={<ProductLayout />} />
-            <Route path="delivery/:id"  element={<Delivery/>}/>
-            <Route path="checkout" element={<Checkout/>} />
-            
-            
+            <Route path="delivery/:id" element={<Delivery />} />
+            <Route path="policy/shipping-policy" element={<ShippingPolicy />} />
+            <Route path="policy/refund-policy" element={<RefundPolicy />} />
+            <Route path="policy/terms" element={<Terms />} />
+            <Route path="checkout" element={<Checkout />} />
+
             <Route path="*" element={<ErrorPage />} />
           </Route>
           {user?.role === "admin" ? (

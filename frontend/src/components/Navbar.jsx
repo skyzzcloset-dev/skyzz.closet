@@ -230,7 +230,7 @@ const Navbar = () => {
                 <FiChevronDown className={`transition-transform ${shopOpen ? "rotate-180" : "rotate-0"}`} />
               </button>
               {shopOpen && (
-                <div className="flex flex-col pl-5 space-y-2 mt-2">
+                <div className="flex flex-col  space-y-2 mt-">
                   {["Dress", "Tops", "Bottoms", "Shirts"].map((cat) => (
                     <NavLink
                       key={cat}
@@ -239,7 +239,7 @@ const Navbar = () => {
                         setIsOpen(false);
                         setShopOpen(false);
                       }}
-                      className="block text-sm"
+                      className="block text-md border rounded-full px-5 p-2"
                     >
                       {cat}
                     </NavLink>
@@ -287,11 +287,11 @@ const Navbar = () => {
                     <FiChevronDown className={`ml-auto transition-transform ${userMenuOpen ? "rotate-180" : "rotate-0"}`} />
                   </button>
                   {userMenuOpen && (
-                    <div className="flex flex-col mt-2 pl-10 space-y-2">
-                      <div className="text-sm font-medium">Hi, {user.username}</div>
+                    <div className="flex flex-col mt-3 pl-5 space-y-3 ">
+                      <div className="text-md   font-medium">Hi, {user.username}</div>
                       <NavLink
                         to="/delivery"
-                        className="text-sm hover:text-blue-700"
+                        className="text-md   hover:text-blue-700"
                         onClick={() => setUserMenuOpen(false)}
                       >
                         Delivery Status
@@ -301,7 +301,7 @@ const Navbar = () => {
                           handleLogout();
                           setUserMenuOpen(false);
                         }}
-                        className="text-sm text-red-500 hover:text-red-700 text-left"
+                        className="text-md text-red-500  hover:text-red-700 text-left"
                       >
                         Logout
                       </button>

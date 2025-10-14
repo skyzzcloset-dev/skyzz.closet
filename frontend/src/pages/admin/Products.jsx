@@ -12,16 +12,12 @@ const Products = () => {
   useEffect(() => { dispatch(getAllProduct()); }, [dispatch]);
 
   const handleUpdate = (row) => {
-   const updatedData = {
-    name: row.product,
-    stock: row.inventory,
-    brand: row.brand,
-    category: row.category,
-    images: row.image ? [row.image.props.src] : [],
+   
+     console.log("update", row);
   };
 
-  dispatch(updateProduct({ id: row.id, productData: updatedData }));
-  };
+
+
 
   const handleDelete = (row) => {
     console.log("Delete", row);
