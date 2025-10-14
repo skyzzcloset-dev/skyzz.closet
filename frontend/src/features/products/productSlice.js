@@ -36,15 +36,28 @@ export const getAllProduct = createAsyncThunk(
 );
 
 export const updateProduct = createAsyncThunk(
-  "product/update",
-  async ({ id, productData }, thunkAPI) => {
-    try {
-      return await productService.updateProduct(id, productData);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+  "products/updateProduct",
+  async ({ id, productData }, { getState }) => {
+    const token = getState().auth.token;
+    const response = await fetch(
+      `https://product-production-4bd9.up.railway.app/api/product/update/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(productData),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to update");
     }
+    return response.json();
   }
 );
+
 
 export const deleteProduct = createAsyncThunk(
   "product/delete",

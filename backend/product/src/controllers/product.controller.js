@@ -93,7 +93,7 @@ async function singleProduct(req, res) {
   }
 }
 
-// ✅ Update product
+
 async function updateProduct(req, res) {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -103,12 +103,11 @@ async function updateProduct(req, res) {
   const product = await productModel.findOne({ _id: id, admin: req.user.id });
   if (!product) return res.status(404).json({ message: "Product not found" });
 
-  const allowedUpdates = ["name", "description", "price", "category", "stock"];
+  const allowedUpdates = ["name", "description", "price", "category", "stock", "brand"];
   for (const key of Object.keys(req.body)) {
     if (allowedUpdates.includes(key)) {
-      if (key === "price" && typeof req.body.price === "object") {
-        if (req.body.price.amount) product.price.amount = req.body.price.amount;
-        if (req.body.price.currency) product.price.currency = req.body.price.currency;
+      if (key === "price") {
+        product.price = Number(req.body.price);
       } else {
         product[key] = req.body[key];
       }

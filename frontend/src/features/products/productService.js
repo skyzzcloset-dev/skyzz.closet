@@ -34,7 +34,7 @@ const getProduct = async (id) => {
 };
 
 const updateProduct = async (id, productData) => {
-  const res = await axios.put(API_URL + "update/" + id, productData, {
+  const res = await axios.patch(API_URL + "update/" + id, productData, {
     headers: getAuthHeader(),
   });
   return res.data;
