@@ -8,38 +8,43 @@ async function createOrder(req, res) {
     const token =
       req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
     if (!token)
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({success: false, message: "Unauthorized"});
 
     // Fetch Cart
-    const { data: cartData } = await axios.get(
+    const {data: cartData} = await axios.get(
       "http://cart-production-72ab.up.railway.app/api/cart/getItems",
-      { headers: { Authorization: `Bearer ${token}` } }
+      {headers: {Authorization: `Bearer ${token}`}}
     );
-    console.log( cartData?.cart?.items);
-    
+    console.log(cartData?.cart?.items);
 
     const items = cartData?.cart?.items || [];
     if (!items.length)
-      return res.status(400).json({ success: false, message: "Cart is empty" });
+      return res.status(400).json({success: false, message: "Cart is empty"});
 
     // Fetch Products
-   const products = await Promise.all(
-  items.map(async (item) => {
-    try {
-      const res = await axios.get(
-        `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      return res.data.product;
-    } catch (err) {
-      console.error("Product fetch failed for:", item.productId, err.response?.data || err.message);
-      return null;
-    }
-  })
-);
+    const products = await Promise.all(
+      items.map(async (item) => {
+        try {
+          const res = await axios.get(
+            `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`,
+            {headers: {Authorization: `Bearer ${token}`}}
+          );
+          return res.data.product;
+        } catch (err) {
+          console.error(
+            "Product fetch failed for:",
+            item.productId,
+            err.response?.data || err.message
+          );
+          return null;
+        }
+      })
+    );
 
-
-    console.log(items.map(item => item.productId), products);
+    console.log(
+      items.map((item) => item.productId),
+      products
+    );
 
     // Build Order Items
     let totalAmountValue = 0;
@@ -57,13 +62,12 @@ async function createOrder(req, res) {
       return {
         productId: item.productId,
         quantity: item.quantity,
-        price: { amount: itemTotal, currency: "INR" },
+        price: {amount: itemTotal, currency: "INR"},
       };
     });
 
     // Shipping Validation
     const shipping = req.body.shippingAddress;
-  
 
     if (
       !shipping ||
@@ -87,7 +91,7 @@ async function createOrder(req, res) {
       user: user.id,
       items: orderItems,
       status: "PENDING",
-      totalAmount: { price: totalAmountValue, currency: "INR" },
+      totalAmount: {price: totalAmountValue, currency: "INR"},
       shippingAddress: {
         firstName: shipping.firstName,
         lastName: shipping.lastName,
@@ -103,10 +107,10 @@ async function createOrder(req, res) {
 
     return res
       .status(201)
-      .json({ success: true, message: "Order created", order });
+      .json({success: true, message: "Order created", order});
   } catch (error) {
     console.error("Order error:", error.response?.data || error.message);
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({success: false, message: error.message});
   }
 }
 
@@ -192,10 +196,28 @@ async function updateOrderAddress(req, res) {
   }
 }
 
+async function countOrders(req, res) {
+  try {
+    const res = await orderModel.countDocuments();
+    if (!res) {
+      return res.status(400).json({message: "Orders not Fetched"});
+    }
+
+    return res
+      .status(200)
+      .json({message: "Orders Fetched Successfully", count: res});
+  } catch (error) {
+    res
+      .status(500)
+      .json({message: "Internal server error", error: error.message});
+  }
+}
+
 module.exports = {
   createOrder,
   getMyOrders,
   getOrderById,
   cancelOrderById,
   updateOrderAddress,
+  countOrders
 };

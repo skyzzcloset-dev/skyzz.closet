@@ -4,42 +4,43 @@ import Table from "../../ui/Tables";
 import axios from "axios";
 
 const Users = () => {
-  const {user, setUser} = useState([]);
-  const [newData, setNewData] = useState([]);
+  const [user, setUser] = useState([]);
 
   const columns = ["Name", "Email", "Role"];
-  const data = newData.map((u) => ({
-    name: u.name,
+  const data = user.map((u) => ({
+    name: `${u.fullName?.firstName ?? ""} ${u.fullName?.lastName ?? ""}`,
     email: u.email,
     role: u.role || "User",
   }));
 
-  useEffect(() => {
-    const fetchAllUser = async () => {
+  async function fetchUser() {
+    try {
       const res = await axios.get(
-        "http://auth-production-547e.up.railway.app/api/auth/getAllUsers"
+        "https://auth-production-547e.up.railway.app/api/auth/getAllUsers",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
-      const users = res.data;
+      setUser(res.data.users || []);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  }
 
-      console.log(users);
-    };
-
-    fetchAllUser()
+  useEffect(() => {
+    fetchUser();
   }, []);
 
   return (
-    <div className="p-5">
-      <header className="mb-4 border-b border-gray-300 p-5">
+    <div className="px-5">
+      <header className="mb-4 border-b border-gray-300 p-5  px-5 lg:mr-65">
         <h1 className="text-2xl lg:text-4xl font-bold">Users</h1>
       </header>
 
       <main>
-        <Table
-          columns={columns}
-          data={data}
-          onUpdate={(row) => console.log("Update user:", row)}
-          onDelete={(row) => console.log("Delete user:", row)}
-        />
+        <Table columns={columns} data={data} />
       </main>
     </div>
   );

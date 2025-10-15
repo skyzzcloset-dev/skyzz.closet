@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 import {
   getAllProduct,
   updateProduct,
@@ -11,7 +11,7 @@ import Table from "../../ui/Tables";
 const Products = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { items } = useSelector((state) => state.products);
+  const {items} = useSelector((state) => state.products);
 
   const [editRowId, setEditRowId] = useState(null);
   const [editedData, setEditedData] = useState({});
@@ -49,7 +49,7 @@ const Products = () => {
       description: editedData.description,
     };
 
-  dispatch(updateProduct({ id: editRowId, productData: payload }))
+    dispatch(updateProduct({id: editRowId, productData: payload}))
       .unwrap()
       .then(() => {
         dispatch(getAllProduct());
@@ -177,7 +177,7 @@ const Products = () => {
             Edit
           </button>
           <button
-            onClick={() => handleDelete({ id: p._id })}
+            onClick={() => handleDelete({id: p._id})}
             className="bg-red-500 text-white px-2 py-1 rounded"
           >
             Delete
@@ -189,19 +189,21 @@ const Products = () => {
 
   return (
     <>
-      <nav className="flex justify-between items-center p-5">
-        <h1 className="text-2xl font-semibold">Products</h1>
-        <button
-          onClick={() => navigate("/admin/add")}
-          className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
-        >
-          Add Product
-        </button>
-      </nav>
+      
+        <nav className="flex justify-between items-center p-5 px-5 lg:mr-65">
+          <h1 className="text-2xl font-semibold">Products</h1>
+          <button
+            onClick={() => navigate("/admin/add")}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+          >
+            Add Product
+          </button>
+        </nav>
 
-      <main className="p-4">
-        <Table columns={columns} data={data} />
-      </main>
+        <main className="p-4">
+          <Table columns={columns} data={data} />
+        </main>
+      
     </>
   );
 };
