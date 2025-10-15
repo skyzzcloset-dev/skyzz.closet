@@ -3,6 +3,11 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_AUTH_API;
 
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  return {Authorization: `Bearer ${token}`};
+};
+
 // login user
 const login = async (userData) => {
   const res = await axios.post(API_URL + "login", userData);
@@ -34,10 +39,20 @@ const logout = async () => {
   localStorage.removeItem("user");
 };
 
+const getAllUsers = async (filters = {}) => {
+  const query = new URLSearchParams(filters).toString();
+
+  const res = await axios.get(`${API_URL}getAllUsers?${query}`, {
+    headers: getAuthHeader(),
+  });
+  return res.data;
+};
+
 const authService = {
   login,
   register,
   logout,
+  getAllUsers,
 };
 
 export default authService;

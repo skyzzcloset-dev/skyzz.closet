@@ -54,7 +54,7 @@ async function addProduct(req, res) {
 }
 
 // ✅ Get all products
-// controllers/product.controller.js
+
 async function allProducts(req, res) {
   const { q, maxPrice, minPrice, category, skip = 0, limit = 20 } = req.query;
   try {

@@ -1,17 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import Table from "../../ui/Tables";
+
 import axios from "axios";
 
 const Users = () => {
-  const [users, setUsers] = useState([]);
-
+  const {user, setUser} = useState([]);
+  const [newData, setNewData] = useState([]);
 
   const columns = ["Name", "Email", "Role"];
-  const data = users.map((u) => ({
+  const data = newData.map((u) => ({
     name: u.name,
     email: u.email,
     role: u.role || "User",
   }));
+
+  useEffect(() => {
+    const fetchAllUser = async () => {
+      const res = await axios.get(
+        "http://auth-production-547e.up.railway.app/api/auth/getAllUsers"
+      );
+      const users = res.data;
+
+      console.log(users);
+    };
+
+    fetchAllUser()
+  }, []);
 
   return (
     <div className="p-5">

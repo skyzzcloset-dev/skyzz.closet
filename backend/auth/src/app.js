@@ -4,13 +4,11 @@ const cors = require("cors");
 const routes = require("./routes/auth.routes");
 
 const app = express();
-exports.app = app;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
-// ✅ CORS setup (frontend: Vercel, allow cookies)
 app.use(
   cors({
     origin: ["https://www.skyzzcloset.shop", "http://localhost:5173"],
@@ -19,11 +17,10 @@ app.use(
   })
 );
 
-// Routes
 app.use("/api/auth", routes);
 
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
 
-module.exports = app;
+module.exports = app;  // ✅ Only this
