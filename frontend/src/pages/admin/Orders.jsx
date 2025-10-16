@@ -13,7 +13,7 @@ const Orders = () => {
     const fetchOrders = async () => {
       try {
         const res = await axios.get(
-          "https://order-production-3539.up.railway.app/api/order/getAllOrders",
+          "https://orders-production-47e9.up.railway.app/api/order/getAllOrders",
           {
            headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

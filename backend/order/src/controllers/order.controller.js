@@ -12,7 +12,7 @@ async function createOrder(req, res) {
 
     // Fetch Cart
     const {data: cartData} = await axios.get(
-      "http://cart-production-72ab.up.railway.app/api/cart/getItems",
+      "https://skyzzcloset-production.up.railway.app/api/cart/getItems",
       {headers: {Authorization: `Bearer ${token}`}}
     );
 
