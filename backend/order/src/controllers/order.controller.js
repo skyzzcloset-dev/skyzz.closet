@@ -150,6 +150,78 @@ async function getOrderById(req, res) {
   }
 }
 
+async function getAllOrders(req, res) {
+  const {
+    firstName,
+    lastName,
+    phone,
+    street,
+    apartment,
+    city,
+    state,
+    zip,
+    createdAt,
+    productId,
+    minTotal,
+    maxTotal,
+    skip = 0,
+    limit = 20,
+  } = req.query;
+
+  try {
+    const filter = {};
+
+    // Shipping Address filters
+    if (firstName)
+      filter["shippingAddress.firstName"] = {$regex: firstName, $options: "i"};
+    if (lastName)
+      filter["shippingAddress.lastName"] = {$regex: lastName, $options: "i"};
+    if (phone) filter["shippingAddress.phone"] = phone;
+    if (street)
+      filter["shippingAddress.street"] = {$regex: street, $options: "i"};
+    if (apartment)
+      filter["shippingAddress.apartment"] = {$regex: apartment, $options: "i"};
+    if (city) filter["shippingAddress.city"] = {$regex: city, $options: "i"};
+    if (state) filter["shippingAddress.state"] = {$regex: state, $options: "i"};
+    if (zip) filter["shippingAddress.zip"] = zip;
+
+    // Date filter
+    if (createdAt) filter.createdAt = new Date(createdAt);
+
+    // Items filter (by productId)
+    if (productId) filter["items.productId"] = productId;
+
+    // Total amount filter
+    if (minTotal || maxTotal) {
+      filter["totalAmount.price"] = {};
+      if (minTotal) filter["totalAmount.price"].$gte = parseFloat(minTotal);
+      if (maxTotal) filter["totalAmount.price"].$lte = parseFloat(maxTotal);
+    }
+
+    // Fetch orders
+    const orders = await orderModel
+      .find(filter)
+      .skip(parseInt(skip))
+      .limit(parseInt(limit))
+      .select("-password");
+
+    // Return also list of all order IDs
+    const orderIds = orders.map((order) => order._id);
+
+    return res.status(200).json({
+      success: true,
+      orders,
+      orderIds,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      details: error.message,
+    });
+  }
+}
+
 // ✅ Cancel Order
 async function cancelOrderById(req, res) {
   try {
@@ -219,5 +291,6 @@ module.exports = {
   getOrderById,
   cancelOrderById,
   updateOrderAddress,
-  countOrders
+  countOrders,
+  getAllOrders
 };
