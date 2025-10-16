@@ -1,8 +1,13 @@
+// src/features/auth/authService.js
 import axios from "axios";
 
-// Use correct Vite env variable and trim trailing slash
+// Safely read VITE_AUTH_API and remove trailing slash
 const API_URL = import.meta.env.VITE_AUTH_API?.replace(/\/$/, "");
 
+// Debug: check if API_URL is loaded
+if (!API_URL) console.error("VITE_AUTH_API is not defined. Check your .env file.");
+
+// Helper to get auth headers
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
   return { Authorization: `Bearer ${token}` };
@@ -11,9 +16,9 @@ const getAuthHeader = () => {
 // Login user
 const login = async (userData) => {
   if (!API_URL) throw new Error("VITE_AUTH_API is not defined");
-
+  
   const res = await axios.post(`${API_URL}/login`, userData, {
-    withCredentials: true,
+    withCredentials: true, // include cookies if backend uses them
   });
 
   if (res.data?.token) {
@@ -27,7 +32,7 @@ const login = async (userData) => {
 // Register user
 const register = async (userData) => {
   if (!API_URL) throw new Error("VITE_AUTH_API is not defined");
-
+  
   const res = await axios.post(`${API_URL}/register`, userData, {
     withCredentials: true,
   });
@@ -49,13 +54,15 @@ const logout = () => {
 // Get all users with optional filters
 const getAllUsers = async (filters = {}) => {
   if (!API_URL) throw new Error("VITE_AUTH_API is not defined");
-
+  
   const query = new URLSearchParams(filters).toString();
   const res = await axios.get(`${API_URL}/getAllUsers?${query}`, {
     headers: getAuthHeader(),
     withCredentials: true,
   });
+
   return res.data;
 };
 
-export default { login, register, logout, getAllUsers };
+const authService = { login, register, logout, getAllUsers };
+export default authService;
