@@ -5,9 +5,6 @@ function createAuthMiddleware(roles = ["customer"]) {
     const token =
       req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
 
-
-      console.log(token);
-      
     if (!token) {
       return res
         .status(401)
@@ -17,9 +14,6 @@ function createAuthMiddleware(roles = ["customer"]) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-
-      console.log(decoded.role);
-      
       if (!roles.includes(decoded.role)) {
         return res.status(403).json({
           message: "Insufficient Perms",
@@ -27,7 +21,6 @@ function createAuthMiddleware(roles = ["customer"]) {
       }
       req.user = decoded;
 
-      
       next();
     } catch (error) {
       return res

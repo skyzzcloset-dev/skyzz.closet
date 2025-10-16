@@ -1,5 +1,5 @@
 const express = require("express");
-const {createAuthMiddleware} = require("../middlewares/auth.middleware");
+const { createAuthMiddleware } = require("../middlewares/auth.middleware");
 const {
   createOrder,
   getMyOrders,
@@ -14,15 +14,10 @@ const router = express.Router();
 
 router.post("/create", createAuthMiddleware(["customer"]), createOrder);
 router.get("/me", createAuthMiddleware(["customer"]), getMyOrders);
+router.get("/getAllOrders", createAuthMiddleware(["admin"]), getAllOrders); // ✅ Move above :id
+router.get("/orderCount", createAuthMiddleware(["customer"]), countOrders);
 router.get("/:id", createAuthMiddleware(["customer"]), getOrderById);
-router.get("/getAllOrders", createAuthMiddleware(["admin"]) , getAllOrders);
-router.get("/orderCount" , createAuthMiddleware(["customer"]) , countOrders )
 router.post("/cancel/:id", createAuthMiddleware(["customer"]), cancelOrderById);
-router.patch(
-  "/address/:id",
-  createAuthMiddleware(["customer"]),
-  updateOrderAddress
-);
-
+router.patch("/address/:id", createAuthMiddleware(["customer"]), updateOrderAddress);
 
 module.exports = router;

@@ -7,7 +7,6 @@ import {NavLink} from "react-router-dom";
 
 const Cart = () => {
   const {cartItems} = useSelector((state) => state.cart);
-  console.log(cartItems);
 
   const [products, setProducts] = useState([]);
   const dispatch = useDispatch();

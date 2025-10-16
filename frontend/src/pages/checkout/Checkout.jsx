@@ -135,7 +135,7 @@ const Checkout = () => {
             }
           );
           alert("Payment Successful!");
-          console.log(data.payment);
+
           navigate("/");
         } catch (err) {
           console.error("Payment verification failed:", err);
@@ -196,7 +196,6 @@ const Checkout = () => {
 
       const response = await dispatch(createOrder(payload)).unwrap();
       const orderId = response.order._id;
-      console.log("Order ID:", orderId);
 
       const token = localStorage.getItem("token");
       const {data: paymentData} = await axios.post(

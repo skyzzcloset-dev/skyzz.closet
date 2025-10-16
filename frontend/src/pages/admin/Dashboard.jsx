@@ -80,12 +80,12 @@ const Dashboard = () => {
         </main>
       </div>
       <div className="px-5">
-      <Table
-        columns={columns}
-        data={orders}
-        onUpdate={(row) => console.log("Update order:", row)}
-        onDelete={(row) => console.log("Delete order:", row)}
-      />
+        <Table
+          columns={columns}
+          data={orders}
+          onUpdate={(row) => ("Update order:", row)}
+          onDelete={(row) => ("Delete order:", row)}
+        />
       </div>
     </>
   );

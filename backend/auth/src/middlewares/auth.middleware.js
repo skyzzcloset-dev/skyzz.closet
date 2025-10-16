@@ -11,9 +11,6 @@ async function authMiddleware(req, res, next) {
       .json({success: false, message: "Unauthorized: No token provided"});
   }
 
-  console.log("Headers:", req.headers);
-  console.log("Authorization header:", req.header("Authorization"));
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 

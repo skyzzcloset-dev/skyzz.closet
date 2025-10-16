@@ -15,7 +15,7 @@ async function createOrder(req, res) {
       "http://cart-production-72ab.up.railway.app/api/cart/getItems",
       {headers: {Authorization: `Bearer ${token}`}}
     );
-    console.log(cartData?.cart?.items);
+
 
     const items = cartData?.cart?.items || [];
     if (!items.length)
@@ -41,10 +41,7 @@ async function createOrder(req, res) {
       })
     );
 
-    console.log(
-      items.map((item) => item.productId),
-      products
-    );
+
 
     // Build Order Items
     let totalAmountValue = 0;
