@@ -16,7 +16,7 @@ const Orders = () => {
           "https://order-production-3539.up.railway.app/api/order/me",
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
