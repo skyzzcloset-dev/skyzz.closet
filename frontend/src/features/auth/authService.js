@@ -7,8 +7,9 @@ const API_URL = import.meta.env.VITE_AUTH_API;
 // Helper to get auth headers
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
-  return token ? {Authorization: `Bearer ${token}`} : {};
+  return {Authorization: `Bearer ${token}`};
 };
+
 
 // Login user
 const login = async (userData) => {

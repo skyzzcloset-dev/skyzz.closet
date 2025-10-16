@@ -16,7 +16,7 @@ const addProduct = async (formData) => {
   return res.data;
 };
 
-// Get all products
+
 // features/products/productService.js
 const getAllProduct = async (filters = {}) => {
   const query = new URLSearchParams(filters).toString();
