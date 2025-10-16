@@ -1,7 +1,7 @@
 // src/features/auth/authService.js
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_AUTH_API;
+const API_URL = "https://auth-production-547e.up.railway.app/api/auth";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
