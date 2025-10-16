@@ -2,7 +2,10 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_CART_API;
 
-const getAuthHeader = (token) => ({ Authorization: `Bearer ${token}` });
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  return {Authorization: `Bearer ${token}`};
+};
 
 const addCartItems = async (cartData, token) => {
   const res = await axios.post(API_URL + "items", cartData, {
