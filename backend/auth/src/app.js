@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: ["https://www.skyzzcloset.shop", "http://localhost:5173"],
+    origin: ["https://www.skyzzcloset.shop", "http://localhost:5174"],
     credentials: true,
     optionsSuccessStatus: 200,
   })
