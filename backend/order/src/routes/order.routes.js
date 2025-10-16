@@ -12,7 +12,7 @@ const {
 const router = express.Router();
 
 router.post("/create", createAuthMiddleware(["customer"]), createOrder);
-router.get("/me", createAuthMiddleware(["admin" , "customer"]), getMyOrders);
+router.get("/me", createAuthMiddleware(["customer", "admin"]), getMyOrders);
 router.get("/:id", createAuthMiddleware(["customer"]), getOrderById);
 router.get("/orderCount" , createAuthMiddleware(["customer"]) , countOrders )
 router.post("/cancel/:id", createAuthMiddleware(["customer"]), cancelOrderById);

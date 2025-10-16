@@ -16,10 +16,11 @@ const Orders = () => {
           "https://order-production-3539.up.railway.app/api/order/me",
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // include "Bearer "
             },
           }
         );
+
         setOrders(res.data.orders);
       } catch (error) {
         console.error("Error fetching orders:", error);
