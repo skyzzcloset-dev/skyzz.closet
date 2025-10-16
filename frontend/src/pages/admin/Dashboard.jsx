@@ -55,35 +55,39 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="px-5 lg:mr-65">
-      <header className="mb-4 border-b border-gray-300 p-5">
-        <h1 className="text-2xl lg:text-4xl font-bold">Dashboard</h1>
-      </header>
+    <>
+      <div className="px-5 lg:mr-65">
+        <header className="mb-4 border-b border-gray-300 p-5">
+          <h1 className="text-2xl lg:text-4xl font-bold">Dashboard</h1>
+        </header>
 
-      <main className="p-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {stats.map((item, index) => (
-            <div
-              key={index}
-              className="rounded bg-gray-200 p-5 h-32 flex flex-col justify-center items-center shadow"
-            >
-              <h1 className="font-semibold">{item.name}</h1>
-              <h1 className="text-2xl font-bold">{item.value}</h1>
-            </div>
-          ))}
-        </div>
+        <main className="p-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {stats.map((item, index) => (
+              <div
+                key={index}
+                className="rounded bg-gray-200 p-5 h-32 flex flex-col justify-center items-center shadow"
+              >
+                <h1 className="font-semibold">{item.name}</h1>
+                <h1 className="text-2xl font-bold">{item.value}</h1>
+              </div>
+            ))}
+          </div>
 
-        <div className="mt-10">
-          <h1 className="text-lg font-semibold mb-2">Recent Orders</h1>
-          <Table
-            columns={columns}
-            data={orders}
-            onUpdate={(row) => console.log("Update order:", row)}
-            onDelete={(row) => console.log("Delete order:", row)}
-          />
-        </div>
-      </main>
-    </div>
+          <div className="mt-10">
+            <h1 className="text-lg font-semibold mb-2">Recent Orders</h1>
+          </div>
+        </main>
+      </div>
+      <div className="px-5">
+      <Table
+        columns={columns}
+        data={orders}
+        onUpdate={(row) => console.log("Update order:", row)}
+        onDelete={(row) => console.log("Delete order:", row)}
+      />
+      </div>
+    </>
   );
 };
 
