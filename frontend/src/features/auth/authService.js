@@ -13,7 +13,7 @@ const getAuthHeader = () => {
 
 // Login user
 const login = async (userData) => {
-  const res = await axios.post(`${API_URL}/login`, userData, {
+  const res = await axios.post(API_URL + "login", userData, {
     withCredentials: true, // ✅ include cookies if backend uses them
   });
 
@@ -27,7 +27,7 @@ const login = async (userData) => {
 
 // Register user
 const register = async (userData) => {
-  const res = await axios.post(`${API_URL}/register`, userData, {
+  const res = await axios.post(API_URL + "register", userData, {
     withCredentials: true,
   });
 
@@ -48,7 +48,7 @@ const logout = () => {
 // Get all users with optional filters
 const getAllUsers = async (filters = {}) => {
   const query = new URLSearchParams(filters).toString();
-  const res = await axios.get(`${API_URL}/getAllUsers?${query}`, {
+  const res = await axios.get(`${API_URL}getAllUsers?${query}`, {
     headers: getAuthHeader(),
     withCredentials: true,
   });
