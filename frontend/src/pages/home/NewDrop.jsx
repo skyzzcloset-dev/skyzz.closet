@@ -11,9 +11,9 @@ const NewDrop = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 8;
 
-  // useEffect(() => {
-  //   dispatch(getAllProduct());
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(getAllProduct());
+  }, [dispatch]);
 
   // Reverse array to show newest first
   const revArr = [...items].reverse();
