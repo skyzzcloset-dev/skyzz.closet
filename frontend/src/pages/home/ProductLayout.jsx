@@ -129,7 +129,7 @@ const ProductLayout = () => {
             <div className="mt-5">
               <h3 className="font-medium text-sm mb-1">Color</h3>
               <div className="flex gap-2 flex-wrap">
-                {item.colors.map((color, idx) => (
+                {item.colors?.join(",").split(",").map((color, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedColor(color)}
