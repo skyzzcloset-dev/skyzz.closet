@@ -12,6 +12,7 @@ const initialState = {
 const getToken = (thunkAPI) =>
   thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
 
+
 export const createOrder = createAsyncThunk(
   "order/create",
   async (data, thunkAPI) => {

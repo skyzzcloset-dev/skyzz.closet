@@ -2,10 +2,9 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_ORDER_API;
 
-const getAuthHeader = () => {
-  const token = localStorage.getItem("token");
-  return {Authorization: `Bearer ${token}`};
-};
+const getAuthHeader = (token) => ({
+  Authorization: `Bearer ${token}`,
+});
 
 export const createOrder = async (data, token) =>
   (
