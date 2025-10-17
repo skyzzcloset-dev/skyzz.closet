@@ -10,9 +10,11 @@ const initialState = {
   message: "",
 };
 
+// Helper to get token
 const getToken = (thunkAPI) =>
   thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
 
+// ➕ Create a payment
 export const createPayment = createAsyncThunk(
   "payment/create",
   async ({ id, paymentData }, thunkAPI) => {
@@ -26,6 +28,7 @@ export const createPayment = createAsyncThunk(
   }
 );
 
+// ✅ Verify a payment
 export const verifyPayment = createAsyncThunk(
   "payment/verify",
   async (paymentData, thunkAPI) => {

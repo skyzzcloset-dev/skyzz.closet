@@ -1,4 +1,5 @@
-import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+// src/features/cart/cartSlice.js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import cartService from "./cartServices";
 
 const initialState = {
@@ -9,6 +10,7 @@ const initialState = {
   message: "",
 };
 
+// Helper to get token
 const getToken = (thunkAPI) =>
   thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
 
@@ -17,8 +19,7 @@ export const addCartItems = createAsyncThunk(
   "cart/add",
   async (cartData, thunkAPI) => {
     try {
-      const token = getToken(thunkAPI);
-      return await cartService.addCartItems(cartData, token);
+      return await cartService.addCartItems(cartData);
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -31,8 +32,7 @@ export const getCartItems = createAsyncThunk(
   "cart/get",
   async (_, thunkAPI) => {
     try {
-      const token = getToken(thunkAPI);
-      return await cartService.getCartItems(token);
+      return await cartService.getCartItems();
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -40,13 +40,12 @@ export const getCartItems = createAsyncThunk(
   }
 );
 
-// ✏ Update
+// ✏ Update item
 export const updateCart = createAsyncThunk(
   "cart/update",
-  async ({id, cartData}, thunkAPI) => {
+  async ({ id, cartData }, thunkAPI) => {
     try {
-      const token = getToken(thunkAPI);
-      return await cartService.updateCart(id, cartData, token);
+      return await cartService.updateCart(id, cartData);
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -54,13 +53,12 @@ export const updateCart = createAsyncThunk(
   }
 );
 
-// 🗑 Delete
+// 🗑 Delete item
 export const deleteCart = createAsyncThunk(
   "cart/delete",
-  async ({id}, thunkAPI) => {
+  async ({ id }, thunkAPI) => {
     try {
-      const token = getToken(thunkAPI);
-      return await cartService.deleteCart(id,  token);
+      return await cartService.deleteCart(id);
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -107,5 +105,5 @@ const cartSlice = createSlice({
   },
 });
 
-export const {reset, clearCart, loadCartFromStorage} = cartSlice.actions;
+export const { reset, clearCart, loadCartFromStorage } = cartSlice.actions;
 export default cartSlice.reducer;

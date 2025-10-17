@@ -1,39 +1,45 @@
+// src/features/cart/cartService.js
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_CART_API;
 
+// Helper to get auth headers
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
-  return {Authorization: `Bearer ${token}`};
+  return { Authorization: `Bearer ${token}` };
 };
 
-const addCartItems = async (cartData, token) => {
-  const res = await axios.post(API_URL + "items", cartData, {
-    headers: getAuthHeader(token),
+// Add cart items
+const addCartItems = async (cartData) => {
+  const res = await axios.post(`${API_URL}items`, cartData, {
+    headers: getAuthHeader(),
     withCredentials: true,
   });
   return res.data;
 };
 
-const getCartItems = async (token) => {
-  const res = await axios.get(API_URL + "getItems", {
-    headers: getAuthHeader(token),
+// Get cart items
+const getCartItems = async () => {
+  const res = await axios.get(`${API_URL}getItems`, {
+    headers: getAuthHeader(),
     withCredentials: true,
   });
   return res.data;
 };
 
-const updateCart = async (id, cartData, token) => {
-  const res = await axios.patch(API_URL + `items/${id}`, cartData, {
-    headers: getAuthHeader(token),
+// Update cart item
+const updateCart = async (id, cartData) => {
+  const res = await axios.patch(`${API_URL}items/${id}`, cartData, {
+    headers: getAuthHeader(),
     withCredentials: true,
   });
   return res.data;
 };
 
-const deleteCart = async (id, token) => {
-  const res = await axios.delete(API_URL + `items/${id}` , {
-    headers: getAuthHeader(token),
+// Delete cart item
+const deleteCart = async (id) => {
+  const res = await axios.delete(`${API_URL}items/${id}`, {
+    headers: getAuthHeader(),
     withCredentials: true,
   });
   return res.data;

@@ -13,7 +13,7 @@ const Orders = () => {
     const fetchOrders = async () => {
       try {
         const res = await axios.get(
-          "https://orders-production-47e9.up.railway.app/api/order/getAllOrders",
+          "https://order-pvnb.onrender.com/api/order/getAllOrders",
           {
            headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -1,5 +1,5 @@
 // src/features/auth/authSlice.js
-import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
 
 // Get user + token from localStorage if exists
@@ -7,8 +7,8 @@ const user = JSON.parse(localStorage.getItem("user"));
 const token = localStorage.getItem("token");
 
 const initialState = {
-  user: user ? user : null,
-  token: token ? token : null,
+  user: user || null,
+  token: token || null,
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -21,10 +21,9 @@ export const login = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const res = await authService.login(userData);
-      return {user: res.user, token: res.token}; // ✅ return both
+      return { user: res.user, token: res.token };
     } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || "Login failed";
+      const message = error.response?.data?.message || error.message || "Login failed";
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -36,10 +35,9 @@ export const register = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const res = await authService.register(userData);
-      return {user: res.user, token: res.token}; // ✅ return both
+      return { user: res.user, token: res.token };
     } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || "Register failed";
+      const message = error.response?.data?.message || error.message || "Register failed";
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -53,16 +51,14 @@ export const logout = createAsyncThunk("auth/logout", async () => {
   localStorage.removeItem("cart");
 });
 
+// Get all users
 export const getAllUsers = createAsyncThunk(
   "auth/getAllUsers",
   async (_, thunkAPI) => {
     try {
-     return await authService.getAllUsers()
+      return await authService.getAllUsers();
     } catch (error) {
-      const message =
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to fetch users";
+      const message = error.response?.data?.message || error.message || "Failed to fetch users";
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -82,9 +78,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Login
-      .addCase(login.pending, (state) => {
-        state.isLoading = true;
-      })
+      .addCase(login.pending, (state) => { state.isLoading = true; })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
@@ -102,9 +96,7 @@ const authSlice = createSlice({
       })
 
       // Register
-      .addCase(register.pending, (state) => {
-        state.isLoading = true;
-      })
+      .addCase(register.pending, (state) => { state.isLoading = true; })
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
@@ -127,13 +119,12 @@ const authSlice = createSlice({
         state.token = null;
       })
 
-      .addCase(getAllUsers.pending, (state) => {
-        state.isLoading = true;
-      })
+      // Get all users
+      .addCase(getAllUsers.pending, (state) => { state.isLoading = true; })
       .addCase(getAllUsers.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.user = action.payload.users;
+        state.user = action.payload.users; // maybe rename to `users` in state
       })
       .addCase(getAllUsers.rejected, (state, action) => {
         state.isLoading = false;
@@ -143,5 +134,5 @@ const authSlice = createSlice({
   },
 });
 
-export const {reset} = authSlice.actions;
+export const { reset } = authSlice.actions;
 export default authSlice.reducer;

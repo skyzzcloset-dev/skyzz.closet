@@ -16,10 +16,12 @@ async function createPayment(req, res) {
     if (!token) return res.status(401).json({message: "Unauthorized"});
 
     const orderId = req.params.orderId;
+    console.log(orderId);
+    
 
     // Fetch your order from backend
     const orderResponse = await axios.get(
-      `https://orders-production-47e9.up.railway.app/api/order/${orderId}`,
+      `https://order-pvnb.onrender.com/api/order/${orderId}`,
       {headers: {Authorization: `Bearer ${token}`}}
     );
     const totalAmount = orderResponse.data.order.totalAmount;

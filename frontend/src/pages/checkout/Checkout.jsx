@@ -162,7 +162,6 @@ const Checkout = () => {
   const onSubmit = async (data) => {
     if (isProcessing) return; // ✅ prevent double submit
     setIsProcessing(true);
-  console.log(data);
   
     try {
       const shippingAddress = {
@@ -195,9 +194,14 @@ const Checkout = () => {
         },
       };
 
+      console.log(payload);
+      
+
       const response = await dispatch(createOrder(payload)).unwrap();
+       console.log(response);
+       
       const orderId = response.order._id;
-console.log( orderId);
+       console.log( orderId);
 
       const token = localStorage.getItem("token");
       const {data: paymentData} = await axios.post(
@@ -215,7 +219,7 @@ console.log( orderId);
     } catch (err) {
      
       console.error("Checkout error:", err);
-      alert("Something went wrong while placing the order.");
+      // alert("Something went wrong while placing the order.");
       setIsProcessing(false);
     }
   };

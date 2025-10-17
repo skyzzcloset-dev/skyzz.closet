@@ -1,4 +1,5 @@
-import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+// src/features/order/orderSlice.js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import orderService from "./orderService";
 
 const initialState = {
@@ -9,10 +10,11 @@ const initialState = {
   message: "",
 };
 
+// Helper to get token
 const getToken = (thunkAPI) =>
   thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
 
-
+// ➕ Create a new order
 export const createOrder = createAsyncThunk(
   "order/create",
   async (data, thunkAPI) => {
@@ -27,6 +29,7 @@ export const createOrder = createAsyncThunk(
   }
 );
 
+// 📥 Get all orders
 export const getOrders = createAsyncThunk(
   "order/getAll",
   async (params, thunkAPI) => {
@@ -73,5 +76,5 @@ const orderSlice = createSlice({
   },
 });
 
-export const {reset} = orderSlice.actions;
+export const { reset } = orderSlice.actions;
 export default orderSlice.reducer;
