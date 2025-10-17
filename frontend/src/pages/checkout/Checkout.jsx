@@ -219,7 +219,7 @@ const Checkout = () => {
     } catch (err) {
      
       console.error("Checkout error:", err);
-      // alert("Something went wrong while placing the order.");
+      alert("Something went wrong while placing the order.");
       setIsProcessing(false);
     }
   };
