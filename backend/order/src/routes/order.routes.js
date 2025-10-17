@@ -1,5 +1,5 @@
 const express = require("express");
-const { createAuthMiddleware } = require("../middlewares/auth.middleware");
+const {createAuthMiddleware} = require("../middlewares/auth.middleware");
 const {
   createOrder,
   getMyOrders,
@@ -7,17 +7,27 @@ const {
   cancelOrderById,
   updateOrderAddress,
   countOrders,
-  getAllOrders
+  getAllOrders,
 } = require("../controllers/order.controller");
 
 const router = express.Router();
 
+// ✅ Static & specific routes FIRST
 router.post("/create", createAuthMiddleware(["customer"]), createOrder);
-router.get("/me", createAuthMiddleware(["customer"]), getMyOrders);
-router.get("/getAllOrders", createAuthMiddleware(["admin"]), getAllOrders); // ✅ Move above :id
-router.get("/orderCount", createAuthMiddleware(["customer"]), countOrders);
-router.get("/:id", createAuthMiddleware(["customer"]), getOrderById);
 router.post("/cancel/:id", createAuthMiddleware(["customer"]), cancelOrderById);
-router.patch("/address/:id", createAuthMiddleware(["customer"]), updateOrderAddress);
+
+router.get("/me", createAuthMiddleware(["customer"]), getMyOrders);
+router.get("/getAllOrders", createAuthMiddleware(["admin"]), getAllOrders);
+router.get("/orderCount", createAuthMiddleware(["customer"]), countOrders);
+
+// ✅ Address update before dynamic :id
+router.patch(
+  "/address/:id",
+  createAuthMiddleware(["customer"]),
+  updateOrderAddress
+);
+
+// ✅ Dynamic route LAST (or with regex)
+router.get("/:id", createAuthMiddleware(["customer"]), getOrderById);
 
 module.exports = router;
