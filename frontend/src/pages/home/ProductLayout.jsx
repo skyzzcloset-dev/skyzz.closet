@@ -150,7 +150,7 @@ const ProductLayout = () => {
           <h3 className="font-medium text-sm mb-1 mt-5">Sizes</h3>
           <div className="flex gap-2 flex-wrap">
             {defaultSizes.map((size) => {
-              const isAvailable = item.sizes?.includes(size);
+              const isAvailable = item.sizes?.join(",").split(",").includes(size);
               return (
                 <button
                   key={size}
