@@ -1,6 +1,6 @@
-import React, { lazy, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import React, {lazy, useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
+import {ChevronDown, ChevronUp} from "lucide-react";
 import productService from "../../features/products/productService";
 import Search from "../../components/Search";
 
@@ -46,7 +46,9 @@ const Shop = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
-        <p className="text-gray-500 text-lg animate-pulse">Loading products...</p>
+        <p className="text-gray-500 text-lg animate-pulse">
+          Loading products...
+        </p>
       </div>
     );
   }
@@ -75,30 +77,35 @@ const Shop = () => {
         {/* Products Section */}
         <main className="flex-1">
           {/* Header + Filter Button */}
-          <div className="flex items-center justify-between mb-1 relative">
+          <div className="flex items-center justify-center mb-1 relative">
             <h1 className="text-2xl sm:text-3xl font-bold capitalize">
               {category || "All Products"}
             </h1>
-            <div className="relative">
+            {/* <div className="relative">
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
                 className="lg:hidden flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md shadow hover:bg-orange-600 transition"
               >
                 <span>Filters</span>
-                {isFilterOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                {isFilterOpen ? (
+                  <ChevronUp size={18} />
+                ) : (
+                  <ChevronDown size={18} />
+                )}
               </button>
 
-              {/* Dropdown — Opens downward */}
+             
               {isFilterOpen && (
                 <div className="absolute top-full right-0 mt-2 w-[300px] z-50">
                   <Search onFilterChange={setFilters} isOpen={true} />
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
 
-          <p className="text-gray-500 mb-10 text-sm">
-            Showing {products.length} {products.length === 1 ? "product" : "products"}
+          <p className="text-gray-500 mb-10 text-center text-sm">
+            Showing {products.length}{" "}
+            {products.length === 1 ? "product" : "products"}
           </p>
 
           <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 justify-items-center">

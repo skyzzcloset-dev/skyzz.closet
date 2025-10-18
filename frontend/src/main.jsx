@@ -1,11 +1,11 @@
 import React from "react";
-import { createRoot } from "react-dom/client";
+import {createRoot} from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { store } from "./app/store";
-import { Provider } from "react-redux";
-import { ToastContainer, toast } from "react-toastify";
-import { registerSW } from "virtual:pwa-register";
+import {store} from "./app/store";
+import {Provider} from "react-redux";
+import {ToastContainer, toast , Bounce} from "react-toastify";
+import {registerSW} from "virtual:pwa-register";
 
 // Register Service Worker with update + offline handling
 const updateSW = registerSW({
@@ -18,7 +18,7 @@ const updateSW = registerSW({
     }, 3000);
   },
   onOfflineReady() {
-    toast.success("✅ App ready to work offline!", { autoClose: 3000 });
+    toast.success("✅ App ready to work offline!", {autoClose: 3000});
   },
 });
 
@@ -34,15 +34,16 @@ if (container) {
       </Provider>
       <ToastContainer
         position="top-center"
-        autoClose={1500}
+        autoClose={1200}
         hideProgressBar={false}
         newestOnTop={false}
-        closeOnClick
+        closeOnClick={false}
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
         theme="light"
+        transition={Bounce}
       />
     </>
   );

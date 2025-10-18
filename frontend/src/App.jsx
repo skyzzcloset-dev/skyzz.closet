@@ -72,7 +72,7 @@ function App() {
             <Route path="policy/refund-policy" element={<RefundPolicy />} />
             <Route path="policy/terms" element={<Terms />} />
             <Route path="checkout" element={<Checkout />} />
-
+            <Route path="delivery" element={<Delivery />} />
             <Route path="*" element={<ErrorPage />} />
           </Route>
           {user?.role === "admin" ? (
