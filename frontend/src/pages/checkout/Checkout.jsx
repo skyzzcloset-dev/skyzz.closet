@@ -46,7 +46,7 @@ const Checkout = () => {
           ...res.data.product,
           quantity: cartItems[idx].quantity,
           sizes: cartItems[idx].sizes,
-          amount: cartItems.totalAmount.price - discount + delivery
+          amount: cartItems.totalAmount - discount + delivery
         }));
         setOrders(fetchedOrders);
       } catch (err) {
