@@ -11,8 +11,6 @@ function createAuthMiddleware(roles = ["customer"]) {
         .json({success: false, message: "Unauthorized: No token provided"});
     }
 
-    console.log(token);
-    
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);

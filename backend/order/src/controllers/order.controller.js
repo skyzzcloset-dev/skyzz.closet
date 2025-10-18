@@ -7,60 +7,11 @@ async function createOrder(req, res) {
     const user = req.user;
     const token =
       req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
+
     if (!token)
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({success: false, message: "Unauthorized"});
 
-    // Fetch Cart
-    const { data: cartData } = await axios.get(
-      "https://skyzzcloset-production.up.railway.app/api/cart/getItems",
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    const items = cartData?.cart?.items || [];
-    if (!items.length)
-      return res.status(400).json({ success: false, message: "Cart is empty" });
-
-    // Fetch Products
-    const products = await Promise.all(
-      items.map(async (item) => {
-        try {
-          const response = await axios.get(
-            `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          return response.data.product;
-        } catch (err) {
-          console.error(
-            "Product fetch failed for:",
-            item.productId,
-            err.response?.data || err.message
-          );
-          return null;
-        }
-      })
-    );
-
-    // Build Order Items & totalAmount
-    let totalAmountValue = 0;
-    const orderItems = items.map((item) => {
-      const product = products.find(
-        (p) => p && p._id.toString() === item.productId.toString()
-      );
-      if (!product) throw new Error(`Product not found`);
-      if (product.stock < item.quantity)
-        throw new Error(`Insufficient stock for ${product.name}`);
-
-      const itemTotal = product.price * item.quantity;
-      totalAmountValue += itemTotal;
-
-      return {
-        productId: item.productId,
-        quantity: item.quantity,
-        price: { amount: itemTotal, currency: "INR" },
-      };
-    });
-
-    // Shipping Validation
+    // ✅ 1. Validate Shipping Address FIRST
     const shipping = req.body.shippingAddress;
     if (
       !shipping ||
@@ -79,12 +30,69 @@ async function createOrder(req, res) {
       });
     }
 
-    // Create Order
+    // ✅ 2. Fetch Cart
+    const {data: cartData} = await axios.get(
+      "https://skyzzcloset-production.up.railway.app/api/cart/getItems",
+      {headers: {Authorization: `Bearer ${token}`}}
+    );
+
+    const items = cartData?.cart?.items || [];
+    if (!items.length)
+      return res.status(400).json({success: false, message: "Cart is empty"});
+
+    // ✅ 3. Fetch Products
+    const products = await Promise.all(
+      items.map(async (item) => {
+        try {
+          const response = await axios.get(
+            `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`,
+            {headers: {Authorization: `Bearer ${token}`}}
+          );
+          return response.data.product;
+        } catch (err) {
+          console.error(
+            "Product fetch failed for:",
+            item.productId,
+            err.response?.data || err.message
+          );
+          return null;
+        }
+      })
+    );
+
+    // ✅ 4. Calculate Total Amount
+    let totalAmountValue = 0;
+    const orderItems = items.map((item) => {
+      const product = products.find(
+        (p) => p && p._id.toString() === item.productId.toString()
+      );
+      if (!product) throw new Error(`Product not found`);
+      if (product.stock < item.quantity)
+        throw new Error(`Insufficient stock for ${product.name}`);
+
+      const itemTotal = product.price * item.quantity;
+      totalAmountValue += itemTotal;
+      return {
+        productId: item.productId,
+        quantity: item.quantity,
+        price: {amount: itemTotal, currency: "INR"},
+      };
+    });
+
+    // ✅ 5. Add Delivery Charge ONCE
+    const deliveryCharges = shipping.state === "Delhi" ? 60 : 80;
+    totalAmountValue += deliveryCharges;
+
+    // ✅ 6. Create Order
     const order = await orderModel.create({
       user: user.id,
       items: orderItems,
       status: "PENDING",
-      totalAmount: { price: totalAmountValue, currency: "INR" },
+      totalAmount: {
+        price: totalAmountValue,
+        delivery: deliveryCharges,
+        currency: "INR",
+      },
       shippingAddress: {
         firstName: shipping.firstName,
         lastName: shipping.lastName,
@@ -98,10 +106,12 @@ async function createOrder(req, res) {
       },
     });
 
-    return res.status(201).json({ success: true, message: "Order created", order });
+    return res
+      .status(201)
+      .json({success: true, message: "Order created", order});
   } catch (error) {
     console.error("Order error:", error.response?.data || error.message);
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({success: false, message: error.message});
   }
 }
 
@@ -114,13 +124,15 @@ async function getMyOrders(req, res) {
     const skip = (page - 1) * limit;
 
     const [orders, total] = await Promise.all([
-      orderModel.find({ user: userId }).skip(skip).limit(limit),
-      orderModel.countDocuments({ user: userId }),
+      orderModel.find({user: userId}).skip(skip).limit(limit),
+      orderModel.countDocuments({user: userId}),
     ]);
 
-    res.status(200).json({ orders, meta: { total, page, limit } });
+    res.status(200).json({orders, meta: {total, page, limit}});
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({message: "Internal server error", error: error.message});
   }
 }
 
@@ -129,13 +141,15 @@ async function getOrderById(req, res) {
   try {
     const userId = req.user.id;
     const order = await orderModel.findById(req.params.id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!order) return res.status(404).json({message: "Order not found"});
     if (order.user.toString() !== userId)
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(403).json({message: "Forbidden"});
 
-    res.status(200).json({ order });
+    res.status(200).json({order});
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({message: "Internal server error", error: error.message});
   }
 }
 
@@ -161,13 +175,17 @@ async function getAllOrders(req, res) {
 
     const filter = {};
 
-    if (firstName) filter["shippingAddress.firstName"] = { $regex: firstName, $options: "i" };
-    if (lastName) filter["shippingAddress.lastName"] = { $regex: lastName, $options: "i" };
+    if (firstName)
+      filter["shippingAddress.firstName"] = {$regex: firstName, $options: "i"};
+    if (lastName)
+      filter["shippingAddress.lastName"] = {$regex: lastName, $options: "i"};
     if (phone) filter["shippingAddress.phone"] = phone;
-    if (street) filter["shippingAddress.street"] = { $regex: street, $options: "i" };
-    if (apartment) filter["shippingAddress.apartment"] = { $regex: apartment, $options: "i" };
-    if (city) filter["shippingAddress.city"] = { $regex: city, $options: "i" };
-    if (state) filter["shippingAddress.state"] = { $regex: state, $options: "i" };
+    if (street)
+      filter["shippingAddress.street"] = {$regex: street, $options: "i"};
+    if (apartment)
+      filter["shippingAddress.apartment"] = {$regex: apartment, $options: "i"};
+    if (city) filter["shippingAddress.city"] = {$regex: city, $options: "i"};
+    if (state) filter["shippingAddress.state"] = {$regex: state, $options: "i"};
     if (zip) filter["shippingAddress.zip"] = zip;
     if (createdAt) filter.createdAt = new Date(createdAt);
     if (productId) filter["items.productId"] = productId;
@@ -184,9 +202,11 @@ async function getAllOrders(req, res) {
 
     const orderIds = orders.map((order) => order._id);
 
-    return res.status(200).json({ success: true, orders, orderIds });
+    return res.status(200).json({success: true, orders, orderIds});
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Server error", details: error.message });
+    return res
+      .status(500)
+      .json({success: false, message: "Server error", details: error.message});
   }
 }
 
@@ -195,17 +215,19 @@ async function cancelOrderById(req, res) {
   try {
     const userId = req.user.id;
     const order = await orderModel.findById(req.params.id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!order) return res.status(404).json({message: "Order not found"});
     if (order.user.toString() !== userId)
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(403).json({message: "Forbidden"});
     if (order.status !== "PENDING")
-      return res.status(409).json({ message: "Cannot cancel at this stage" });
+      return res.status(409).json({message: "Cannot cancel at this stage"});
 
     order.status = "CANCELLED";
     await order.save();
-    res.status(200).json({ order });
+    res.status(200).json({order});
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({message: "Internal server error", error: error.message});
   }
 }
 
@@ -214,11 +236,11 @@ async function updateOrderAddress(req, res) {
   try {
     const userId = req.user.id;
     const order = await orderModel.findById(req.params.id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!order) return res.status(404).json({message: "Order not found"});
     if (order.user.toString() !== userId)
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(403).json({message: "Forbidden"});
     if (order.status !== "PENDING")
-      return res.status(409).json({ message: "Cannot update at this stage" });
+      return res.status(409).json({message: "Cannot update at this stage"});
 
     order.shippingAddress = {
       ...order.shippingAddress,
@@ -226,9 +248,11 @@ async function updateOrderAddress(req, res) {
     };
 
     await order.save();
-    res.status(200).json({ order });
+    res.status(200).json({order});
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({message: "Internal server error", error: error.message});
   }
 }
 
@@ -236,9 +260,11 @@ async function updateOrderAddress(req, res) {
 async function countOrders(req, res) {
   try {
     const count = await orderModel.countDocuments();
-    res.status(200).json({ message: "Orders fetched successfully", count });
+    res.status(200).json({message: "Orders fetched successfully", count});
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({message: "Internal server error", error: error.message});
   }
 }
 

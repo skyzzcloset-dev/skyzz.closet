@@ -53,6 +53,11 @@ const orderSchema = new mongoose.Schema(
         type: Number,
         required: true,
       },
+      delivery: {
+        type: Number,
+        required: true,
+        default: 80,
+      },
       currency: {
         type: String,
         enum: ["USD", "INR"],

@@ -5,7 +5,7 @@ const { createPayment, verifyPayment } = require("../controllers/payment.control
 const router = express.Router();
 
 // Only logged-in customers can create/verify payment
-router.post("/create/:orderId", createAuthMiddleware(["customer"]), createPayment);
-router.post("/verify", createAuthMiddleware(["customer"]), verifyPayment);
+router.post("/create/:orderId", createAuthMiddleware(["customer" , "admin"]), createPayment);
+router.post("/verify", createAuthMiddleware(["customer" , "admin"]), verifyPayment);
 
 module.exports = router;

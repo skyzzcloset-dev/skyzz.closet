@@ -16,8 +16,7 @@ async function createPayment(req, res) {
     if (!token) return res.status(401).json({message: "Unauthorized"});
 
     const orderId = req.params.orderId;
-    console.log(orderId);
-    
+
 
     // Fetch your order from backend
     const orderResponse = await axios.get(
