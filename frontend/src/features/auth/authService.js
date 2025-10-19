@@ -1,8 +1,8 @@
 // src/features/auth/authService.js
 import axios from "axios";
 
-// Safely read VITE_AUTH_API and remove trailing slash
-const API_URL = import.meta.env.VITE_AUTH_API?.replace(/\/$/, "");
+
+const API_URL = "https://auth-production-547e.up.railway.app/api/auth";
 
 if (!API_URL) console.error("VITE_AUTH_API is not defined. Check your .env file.");
 
