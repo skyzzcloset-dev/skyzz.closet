@@ -117,7 +117,7 @@ const Checkout = () => {
     const finalAmount = total * 100; // convert to paise
 
     const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      key: import.meta.env.VITE_RAZORPAY_TEST_KEY_ID,
       amount: finalAmount,
       currency: "INR",
       order_id: razorpayOrderId,

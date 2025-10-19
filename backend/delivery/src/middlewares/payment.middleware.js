@@ -9,8 +9,8 @@ async function checkPaymentStatus(req, res, next) {
       `https://api.razorpay.com/v1/payments/${orderId}`,
       {
         auth: {
-          username: process.env.RAZORPAY_KEY_ID,
-          password: process.env.RAZORPAY_SECRET,
+          username: process.env.RAZORPAY_TEST_KEY_ID,
+          password: process.env.RAZORPAY_TEST_SECRET,
         },
       }
     );

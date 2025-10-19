@@ -4,8 +4,8 @@ const axios = require("axios");
 const crypto = require("crypto");
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+  key_id: process.env.RAZORPAY_TEST_KEY_ID,
+  key_secret: process.env.RAZORPAY_TEST_KEY_SECRET,
 });
 
 // Create Razorpay order
@@ -67,7 +67,7 @@ async function verifyPayment(req, res) {
 
   try {
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .createHmac("sha256", process.env.RAZORPAY_TEST_KEY_SECRET)
       .update(`${razorpayOrderId}|${paymentId}`)
       .digest("hex");
 
