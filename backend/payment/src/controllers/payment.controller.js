@@ -4,8 +4,8 @@ const axios = require("axios");
 const crypto = require("crypto");
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_TEST_KEY_ID,
-  key_secret: process.env.RAZORPAY_TEST_KEY_SECRET,
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 // Create Razorpay order
@@ -17,10 +17,9 @@ async function createPayment(req, res) {
 
     const orderId = req.params.orderId;
 
-
     // Fetch your order from backend
     const orderResponse = await axios.get(
-      `https://skyzzcloset-production-b3c8.up.railway.app/api/order/${orderId}`,
+      `https://order-pvnb.onrender.com/api/order/${orderId}`,
       {headers: {Authorization: `Bearer ${token}`}}
     );
     const totalAmount = orderResponse.data.order.totalAmount;
@@ -67,7 +66,7 @@ async function verifyPayment(req, res) {
 
   try {
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_TEST_KEY_SECRET)
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpayOrderId}|${paymentId}`)
       .digest("hex");
 

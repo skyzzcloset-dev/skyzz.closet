@@ -117,7 +117,7 @@ const Checkout = () => {
     const finalAmount = total * 100; // convert to paise
 
     const options = {
-      key: import.meta.env.VITE_RAZORPAY_TEST_KEY_ID,
+       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: finalAmount,
       currency: "INR",
       order_id: razorpayOrderId,
@@ -207,7 +207,7 @@ const Checkout = () => {
       await displayRazorpay(paymentData.payment.razorpayOrderId);
     } catch (err) {
       console.error("Checkout error:", err);
-      alert("Something went wrong while placing the order.");
+      alert(err)
       setIsProcessing(false);
     }
   };
