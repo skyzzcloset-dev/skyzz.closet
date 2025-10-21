@@ -1,8 +1,9 @@
 // src/features/order/orderService.js
 import axios from "axios";
 
-const API_URL = "/api/order/";
+const API_URL = "https://skyzzcloset-production-b3c8.up.railway.app/api/order/";
 
+if (!API_URL) console.error("VITE_ORDER_API is not defined. Check your .env file.");
 // Helper to get auth headers
 const getAuthHeader = (token) => ({
   Authorization: `Bearer ${token}`,
@@ -12,7 +13,6 @@ const getAuthHeader = (token) => ({
 export const createOrder = async (data, token) => {
   const res = await axios.post(`${API_URL}create`, data, {
     headers: getAuthHeader(token),
-   
   });
   return res.data;
 };
@@ -27,5 +27,5 @@ export const getOrders = async (params, token) => {
   return res.data;
 };
 
-const orderService = { createOrder, getOrders };
+const orderService = {createOrder, getOrders};
 export default orderService;

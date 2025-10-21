@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/api/product/";
+const API_URL = "https://product-production-4bd9.up.railway.app/api/product/";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
@@ -15,7 +15,6 @@ const addProduct = async (formData) => {
   });
   return res.data;
 };
-
 
 // features/products/productService.js
 const getAllProduct = async (filters = {}) => {

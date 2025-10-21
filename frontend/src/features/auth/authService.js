@@ -1,8 +1,9 @@
 // src/features/auth/authService.js
 import axios from "axios";
 
-// Use proxy endpoint instead of full URL
-const API_URL = "/api/auth";
+
+const API_URL = import.meta.env.VITE_AUTH_API;
+
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
