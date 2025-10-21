@@ -260,6 +260,7 @@ async function updateOrderAddress(req, res) {
 async function countOrders(req, res) {
   try {
     const count = await orderModel.countDocuments();
+
     res.status(200).json({message: "Orders fetched successfully", count});
   } catch (error) {
     res

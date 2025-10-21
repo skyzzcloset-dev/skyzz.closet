@@ -1,10 +1,11 @@
 import {useState, useEffect} from "react";
-import Table from "../../ui/Tables";
 import axios from "axios";
+import Orders from "./Orders";
 
 const Dashboard = () => {
   const [product, setProduct] = useState(0);
   const [user, setUser] = useState(0);
+  const [order, setOrder] = useState(0);
 
   useEffect(() => {
     const fetchProductCount = async () => {
@@ -36,23 +37,30 @@ const Dashboard = () => {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await axios.get(
+          "https://order-pvnb.onrender.com/api/order/orderCount"
+        );
+        setOrder(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  console.log(order);
+
   const stats = [
     {name: "Total Product", value: product},
     {name: "Total Users", value: user},
-    {name: "Total Orders", value: 45},
+    {name: "Total Orders", value: order},
   ];
 
   const columns = ["ID", "Customer", "Date", "Total"];
-  const orders = [
-    {id: "#12345", customer: "Sophia Clark", date: "2024-07-26", total: "$150"},
-    {
-      id: "#12346",
-      customer: "Olivia Bennett",
-      date: "2024-07-25",
-      total: "$200",
-    },
-    {id: "#12347", customer: "Emma Carter", date: "2024-07-24", total: "$100"},
-  ];
 
   return (
     <>
@@ -73,19 +81,10 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
-
-          <div className="mt-10">
-            <h1 className="text-lg font-semibold mb-2">Recent Orders</h1>
-          </div>
         </main>
       </div>
-      <div className="px-5">
-        <Table
-          columns={columns}
-          data={orders}
-          onUpdate={(row) => ("Update order:", row)}
-          onDelete={(row) => ("Delete order:", row)}
-        />
+      <div>
+        <Orders />
       </div>
     </>
   );

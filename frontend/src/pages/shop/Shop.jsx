@@ -1,8 +1,9 @@
 import React, {lazy, useEffect, useState} from "react";
 import {useLocation} from "react-router-dom";
-import {ChevronDown, ChevronUp} from "lucide-react";
+
 import productService from "../../features/products/productService";
 import Search from "../../components/Search";
+import Newdrop from "../home/NewDrop"
 
 const ProductCard = lazy(() => import("../../ui/ProductCard"));
 const Pagination = lazy(() => import("../../components/Pagination"));
@@ -67,18 +68,18 @@ const Shop = () => {
   }
 
   return (
-    <div className="w-full mx-auto px-4 lg:px-5 py-10">
+    <div className="w-full mx-auto px-4  lg:px-10 py-10">
       <div className="flex flex-col lg:flex-row gap-5 relative">
         {/* Sidebar for desktop */}
-        <aside className="lg:w-1/4  hidden lg:block">
+        {/* <aside className="lg:w-1/4  hidden lg:block">
           <Search onFilterChange={setFilters} isOpen={true} />
-        </aside>
+        </aside> */}
 
         {/* Products Section */}
         <main className="flex-1">
           {/* Header + Filter Button */}
-          <div className="flex items-center justify-center mb-1 relative">
-            <h1 className="text-2xl sm:text-3xl font-bold capitalize">
+          <div className="flex items-center  mb-1 relative">
+            <h1 className="text-2xl sm:text-3xl  px-4 font-bold capitalize">
               {category || "All Products"}
             </h1>
             {/* <div className="relative">
@@ -103,12 +104,12 @@ const Shop = () => {
             </div> */}
           </div>
 
-          <p className="text-gray-500 mb-10 text-center text-sm">
+          <p className="text-gray-500 mb-8 px-5 text-left text-sm">
             Showing {products.length}{" "}
             {products.length === 1 ? "product" : "products"}
           </p>
 
-          <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 justify-items-center">
+          <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 justify-items-center">
             {currentPosts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
