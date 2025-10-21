@@ -1,5 +1,5 @@
 // src/features/cart/cartSlice.js
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import cartService from "./cartServices";
 
 const initialState = {
@@ -43,7 +43,7 @@ export const getCartItems = createAsyncThunk(
 // ✏ Update item
 export const updateCart = createAsyncThunk(
   "cart/update",
-  async ({ id, cartData }, thunkAPI) => {
+  async ({id, cartData}, thunkAPI) => {
     try {
       return await cartService.updateCart(id, cartData);
     } catch (error) {
@@ -56,7 +56,7 @@ export const updateCart = createAsyncThunk(
 // 🗑 Delete item
 export const deleteCart = createAsyncThunk(
   "cart/delete",
-  async ({ id }, thunkAPI) => {
+  async ({id}, thunkAPI) => {
     try {
       return await cartService.deleteCart(id);
     } catch (error) {
@@ -91,7 +91,7 @@ const cartSlice = createSlice({
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
       .addCase(getCartItems.fulfilled, (state, action) => {
-        state.cartItems = action.payload.cart.items;
+        state.cartItems = action.payload.cart;
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
       .addCase(updateCart.fulfilled, (state, action) => {
@@ -105,5 +105,5 @@ const cartSlice = createSlice({
   },
 });
 
-export const { reset, clearCart, loadCartFromStorage } = cartSlice.actions;
+export const {reset, clearCart, loadCartFromStorage} = cartSlice.actions;
 export default cartSlice.reducer;
