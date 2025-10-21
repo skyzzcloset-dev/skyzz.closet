@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/api/cart/";
+const API_URL = "https://skyzzcloset-production.up.railway.app/api/cart/";
 
 const getAuthHeader = (token) => ({ Authorization: `Bearer ${token}` });
 

@@ -2,7 +2,7 @@
 import axios from "axios";
 
 // Use proxy endpoint instead of full URL
-const API_URL = "/api/auth";
+const API_URL = "https://auth-production-547e.up.railway.app/api/auth";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
