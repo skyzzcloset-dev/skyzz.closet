@@ -1,12 +1,9 @@
 // src/features/auth/authService.js
 import axios from "axios";
 
+// Use proxy endpoint instead of full URL
+const API_URL = "/api/auth";
 
-const API_URL = "https://auth-production-547e.up.railway.app/api/auth";
-
-if (!API_URL) console.error("VITE_AUTH_API is not defined. Check your .env file.");
-
-// Helper to get auth headers
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
   return { Authorization: `Bearer ${token}` };
@@ -14,7 +11,6 @@ const getAuthHeader = () => {
 
 // Login user
 const login = async (userData) => {
-  if (!API_URL) throw new Error("VITE_AUTH_API is not defined");
   const res = await axios.post(`${API_URL}/login`, userData, { withCredentials: true });
 
   if (res.data?.token) {
@@ -27,7 +23,6 @@ const login = async (userData) => {
 
 // Register user
 const register = async (userData) => {
-  if (!API_URL) throw new Error("VITE_AUTH_API is not defined");
   const res = await axios.post(`${API_URL}/register`, userData, { withCredentials: true });
 
   if (res.data?.token) {
@@ -46,7 +41,6 @@ const logout = () => {
 
 // Get all users (optional filters)
 const getAllUsers = async (filters = {}) => {
-  if (!API_URL) throw new Error("VITE_AUTH_API is not defined");
   const query = new URLSearchParams(filters).toString();
   const res = await axios.get(`${API_URL}/getAllUsers?${query}`, {
     headers: getAuthHeader(),

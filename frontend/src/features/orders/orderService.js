@@ -1,7 +1,7 @@
 // src/features/order/orderService.js
 import axios from "axios";
 
-const API_URL = "https://skyzzcloset-production-b3c8.up.railway.app/api/order/";
+const API_URL = "/api/order/";
 
 // Helper to get auth headers
 const getAuthHeader = (token) => ({

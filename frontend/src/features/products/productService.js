@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://product-production-4bd9.up.railway.app/api/product/";
+const API_URL = "/api/product/";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");

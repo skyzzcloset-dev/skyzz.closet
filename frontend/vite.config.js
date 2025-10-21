@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -35,16 +34,10 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // fallback page only when offline
         navigateFallback: "/offline.html",
-        navigateFallbackAllowlist: [
-          /^\/$/,         // homepage
-          /^\/products/,  // product pages
-          /^\/about/,     // about page
-        ],
+        navigateFallbackAllowlist: [/^\/$/, /^\/products/, /^\/about/],
         runtimeCaching: [
           {
-            // HTML / app shell
             urlPattern: ({ request }) => request.destination === "document",
             handler: "NetworkFirst",
             options: {
@@ -53,37 +46,60 @@ export default defineConfig({
             },
           },
           {
-            // API requests
             urlPattern: /^https:\/\/your-api-domain\.com\/.*$/,
             handler: "NetworkFirst",
             options: {
               cacheName: "api-cache",
-              expiration: { maxEntries: 50, maxAgeSeconds: 86400 }, // 1 day
+              expiration: { maxEntries: 50, maxAgeSeconds: 86400 },
             },
           },
           {
-            // Google Fonts
             urlPattern: /^https:\/\/fonts\.(?:gstatic|googleapis)\.com\/.*/i,
             handler: "CacheFirst",
             options: {
               cacheName: "google-fonts",
-              expiration: { maxEntries: 20, maxAgeSeconds: 31536000 }, // 1 year
+              expiration: { maxEntries: 20, maxAgeSeconds: 31536000 },
             },
           },
           {
-            // Images
             urlPattern: /\.(?:png|jpg|jpeg|svg|webp|gif)$/,
             handler: "CacheFirst",
             options: {
               cacheName: "image-cache",
-              expiration: { maxEntries: 60, maxAgeSeconds: 2592000 }, // 30 days
+              expiration: { maxEntries: 60, maxAgeSeconds: 2592000 },
             },
           },
         ],
       },
     }),
   ],
-  optimizeDeps: {
-    include: ["react-slick"],
+  optimizeDeps: { include: ["react-slick"] },
+  server: {
+    proxy: {
+      "/api/auth": {
+        target: "https://auth-production-547e.up.railway.app",
+        changeOrigin: true,
+      },
+      "/api/cart": {
+        target: "https://skyzzcloset-production.up.railway.app",
+        changeOrigin: true,
+      },
+      "/api/deliver": {
+        target: "http://localhost:3006",
+        changeOrigin: true,
+      },
+      "/api/order": {
+        target: "https://skyzzcloset-production-b3c8.up.railway.app",
+        changeOrigin: true,
+      },
+      "/api/payment": {
+        target: "https://payment-production-42a1.up.railway.app",
+        changeOrigin: true,
+      },
+      "/api/product": {
+        target: "https://product-production-4bd9.up.railway.app",
+        changeOrigin: true,
+      },
+    },
   },
 });
