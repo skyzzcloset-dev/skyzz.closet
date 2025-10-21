@@ -1,25 +1,14 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import cartService from "./cartServices";
 
-// ✅ Safe JSON parse helper
-const safeParseJSON = (value) => {
-  try {
-    if (!value || value === "undefined") return [];
-    return JSON.parse(value);
-  } catch {
-    return [];
-  }
-};
-
 const initialState = {
-  cartItems: safeParseJSON(localStorage.getItem("cart")),
+  cartItems: JSON.parse(localStorage.getItem("cart")) || [],
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: "",
 };
 
-// Helper to get token
 const getToken = (thunkAPI) =>
   thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
 
@@ -28,7 +17,8 @@ export const addCartItems = createAsyncThunk(
   "cart/add",
   async (cartData, thunkAPI) => {
     try {
-      return await cartService.addCartItems(cartData);
+      const token = getToken(thunkAPI);
+      return await cartService.addCartItems(cartData, token);
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -41,7 +31,8 @@ export const getCartItems = createAsyncThunk(
   "cart/get",
   async (_, thunkAPI) => {
     try {
-      return await cartService.getCartItems();
+      const token = getToken(thunkAPI);
+      return await cartService.getCartItems(token);
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -49,12 +40,13 @@ export const getCartItems = createAsyncThunk(
   }
 );
 
-// ✏ Update item
+// ✏ Update
 export const updateCart = createAsyncThunk(
   "cart/update",
-  async ({ id, cartData }, thunkAPI) => {
+  async ({id, cartData}, thunkAPI) => {
     try {
-      return await cartService.updateCart(id, cartData);
+      const token = getToken(thunkAPI);
+      return await cartService.updateCart(id, cartData, token);
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -62,12 +54,13 @@ export const updateCart = createAsyncThunk(
   }
 );
 
-// 🗑 Delete item
+// 🗑 Delete
 export const deleteCart = createAsyncThunk(
   "cart/delete",
-  async ({ id }, thunkAPI) => {
+  async ({id}, thunkAPI) => {
     try {
-      return await cartService.deleteCart(id);
+      const token = getToken(thunkAPI);
+      return await cartService.deleteCart(id,  token);
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -90,29 +83,29 @@ const cartSlice = createSlice({
       localStorage.removeItem("cart");
     },
     loadCartFromStorage: (state) => {
-      state.cartItems = safeParseJSON(localStorage.getItem("cart"));
+      state.cartItems = JSON.parse(localStorage.getItem("cart")) || [];
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(addCartItems.fulfilled, (state, action) => {
-        state.cartItems = action.payload?.cart?.items || [];
+        state.cartItems = action.payload.cart.items;
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
       .addCase(getCartItems.fulfilled, (state, action) => {
-        state.cartItems = action.payload?.cart?.items || [];
+        state.cartItems = action.payload.cart.items;
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
       .addCase(updateCart.fulfilled, (state, action) => {
-        state.cartItems = action.payload?.cart?.items || [];
+        state.cartItems = action.payload.cart.items;
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
       .addCase(deleteCart.fulfilled, (state, action) => {
-        state.cartItems = action.payload?.cart?.items || [];
+        state.cartItems = action.payload.cart.items;
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       });
   },
 });
 
-export const { reset, clearCart, loadCartFromStorage } = cartSlice.actions;
+export const {reset, clearCart, loadCartFromStorage} = cartSlice.actions;
 export default cartSlice.reducer;
