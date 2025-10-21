@@ -1,7 +1,7 @@
 // src/features/payment/paymentService.js
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_PAYMENT_API;
+const API_URL = "https://payment-production-42a1.up.railway.app/api/payment/";
 
 // Helper to get auth headers
 const getAuthHeader = () => {

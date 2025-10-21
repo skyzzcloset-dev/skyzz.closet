@@ -1,7 +1,7 @@
 // src/features/order/orderService.js
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_ORDER_API;
+const API_URL = "https://skyzzcloset-production-b3c8.up.railway.app/api/order/";
 
 // Helper to get auth headers
 const getAuthHeader = (token) => ({
