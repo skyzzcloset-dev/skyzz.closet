@@ -1,4 +1,3 @@
-// src/features/cart/cartService.js
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_CART_API;
@@ -9,7 +8,7 @@ const getAuthHeader = () => {
   return { Authorization: `Bearer ${token}` };
 };
 
-// Add cart items
+// ➕ Add cart items
 const addCartItems = async (cartData) => {
   const res = await axios.post(`${API_URL}items`, cartData, {
     headers: getAuthHeader(),
@@ -18,7 +17,7 @@ const addCartItems = async (cartData) => {
   return res.data;
 };
 
-// Get cart items
+// 📥 Get cart items
 const getCartItems = async () => {
   const res = await axios.get(`${API_URL}getItems`, {
     headers: getAuthHeader(),
@@ -27,7 +26,7 @@ const getCartItems = async () => {
   return res.data;
 };
 
-// Update cart item
+// ✏ Update cart item
 const updateCart = async (id, cartData) => {
   const res = await axios.patch(`${API_URL}items/${id}`, cartData, {
     headers: getAuthHeader(),
@@ -36,7 +35,7 @@ const updateCart = async (id, cartData) => {
   return res.data;
 };
 
-// Delete cart item
+// 🗑 Delete cart item
 const deleteCart = async (id) => {
   const res = await axios.delete(`${API_URL}items/${id}`, {
     headers: getAuthHeader(),

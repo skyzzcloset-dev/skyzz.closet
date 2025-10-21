@@ -1,9 +1,18 @@
-// src/features/cart/cartSlice.js
-import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import cartService from "./cartServices";
 
+// ✅ Safe JSON parse helper
+const safeParseJSON = (value) => {
+  try {
+    if (!value || value === "undefined") return [];
+    return JSON.parse(value);
+  } catch {
+    return [];
+  }
+};
+
 const initialState = {
-  cartItems: JSON.parse(localStorage.getItem("cart")) || [],
+  cartItems: safeParseJSON(localStorage.getItem("cart")),
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -43,7 +52,7 @@ export const getCartItems = createAsyncThunk(
 // ✏ Update item
 export const updateCart = createAsyncThunk(
   "cart/update",
-  async ({id, cartData}, thunkAPI) => {
+  async ({ id, cartData }, thunkAPI) => {
     try {
       return await cartService.updateCart(id, cartData);
     } catch (error) {
@@ -56,7 +65,7 @@ export const updateCart = createAsyncThunk(
 // 🗑 Delete item
 export const deleteCart = createAsyncThunk(
   "cart/delete",
-  async ({id}, thunkAPI) => {
+  async ({ id }, thunkAPI) => {
     try {
       return await cartService.deleteCart(id);
     } catch (error) {
@@ -81,29 +90,29 @@ const cartSlice = createSlice({
       localStorage.removeItem("cart");
     },
     loadCartFromStorage: (state) => {
-      state.cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+      state.cartItems = safeParseJSON(localStorage.getItem("cart"));
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(addCartItems.fulfilled, (state, action) => {
-        state.cartItems = action.payload.cart.items;
+        state.cartItems = action.payload?.cart?.items || [];
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
       .addCase(getCartItems.fulfilled, (state, action) => {
-        state.cartItems = action.payload.cart.items;
+        state.cartItems = action.payload?.cart?.items || [];
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
       .addCase(updateCart.fulfilled, (state, action) => {
-        state.cartItems = action.payload.cart.items;
+        state.cartItems = action.payload?.cart?.items || [];
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
       .addCase(deleteCart.fulfilled, (state, action) => {
-        state.cartItems = action.payload.cart.items;
+        state.cartItems = action.payload?.cart?.items || [];
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       });
   },
 });
 
-export const {reset, clearCart, loadCartFromStorage} = cartSlice.actions;
+export const { reset, clearCart, loadCartFromStorage } = cartSlice.actions;
 export default cartSlice.reducer;
