@@ -91,7 +91,7 @@ const cartSlice = createSlice({
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
       .addCase(getCartItems.fulfilled, (state, action) => {
-        state.cartItems = action.payload.cart;
+        state.cartItems = action.payload.cart.items;
         localStorage.setItem("cart", JSON.stringify(state.cartItems));
       })
       .addCase(updateCart.fulfilled, (state, action) => {
