@@ -4,8 +4,8 @@ import "./index.css";
 import App from "./App";
 import {store} from "./app/store";
 import {Provider} from "react-redux";
-import {ToastContainer, toast , Bounce} from "react-toastify";
 import {registerSW} from "virtual:pwa-register";
+import toast, {Toaster} from "react-hot-toast";
 
 // Register Service Worker with update + offline handling
 const updateSW = registerSW({
@@ -32,19 +32,7 @@ if (container) {
       <Provider store={store}>
         <App />
       </Provider>
-      <ToastContainer
-        position="top-center"
-        autoClose={1200}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
+      <Toaster position="top-center" reverseOrder={false} />
     </>
   );
 } else {

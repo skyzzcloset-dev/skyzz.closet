@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteCart, updateCart } from "../../features/cart/cartSlice";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { NavLink } from "react-router-dom";
 
 const Cart = () => {

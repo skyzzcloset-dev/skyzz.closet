@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { logout, reset } from "../features/auth/authSlice";
-import { Logo } from "./index";
-import { toast } from "react-toastify";
-import { FiMenu, FiX, FiSearch, FiUser, FiChevronDown } from "react-icons/fi";
-import { HiOutlineShoppingCart } from "react-icons/hi";
+import React, {useState} from "react";
+import {NavLink, useNavigate} from "react-router-dom";
+import {useSelector, useDispatch} from "react-redux";
+import {logout, reset} from "../features/auth/authSlice";
+import {Logo} from "./index";
+import toast from "react-hot-toast";
+import {FiMenu, FiX, FiSearch, FiUser, FiChevronDown} from "react-icons/fi";
+import {HiOutlineShoppingCart} from "react-icons/hi";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,8 +16,8 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  const { cartItems } = useSelector((state) => state.cart);
+  const {user} = useSelector((state) => state.auth);
+  const {cartItems} = useSelector((state) => state.cart);
 
   const handleLogout = async () => {
     try {
@@ -148,7 +148,9 @@ const Navbar = () => {
               </button>
               {userMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-200 py-2 z-50">
-                  <div className="px-4 py-2 text-sm font-medium">Hi, {user.username}</div>
+                  <div className="px-4 py-2 text-sm font-medium">
+                    Hi, {user.username}
+                  </div>
                   <NavLink
                     to="/delivery"
                     className="block px-4 py-2 text-sm hover:bg-gray-100"
@@ -170,13 +172,19 @@ const Navbar = () => {
             </div>
           ) : (
             <NavLink to="/login">
-              <FiUser size={20} className="cursor-pointer ml-4 hover:text-blue-700 transition" />
+              <FiUser
+                size={20}
+                className="cursor-pointer ml-4 hover:text-blue-700 transition"
+              />
             </NavLink>
           )}
 
           {/* Cart */}
           <NavLink to="/cart" className="relative">
-            <HiOutlineShoppingCart size={20} className="cursor-pointer ml-4 hover:text-blue-700 transition" />
+            <HiOutlineShoppingCart
+              size={20}
+              className="cursor-pointer ml-4 hover:text-blue-700 transition"
+            />
             {cartItems?.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {cartItems.length}
@@ -195,7 +203,11 @@ const Navbar = () => {
               </span>
             )}
           </NavLink>
-          <FiSearch size={24} className="cursor-pointer" onClick={() => setSearchOpen(true)} />
+          <FiSearch
+            size={24}
+            className="cursor-pointer"
+            onClick={() => setSearchOpen(true)}
+          />
         </div>
       </div>
 
@@ -227,7 +239,11 @@ const Navbar = () => {
                 className="flex items-center justify-between px-3 text-left py-2 w-full"
               >
                 <span>Shop</span>
-                <FiChevronDown className={`transition-transform ${shopOpen ? "rotate-180" : "rotate-0"}`} />
+                <FiChevronDown
+                  className={`transition-transform ${
+                    shopOpen ? "rotate-180" : "rotate-0"
+                  }`}
+                />
               </button>
               {shopOpen && (
                 <div className="flex flex-col  space-y-2 mt-">
@@ -284,11 +300,17 @@ const Navbar = () => {
                   >
                     <FiUser size={24} />
                     <span className="font-medium">Account</span>
-                    <FiChevronDown className={`ml-auto transition-transform ${userMenuOpen ? "rotate-180" : "rotate-0"}`} />
+                    <FiChevronDown
+                      className={`ml-auto transition-transform ${
+                        userMenuOpen ? "rotate-180" : "rotate-0"
+                      }`}
+                    />
                   </button>
                   {userMenuOpen && (
                     <div className="flex flex-col mt-3 pl-5 space-y-3 ">
-                      <div className="text-md   font-medium">Hi, {user.username}</div>
+                      <div className="text-md   font-medium">
+                        Hi, {user.username}
+                      </div>
                       <NavLink
                         to="/delivery"
                         className="text-md   hover:text-blue-700"

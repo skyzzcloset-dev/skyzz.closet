@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { addCartItems } from "../../features/cart/cartSlice";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";;
 
 const ProductLayout = () => {
   const { id } = useParams();
