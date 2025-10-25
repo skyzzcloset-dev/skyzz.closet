@@ -19,16 +19,28 @@ const Orders = () => {
     return res.data.orders || [];
   };
 
-
-  
+  const fetchPayment = async () => {
+    const res = await axios.get(
+      "https://payment-production-42a1.up.railway.app/api/payment/get",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    return res.data.payments || [];
+  };
 
   const {data: orders = []} = useQuery({
     queryKey: ["orders"],
     queryFn: fetchOrders,
   });
 
-  console.log(orders);
-  
+  const {data: payments = []} = useQuery({
+    queryKey: ["payments"],
+    queryFn: fetchPayment,
+  });
+
   const reversedOrders = [...orders].reverse();
 
   const handleCheckboxChange = (orderId) => {
@@ -64,6 +76,10 @@ const Orders = () => {
     const address = order.shippingAddress || {};
     const isDelivered = selectedOrders.includes(order._id);
 
+    // Find payment status for this order
+    const payment = payments.find((p) => p.order === order._id);
+    const status = payment?.status === "COMPLETED" ? "COMPLETED" : "PENDING";
+
     return {
       "": (
         <input
@@ -89,6 +105,7 @@ const Orders = () => {
           {order.totalAmount?.price} {order.totalAmount?.currency}
         </span>
       ),
+      status: <span className="font-semibold">{status}</span>,
       actions: (
         <button
           onClick={() => setViewOrder(order)}

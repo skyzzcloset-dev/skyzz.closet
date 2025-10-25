@@ -1,5 +1,5 @@
 // src/features/payment/paymentSlice.js
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import paymentService from "./paymentService";
 
 const initialState = {
@@ -17,7 +17,7 @@ const getToken = (thunkAPI) =>
 // ➕ Create a payment
 export const createPayment = createAsyncThunk(
   "payment/create",
-  async ({ id, paymentData }, thunkAPI) => {
+  async ({id, paymentData}, thunkAPI) => {
     try {
       const token = getToken(thunkAPI);
       return await paymentService.createPayment(paymentData, id, token);

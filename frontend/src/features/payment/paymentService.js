@@ -6,7 +6,7 @@ const API_URL = "https://payment-production-42a1.up.railway.app/api/payment/";
 // Helper to get auth headers
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
-  return { Authorization: `Bearer ${token}` };
+  return {Authorization: `Bearer ${token}`};
 };
 
 // Create a payment
@@ -27,9 +27,19 @@ const verifyPayment = async (paymentData) => {
   return res.data;
 };
 
+const getPayment = async (paymentData) => {
+  const res = await axios.get(`${API_URL}get`, {
+    params: paymentData,
+    headers: getAuthHeader(),
+    withCredentials: true,
+  });
+
+  return res.data;
+};
 const paymentService = {
   createPayment,
   verifyPayment,
+  getPayment,
 };
 
 export default paymentService;
