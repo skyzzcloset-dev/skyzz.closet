@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
 import {createOrder} from "../../features/orders/orderSlice";
 
 const indianStates = [
@@ -48,41 +49,32 @@ const Checkout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [orders, setOrders] = useState([]);
   const [discount, setDiscount] = useState(0);
   const [discountCode, setDiscountCode] = useState("");
-  const [delivery, setDelivery] = useState(80);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const selectedState = watch("state");
+  const delivery = selectedState === "Delhi" ? 60 : 80;
 
-  useEffect(() => {
-    setDelivery(selectedState === "Delhi" ? 60 : 80);
-  }, [selectedState]);
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const responses = await Promise.all(
-          cartItems.map((item) =>
-            axios.get(
-              `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`
-            )
+  const {data: orders = [], isLoading} = useQuery({
+    queryKey: ["orders", cartItems],
+    queryFn: async () => {
+      if (!cartItems.length) return [];
+      const responses = await Promise.all(
+        cartItems.map((item) =>
+          axios.get(
+            `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`
           )
-        );
-        const fetchedOrders = responses.map((res, idx) => ({
-          ...res.data.product,
-          quantity: cartItems[idx].quantity,
-          sizes: cartItems[idx].sizes,
-          amount: cartItems.totalAmount - discount + delivery,
-        }));
-        setOrders(fetchedOrders);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-      }
-    };
-    if (cartItems.length) fetchOrders();
-  }, [cartItems]);
+        )
+      );
+      return responses.map((res, idx) => ({
+        ...res.data.product,
+        quantity: cartItems[idx].quantity,
+        sizes: cartItems[idx].sizes,
+      }));
+    },
+    enabled: !!cartItems.length,
+  });
 
   const subtotal = orders.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -92,8 +84,7 @@ const Checkout = () => {
 
   const applyDiscount = () => {
     if (discountCode.trim().toUpperCase() === "SAVE10") {
-      const calc = Math.floor(subtotal * 0.1);
-      setDiscount(calc);
+      setDiscount(Math.floor(subtotal * 0.1));
     } else {
       setDiscount(0);
     }
@@ -113,11 +104,9 @@ const Checkout = () => {
       "https://checkout.razorpay.com/v1/checkout.js"
     );
     if (!res) return alert("Razorpay SDK failed to load!");
-
-    const finalAmount = total * 100; // convert to paise
-
+    const finalAmount = total * 100;
     const options = {
-       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: finalAmount,
       currency: "INR",
       order_id: razorpayOrderId,
@@ -138,8 +127,7 @@ const Checkout = () => {
           );
           alert("Payment Successful!");
           navigate("/");
-        } catch (err) {
-          console.error("Payment verification failed:", err);
+        } catch {
           alert("Payment verification failed!");
         } finally {
           setIsProcessing(false);
@@ -156,15 +144,12 @@ const Checkout = () => {
         },
       },
     };
-
-    const paymentObject = new window.Razorpay(options);
-    paymentObject.open();
+    new window.Razorpay(options).open();
   };
 
   const onSubmit = async (data) => {
     if (isProcessing) return;
     setIsProcessing(true);
-
     try {
       const shippingAddress = {
         firstName: data.firstName,
@@ -177,37 +162,28 @@ const Checkout = () => {
         zip: data.zip,
         country: "India",
       };
-
       const items = cartItems.map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
         price: {amount: item.price, currency: "INR"},
       }));
-
       const payload = {
         items,
         shippingAddress,
-        totalAmount: {
-          price: total,
-          delivery: delivery,
-          currency: "INR",
-        },
+        totalAmount: {price: total, delivery, currency: "INR"},
       };
-
       const response = await dispatch(createOrder(payload)).unwrap();
       const orderId = response.order._id;
-
       const token = localStorage.getItem("token");
       const {data: paymentData} = await axios.post(
         `https://payment-production-42a1.up.railway.app/api/payment/create/${orderId}`,
         {},
         {headers: {Authorization: `Bearer ${token}`}, withCredentials: true}
       );
-
       await displayRazorpay(paymentData.payment.razorpayOrderId);
     } catch (err) {
       console.error("Checkout error:", err);
-      alert(err)
+      alert(err);
       setIsProcessing(false);
     }
   };
@@ -215,12 +191,9 @@ const Checkout = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 flex justify-center items-start px-4 py-8">
       <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-8">
-        {/* FORM */}
         <div className="w-full lg:w-3/5 bg-white rounded-2xl shadow-md p-6 md:p-10">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3">
-              Contact
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-3">Contact</h2>
             <input
               type="email"
               placeholder="Email"
@@ -231,9 +204,7 @@ const Checkout = () => {
               <p className="text-red-500 text-sm">{errors.email.message}</p>
             )}
 
-            <h2 className="text-2xl font-semibold text-gray-800 mt-8">
-              Delivery
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mt-8">Delivery</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <input
                 type="text"
@@ -255,7 +226,6 @@ const Checkout = () => {
               {...register("address", {required: "Address is required"})}
               className="w-full p-3 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
             />
-
             <input
               type="text"
               placeholder="Apartment, suite, etc. (optional)"
@@ -294,10 +264,7 @@ const Checkout = () => {
               placeholder="Phone"
               {...register("phone", {
                 required: "Phone is required",
-                pattern: {
-                  value: /^[0-9]{10}$/,
-                  message: "Invalid phone number",
-                },
+                pattern: {value: /^[0-9]{10}$/, message: "Invalid phone number"},
               })}
               className="w-full p-3 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
             />
@@ -316,12 +283,11 @@ const Checkout = () => {
           </form>
         </div>
 
-        {/* ORDER SUMMARY */}
         <div className="w-full lg:w-2/5 bg-white rounded-2xl shadow-md p-6 md:p-8 h-fit">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Order Summary
-          </h2>
-          {orders.length ? (
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Order Summary</h2>
+          {isLoading ? (
+            <p className="text-gray-500">Loading...</p>
+          ) : orders.length ? (
             <div className="space-y-4">
               {orders.map((item, idx) => (
                 <div

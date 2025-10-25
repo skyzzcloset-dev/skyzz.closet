@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {NavLink, useNavigate} from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
-import {logout, reset} from "../features/auth/authSlice";
-import {Logo} from "./index";
+import {logout, reset} from "../../features/auth/authSlice"
+import {Logo} from "../navbar/index";
 import toast from "react-hot-toast";
 import {FiMenu, FiX, FiSearch, FiUser, FiChevronDown} from "react-icons/fi";
 import {HiOutlineShoppingCart} from "react-icons/hi";

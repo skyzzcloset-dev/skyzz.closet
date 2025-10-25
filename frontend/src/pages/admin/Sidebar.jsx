@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {useDispatch} from "react-redux";
 import {NavLink, useNavigate} from "react-router-dom";
 import "remixicon/fonts/remixicon.css";
-import {logout} from "../features/auth/authSlice";
+import {logout} from "../../features/auth/authSlice";
 import {toast} from "react-toastify";
 
 const Sidebar = () => {

@@ -98,17 +98,43 @@ async function verifyPayment(req, res) {
 }
 
 async function getPayment(req, res) {
+  let {status, order, user, skip = 0, limit = 20} = req.query;
+
+  skip = parseInt(skip, 10) || 0;
+  limit = parseInt(limit, 10) || 20;
+
   try {
-    const payment = await paymentModel.findById(req.params.paymentId);
-    if (payment.status !== "COMPLETED") {
-      return res.status(400).json({message: "Payment not completed"});
+    const filter = {};
+
+    if (status) filter.status = status;
+    if (order) filter.order = mongoose.Types.ObjectId(order);
+    if (user) filter.user = mongoose.Types.ObjectId(user);
+
+    const payments = await paymentModel
+      .find(filter)
+      .skip(skip)
+      .limit(limit)
+      .select("-password");
+
+    if (!payments || payments.length === 0) {
+      return res.status(400).json({message: "Payment not found!!"});
     }
-    if (!payment) return res.status(404).json({message: "Payment not found"});
-    res.status(200).json({payment});
+
+    return res.status(200).json({
+      success: true,
+      payments: payments.map((p) => ({
+        status: p.status,
+        user: p.user,
+        order: p.order,
+      })),
+    });
   } catch (error) {
-    console.error("Error fetching payment:", error);
-    res.status(500).json({message: "Internal Server Error"});
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      details: error.message,
+    });
   }
 }
 
-module.exports = {createPayment, verifyPayment};
+module.exports = {createPayment, verifyPayment, getPayment};

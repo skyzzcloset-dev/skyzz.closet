@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProduct } from "../../features/products/productSlice";
 import ProductCard from "../../ui/ProductCard";
-import Pagination from "../../components/Pagination";
+import Pagination from "../../components/common/Pagination";
 
 const NewDrop = () => {
   const { items } = useSelector((state) => state.products);

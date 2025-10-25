@@ -1,34 +1,35 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import axios from "axios";
-import Table from "../../ui/Tables";
+import Table from "../../components/common/Tables";
+import {useQuery} from "@tanstack/react-query";
 
 const Orders = () => {
-  const [orders, setOrders] = useState([]);
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [viewOrder, setViewOrder] = useState(null);
 
-  const reversedOrders = [...orders].reverse();
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await axios.get(
-          "https://skyzzcloset-production-b3c8.up.railway.app/api/order/getAllOrders",
-          {
-           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          }
-        );
-
-        setOrders(res.data.orders);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
+  const fetchOrders = async () => {
+    const res = await axios.get(
+      "https://skyzzcloset-production-b3c8.up.railway.app/api/order/getAllOrders",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       }
-    };
+    );
+    return res.data.orders || [];
+  };
 
-    fetchOrders();
-  }, []);
+
+  
+
+  const {data: orders = []} = useQuery({
+    queryKey: ["orders"],
+    queryFn: fetchOrders,
+  });
+
+  console.log(orders);
+  
+  const reversedOrders = [...orders].reverse();
 
   const handleCheckboxChange = (orderId) => {
     setSelectedOrders((prev) =>
@@ -49,10 +50,16 @@ const Orders = () => {
     return parts.join(", ");
   };
 
-  // ✅ Column labels must match the keys in `data` (case-insensitive)
-  const columns = ["", "Order ID", "Customer", "Address", "Total", "Actions"];
+  const columns = [
+    "",
+    "Order ID",
+    "Customer",
+    "Address",
+    "Total",
+    "Status",
+    "Actions",
+  ];
 
-  // ✅ Map API data into table rows with lowercase keys
   const data = reversedOrders.map((order) => {
     const address = order.shippingAddress || {};
     const isDelivered = selectedOrders.includes(order._id);
@@ -99,7 +106,7 @@ const Orders = () => {
         <header className="mb-4 border-b border-gray-300 p-5">
           <h1 className="text-2xl lg:text-4xl font-bold">Orders</h1>
         </header>
-        {/* ✅ Modal */}
+
         {viewOrder && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
             <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6">

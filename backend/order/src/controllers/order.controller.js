@@ -3,117 +3,98 @@ const axios = require("axios");
 
 // ✅ Create Order
 async function createOrder(req, res) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    const user = req.user;
-    const token =
-      req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
+    const userId = req.user._id;
+    const { shippingAddress } = req.body;
 
-    if (!token)
-      return res.status(401).json({success: false, message: "Unauthorized"});
-
-    // ✅ 1. Validate Shipping Address FIRST
-    const shipping = req.body.shippingAddress;
     if (
-      !shipping ||
-      !shipping.firstName ||
-      !shipping.lastName ||
-      !shipping.phone ||
-      !shipping.street ||
-      !shipping.city ||
-      !shipping.state ||
-      !shipping.zip ||
-      !shipping.country
+      !shippingAddress?.firstName ||
+      !shippingAddress?.lastName ||
+      !shippingAddress?.phone ||
+      !shippingAddress?.street ||
+      !shippingAddress?.city ||
+      !shippingAddress?.state ||
+      !shippingAddress?.zip ||
+      !shippingAddress?.country
     ) {
-      return res.status(400).json({
-        success: false,
-        message: "Complete shipping address is required",
-      });
+      throw new Error("Complete shipping address is required");
     }
 
-    // ✅ 2. Fetch Cart
-    const {data: cartData} = await axios.get(
-      "https://skyzzcloset-production.up.railway.app/api/cart/getItems",
-      {headers: {Authorization: `Bearer ${token}`}}
-    );
+    // ✅ Fetch user cart from DB
+    const cart = await cartModel.findOne({ user: userId }).populate("items.productId");
+    if (!cart || !cart.items.length) throw new Error("Cart is empty");
 
-    const items = cartData?.cart?.items || [];
-    if (!items.length)
-      return res.status(400).json({success: false, message: "Cart is empty"});
+    let totalAmount = 0;
+    const orderItems = [];
 
-    // ✅ 3. Fetch Products
-    const products = await Promise.all(
-      items.map(async (item) => {
-        try {
-          const response = await axios.get(
-            `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`,
-            {headers: {Authorization: `Bearer ${token}`}}
-          );
-          return response.data.product;
-        } catch (err) {
-          console.error(
-            "Product fetch failed for:",
-            item.productId,
-            err.response?.data || err.message
-          );
-          return null;
-        }
-      })
-    );
+    // ✅ Loop through cart and verify stock + price
+    for (const item of cart.items) {
+      const product = item.productId;
 
-    // ✅ 4. Calculate Total Amount
-    let totalAmountValue = 0;
-    const orderItems = items.map((item) => {
-      const product = products.find(
-        (p) => p && p._id.toString() === item.productId.toString()
-      );
-      if (!product) throw new Error(`Product not found`);
+      if (!product) throw new Error("Product not found");
       if (product.stock < item.quantity)
         throw new Error(`Insufficient stock for ${product.name}`);
 
       const itemTotal = product.price * item.quantity;
-      totalAmountValue += itemTotal;
-      return {
-        productId: item.productId,
+      totalAmount += itemTotal;
+
+      // ✅ Deduct stock immediately
+      product.stock -= item.quantity;
+      await product.save({ session });
+
+      orderItems.push({
+        productId: product._id,
         quantity: item.quantity,
-        price: {amount: itemTotal, currency: "INR"},
-      };
+        price: { amount: itemTotal, currency: "INR" },
+      });
+    }
+
+    // ✅ Add delivery charge dynamically
+    const deliveryCharge = shippingAddress.state === "Delhi" ? 60 : 80;
+    totalAmount += deliveryCharge;
+
+    // ✅ Create order
+    const order = await orderModel.create(
+      [
+        {
+          user: userId,
+          items: orderItems,
+          totalAmount: {
+            price: totalAmount,
+            delivery: deliveryCharge,
+            currency: "INR",
+          },
+          shippingAddress,
+          status: "PENDING",
+        },
+      ],
+      { session }
+    );
+
+    // ✅ Clear cart
+    await cartModel.findOneAndUpdate(
+      { user: userId },
+      { $set: { items: [] } },
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(201).json({
+      success: true,
+      message: "Order created successfully",
+      order: order[0],
     });
-
-    // ✅ 5. Add Delivery Charge ONCE
-    const deliveryCharges = shipping.state === "Delhi" ? 60 : 80;
-    totalAmountValue += deliveryCharges;
-
-    // ✅ 6. Create Order
-    const order = await orderModel.create({
-      user: user.id,
-      items: orderItems,
-      status: "PENDING",
-      totalAmount: {
-        price: totalAmountValue,
-        delivery: deliveryCharges,
-        currency: "INR",
-      },
-      shippingAddress: {
-        firstName: shipping.firstName,
-        lastName: shipping.lastName,
-        phone: shipping.phone,
-        street: shipping.street,
-        apartment: shipping.apartment || "",
-        city: shipping.city,
-        state: shipping.state,
-        zip: shipping.zip,
-        country: shipping.country,
-      },
-    });
-
-    return res
-      .status(201)
-      .json({success: true, message: "Order created", order});
-  } catch (error) {
-    console.error("Order error:", error.response?.data || error.message);
-    return res.status(500).json({success: false, message: error.message});
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    return res.status(400).json({ success: false, message: err.message });
   }
-}
+};
 
 // ✅ Get My Orders (with pagination)
 async function getMyOrders(req, res) {

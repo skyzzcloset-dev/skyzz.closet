@@ -9,15 +9,15 @@ const Search = ({ onFilterChange, isOpen }) => {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [availability, setAvailability] = useState("");
 
-//   useEffect(() => {
-//     const filters = {
-//       category: selectedSubCategory !== "All" ? selectedSubCategory : undefined,
-//       maxPrice: price,
-//       sizes: selectedSizes.length ? selectedSizes : undefined,
-//       availability: availability || undefined,
-//     };
-//     onFilterChange(filters);
-//   }, [selectedSubCategory, price, selectedSizes, availability, onFilterChange]);
+  useEffect(() => {
+    const filters = {
+      category: selectedSubCategory !== "All" ? selectedSubCategory : undefined,
+      maxPrice: price,
+      sizes: selectedSizes.length ? selectedSizes : undefined,
+      availability: availability || undefined,
+    };
+    onFilterChange(filters);
+  }, [selectedSubCategory, price, selectedSizes, availability, onFilterChange]);
 
   const handleSizeChange = (size) => {
     setSelectedSizes((prev) =>

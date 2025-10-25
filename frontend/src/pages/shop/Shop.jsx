@@ -2,11 +2,11 @@ import React, {lazy, useEffect, useState} from "react";
 import {useLocation} from "react-router-dom";
 
 import productService from "../../features/products/productService";
-import Search from "../../components/Search";
+import Search from "../../components/common/Search";
 import Newdrop from "../home/NewDrop"
 
 const ProductCard = lazy(() => import("../../ui/ProductCard"));
-const Pagination = lazy(() => import("../../components/Pagination"));
+const Pagination = lazy(() => import("../../components/common/Pagination"));
 
 const Shop = () => {
   const [products, setProducts] = useState([]);

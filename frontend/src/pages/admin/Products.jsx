@@ -6,7 +6,7 @@ import {
   updateProduct,
   deleteProduct,
 } from "../../features/products/productSlice";
-import Table from "../../ui/Tables";
+import Table from "../../components/common/Tables";
 
 const Products = () => {
   const navigate = useNavigate();

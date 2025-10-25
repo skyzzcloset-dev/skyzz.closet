@@ -1,66 +1,62 @@
-import {useState, useEffect} from "react";
+import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import Orders from "./Orders";
 
 const Dashboard = () => {
-  const [product, setProduct] = useState(0);
-  const [user, setUser] = useState(0);
-  const [order, setOrder] = useState(0);
+  const fetchProductCount = async () => {
+    const res = await axios.get(
+      "https://product-production-4bd9.up.railway.app/api/product/count"
+    );
+    return res.data.count || 0;
+  };
 
-  useEffect(() => {
-    const fetchProductCount = async () => {
-      try {
-        const res = await axios.get(
-          "https://product-production-4bd9.up.railway.app/api/product/count"
-        );
-        setProduct(res.data.count || 0);
-      } catch (error) {
-        console.log(error);
+  const fetchUserCount = async () => {
+    const res = await axios.get(
+      "https://auth-production-547e.up.railway.app/api/auth/userCount",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       }
-    };
-    fetchProductCount();
-  }, []);
+    );
+    return res.data.count || 0;
+  };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await axios.get(
-        "https://auth-production-547e.up.railway.app/api/auth/userCount",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setUser(res.data.count);
-    };
-
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await axios.get(
-          "https://order-pvnb.onrender.com/api/order/orderCount"
-        );
-        setOrder(res.data);
-      } catch (error) {
-        console.log(error);
+  const fetchOrderCount = async () => {
+    const res = await axios.get(
+      "https://order-pvnb.onrender.com/api/order/orderCount",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       }
-    };
+    );
 
-    fetchOrders();
-  }, []);
+    return res.data.count || 0;
+  };
 
-  console.log(order);
+  const {data: product = 0} = useQuery({
+    queryKey: ["productCount"],
+    queryFn: fetchProductCount,
+  });
+
+  const {data: user = 0} = useQuery({
+    queryKey: ["userCount"],
+    queryFn: fetchUserCount,
+  });
+
+  const {data: order = 0} = useQuery({
+    queryKey: ["orderCount"],
+    queryFn: fetchOrderCount,
+  });
+
+
 
   const stats = [
     {name: "Total Product", value: product},
     {name: "Total Users", value: user},
     {name: "Total Orders", value: order},
   ];
-
-  const columns = ["ID", "Customer", "Date", "Total"];
 
   return (
     <>

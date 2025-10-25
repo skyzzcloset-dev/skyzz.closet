@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Logo from "./Logo";
+import Logo from "../navbar/Logo";
 import {NavLink} from "react-router-dom";
 
 const Footer = () => {
