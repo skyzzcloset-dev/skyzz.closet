@@ -11,25 +11,12 @@ app.use(express.json());
 // Middleware to parse cookies
 app.use(cookieParser());
 
-// ✅ CORS setup
-const origins = (
-  process.env.FRONTEND_ORIGINS || "http://localhost:5173,http://localhost:5174"
-)
-  .split(",")
-  .map((o) => o.trim());
 
+// ✅ CORS setup (frontend: Vercel, allow cookies)
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps or Postman)
-      if (!origin) return callback(null, true);
-      if (origins.indexOf(origin) !== -1) {
-        return callback(null, true);
-      } else {
-        return callback(new Error("CORS policy: Origin not allowed"));
-      }
-    },
-    credentials: true, // important for cookies
+    origin: ["https://www.skyzzcloset.shop", "http://localhost:5173"],
+    credentials: true,
     exposedHeaders: ["set-cookie"],
   })
 );
