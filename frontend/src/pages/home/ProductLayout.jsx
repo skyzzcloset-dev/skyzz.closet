@@ -54,6 +54,9 @@ const ProductLayout = () => {
       sizes: selectedSize ? [selectedSize] : [],
       colors: selectedColor ? [selectedColor] : [],
     };
+
+    console.log(cartData);
+    
     try {
       await dispatch(addCartItems(cartData)).unwrap();
       toast.success("Item added to cart successfully!");

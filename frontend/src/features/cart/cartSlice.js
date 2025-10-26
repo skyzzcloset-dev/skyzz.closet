@@ -2,23 +2,21 @@ import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import cartService from "./cartServices";
 
 const initialState = {
-  cartItems: JSON.parse(localStorage.getItem("cart")) || [],
+  cart: null,
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: "",
+  cartItems: [],
 };
-
-const getToken = (thunkAPI) =>
-  thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
 
 // ➕ Add item
 export const addCartItems = createAsyncThunk(
   "cart/add",
   async (cartData, thunkAPI) => {
     try {
-      const token = getToken(thunkAPI);
-      return await cartService.addCartItems(cartData, token);
+      const res = await cartService.addCartItems(cartData);
+      return {cart: res.cart};
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -60,7 +58,7 @@ export const deleteCart = createAsyncThunk(
   async ({id}, thunkAPI) => {
     try {
       const token = getToken(thunkAPI);
-      return await cartService.deleteCart(id,  token);
+      return await cartService.deleteCart(id, token);
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
