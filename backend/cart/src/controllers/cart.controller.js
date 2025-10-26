@@ -1,5 +1,22 @@
 const mongoose = require("mongoose");
 const cartModel = require("../models/cart.model");
+const {default: mongoose} = require("mongoose");
+
+function generateToken(id, email, role) {
+  return jwt.sign({id, email, role}, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+}
+
+function cookieOptions() {
+  const isProd = process.env.NODE_ENV === "production";
+  return {
+    httpOnly: true,
+    secure: isProd, // secure cookies in production (https)
+    sameSite: isProd ? "None" : "Lax", // None required for cross-site cookies (production)
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days to match token expiry
+  };
+}
 
 // ================= GET CART =================
 async function getCart(req, res) {
@@ -13,13 +30,14 @@ async function getCart(req, res) {
       });
     }
 
-    let cart = await cartModel.findOne({ user: user.id });
+    let cart = await cartModel.findOne({user: user.id});
 
     if (!cart) {
-      cart = new cartModel({ user: user.id, items: [] });
+      cart = new cartModel({user: user.id, items: []});
       await cart.save();
     }
-
+    const token = generateToken(user._id, user.email, user.role);
+    res.cookie("token", token, cookieOptions());
     return res.status(200).json({
       success: true,
       message: "Cart found",
@@ -27,8 +45,8 @@ async function getCart(req, res) {
       totals: {
         itemsCount: cart.items.length,
         totalQuantity: cart.items.reduce((sum, item) => sum + item.quantity, 0),
-        colors:cart.colors,
-        sizes : cart.sizes
+        colors: cart.colors,
+        sizes: cart.sizes,
       },
     });
   } catch (error) {
@@ -46,13 +64,17 @@ async function addItemToCart(req, res) {
     const user = req.user;
 
     if (!user) {
-      return res.status(401).json({ message: "Unauthorized: No user found" });
+      return res.status(401).json({message: "Unauthorized: No user found"});
     }
 
     let items = [];
 
     // Handle both formats
-    if (req.body.items && Array.isArray(req.body.items) && req.body.items.length > 0) {
+    if (
+      req.body.items &&
+      Array.isArray(req.body.items) &&
+      req.body.items.length > 0
+    ) {
       items = req.body.items;
     } else if (req.body.productId && req.body.quantity) {
       items.push({
@@ -62,20 +84,22 @@ async function addItemToCart(req, res) {
         colors: req.body.colors || [],
       });
     } else {
-      return res.status(400).json({ message: "Invalid product or quantity" });
+      return res.status(400).json({message: "Invalid product or quantity"});
     }
 
     // Validate
     for (const item of items) {
       if (!item.productId || !item.quantity || item.quantity <= 0) {
-        return res.status(400).json({ message: "Invalid product or quantity in items" });
+        return res
+          .status(400)
+          .json({message: "Invalid product or quantity in items"});
       }
     }
 
     // Find or create cart
-    let cart = await cartModel.findOne({ user: user.id });
+    let cart = await cartModel.findOne({user: user.id});
     if (!cart) {
-      cart = new cartModel({ user: user.id, items: [] });
+      cart = new cartModel({user: user.id, items: []});
     }
 
     // Add/update items
@@ -107,22 +131,23 @@ async function addItemToCart(req, res) {
 
     await cart.save();
 
-    return res.status(201).json({ message: "Item(s) added to cart", cart });
+    return res.status(201).json({message: "Item(s) added to cart", cart});
   } catch (error) {
     console.error("Error adding item to cart:", error);
-    return res.status(500).json({ message: "Server error", error: error.message });
+    return res
+      .status(500)
+      .json({message: "Server error", error: error.message});
   }
 }
-
 
 // ================= UPDATE CART ITEM =================
 async function updateCart(req, res) {
   try {
     const user = req.user;
-    const cart = await cartModel.findOne({ user: user.id });
+    const cart = await cartModel.findOne({user: user.id});
 
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res.status(404).json({message: "Cart not found"});
     }
 
     // 🟢 Case 1: Bulk update with items array
@@ -140,36 +165,36 @@ async function updateCart(req, res) {
       });
     } else {
       // 🟢 Case 2: Single update with productId param + quantity in body
-      const { productId } = req.params;
-      const { quantity } = req.body;
+      const {productId} = req.params;
+      const {quantity} = req.body;
 
       if (!mongoose.Types.ObjectId.isValid(productId)) {
-        return res.status(400).json({ message: "Invalid Product ID" });
+        return res.status(400).json({message: "Invalid Product ID"});
       }
 
       if (!quantity || quantity <= 0) {
         return res
           .status(400)
-          .json({ message: "Quantity must be greater than 0" });
+          .json({message: "Quantity must be greater than 0"});
       }
 
       const idx = cart.items.findIndex(
         (i) => i.productId.toString() === productId
       );
       if (idx < 0) {
-        return res.status(404).json({ message: "Item not found in cart" });
+        return res.status(404).json({message: "Item not found in cart"});
       }
 
       cart.items[idx].quantity = quantity;
     }
 
     await cart.save();
-    return res.status(200).json({ message: "Cart updated", cart });
+    return res.status(200).json({message: "Cart updated", cart});
   } catch (error) {
     console.error(error);
     return res
       .status(500)
-      .json({ message: "Server error", error: error.message });
+      .json({message: "Server error", error: error.message});
   }
 }
 

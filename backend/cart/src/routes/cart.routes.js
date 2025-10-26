@@ -10,7 +10,7 @@ const {
 const router = express.Router();
 
 // Only customers can add, update, get, or delete their own cart
-router.post("/items", createAuthMiddleware(["customer"]), addItemToCart);
+router.post("/items", createAuthMiddleware(), addItemToCart);
 router.get("/getItems", createAuthMiddleware(["customer"]), getCart);
 
 router.patch(
