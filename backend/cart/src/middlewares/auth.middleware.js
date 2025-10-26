@@ -1,3 +1,4 @@
+// backend/src/middlewares/auth.middleware.js
 const jwt = require("jsonwebtoken");
 
 function createAuthMiddleware(roles = ["customer"]) {
@@ -15,10 +16,9 @@ function createAuthMiddleware(roles = ["customer"]) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       if (!roles.includes(decoded.role)) {
-        return res.status(403).json({
-          success: false,
-          message: "Insufficient permissions",
-        });
+        return res
+          .status(403)
+          .json({ success: false, message: "Insufficient permissions" });
       }
 
       req.user = decoded;
