@@ -4,23 +4,26 @@ const cors = require("cors");
 const routes = require("./routes/auth.routes");
 
 const app = express();
+exports.app = app;
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
 
+// ✅ CORS setup (frontend: Vercel, allow cookies)
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://www.skyzzcloset.shop"],
+    origin: ["https://www.skyzzcloset.shop", "http://localhost:5173"],
     credentials: true,
     optionsSuccessStatus: 200,
   })
 );
 
+// Routes
 app.use("/api/auth", routes);
 
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
 
-module.exports = app; // ✅ Only this
+module.exports = app;

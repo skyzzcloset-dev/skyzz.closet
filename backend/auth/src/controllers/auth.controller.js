@@ -91,7 +91,9 @@ async function loginUser(req, res) {
         .json({success: false, message: "Invalid email or password"});
 
     const token = generateToken(user._id, user.email, user.role);
-
+ 
+    console.log(token);
+    
     return res.status(200).json({
       success: true,
       message: "User logged in successfully",
@@ -150,36 +152,6 @@ async function getProfile(req, res) {
   }
 }
 
-async function getAllUsers(req, res) {
-  const {
-    fullname: {firstName, lastName} = {},
-    email,
-    role,
-    skip = 0,
-    limit = 20,
-  } = req.query;
-
-  try {
-    const filter = {};
-
-    if (firstName) filter["fullName.firstName"] = firstName;
-    if (lastName) filter["fullName.lastName"] = lastName;
-    if (email) filter.email = email;
-    if (role) filter.role = role;
-
-    const users = await userModel
-      .find(filter)
-      .skip(skip)
-      .limit(limit)
-      .select("-password");
-    return res.status(200).json({success: true, users});
-  } catch (error) {
-    return res
-      .status(500)
-      .json({success: false, message: "Server error", details: error.message});
-  }
-}
-
 // ================== UPDATE PROFILE ==================
 async function updateProfile(req, res) {
   try {
@@ -231,5 +203,4 @@ module.exports = {
   getProfile,
   updateProfile,
   userCount,
-  getAllUsers,
 };
