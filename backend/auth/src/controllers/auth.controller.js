@@ -24,8 +24,6 @@ function cookieOptions() {
   };
 }
 
-
-// ================== REGISTER ==================
 async function registerUser(req, res) {
   try {
     const { fullName = {}, email, password } = req.body;
@@ -56,7 +54,7 @@ async function registerUser(req, res) {
   }
 }
 
-// ================== LOGIN ==================
+
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
@@ -69,7 +67,9 @@ async function loginUser(req, res) {
     if (!isPasswordValid) return res.status(400).json({ success: false, message: "Invalid email or password" });
 
     const token = generateToken(user._id, user.email, user.role);
-
+ 
+    console.log(token);
+    
     return res.status(200).json({
       success: true,
       message: "User logged in successfully",
@@ -80,7 +80,7 @@ async function loginUser(req, res) {
   }
 }
 
-// ================== LOGOUT ==================
+
 async function logoutUser(req, res) {
   try {
     const token = req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
@@ -100,7 +100,7 @@ async function logoutUser(req, res) {
   }
 }
 
-// ================== PROFILE / USERS ==================
+
 async function getProfile(req, res) {
   try {
     const user = await userModel.findById(req.params.id).select("-password");
@@ -110,6 +110,7 @@ async function getProfile(req, res) {
     return res.status(500).json({ success: false, message: "Server error", details: error.message });
   }
 }
+
 
 async function getAllUsers(req, res) {
   const {
@@ -140,6 +141,7 @@ async function getAllUsers(req, res) {
       .json({success: false, message: "Server error", details: error.message});
   }
 }
+
 
 async function updateProfile(req, res) {
   try {

@@ -6,8 +6,7 @@ const {
   registerUser,
   loginUser,
   logoutUser,
-  userCount,
-  getAllUsers
+  userCount
 } = require("../controllers/auth.controller");
 
 const { createAuthMiddleware } = require("../middlewares/auth.middleware");
@@ -21,7 +20,6 @@ router.post("/logout", logoutUser);
 
 // Protect profile routes
 router.get("/profile/:id", authMiddleware, getProfile);
-router.get("/getAllUsers" , authMiddleware , getAllUsers)
 router.patch("/updateprofile/:id", authMiddleware, updateProfile);
 router.get("/userCount", authMiddleware, userCount);
 

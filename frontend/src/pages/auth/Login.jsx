@@ -20,7 +20,6 @@ const Login = () => {
 
       const resultAction = await dispatch(loginUser(payload));
 
-
       if (loginUser.fulfilled.match(resultAction)) {
         toast.success("Logged in Successfully");
         reset();
