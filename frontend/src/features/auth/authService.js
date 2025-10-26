@@ -2,6 +2,8 @@ import axios from "axios";
 
 const API_URL = "https://auth-production-547e.up.railway.app/api/auth/"
 
+
+
 // login user
 const login = async (userData) => {
   const res = await axios.post(API_URL + "login", userData);
