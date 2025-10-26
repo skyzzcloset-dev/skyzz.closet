@@ -66,7 +66,12 @@ const Checkout = () => {
         const responses = await Promise.all(
           cartItems.map((item) =>
             axios.get(
-              `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`
+              `https://product-production-4bd9.up.railway.app/api/product/get/${item.productId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
             )
           )
         );
@@ -117,7 +122,7 @@ const Checkout = () => {
     const finalAmount = total * 100; // convert to paise
 
     const options = {
-       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: finalAmount,
       currency: "INR",
       order_id: razorpayOrderId,
@@ -201,13 +206,17 @@ const Checkout = () => {
       const {data: paymentData} = await axios.post(
         `https://payment-production-42a1.up.railway.app/api/payment/create/${orderId}`,
         {},
-        {headers: {Authorization: `Bearer ${token}`}, withCredentials: true}
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
 
       await displayRazorpay(paymentData.payment.razorpayOrderId);
     } catch (err) {
       console.error("Checkout error:", err);
-      alert(err)
+      alert(err);
       setIsProcessing(false);
     }
   };

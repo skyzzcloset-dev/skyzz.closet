@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const orderModel = require("../models/order.model");
 const axios = require("axios");
 
@@ -36,6 +37,9 @@ async function createOrder(req, res) {
       {headers: {Authorization: `Bearer ${token}`}}
     );
 
+
+    console.log(cartData);
+    
     const items = cartData?.cart?.items || [];
     if (!items.length)
       return res.status(400).json({success: false, message: "Cart is empty"});
@@ -110,6 +114,7 @@ async function createOrder(req, res) {
       .status(201)
       .json({success: true, message: "Order created", order});
   } catch (error) {
+   
     console.error("Order error:", error.response?.data || error.message);
     return res.status(500).json({success: false, message: error.message});
   }

@@ -3,29 +3,24 @@ import axios from "axios";
 
 const API_URL = "https://skyzzcloset-production-b3c8.up.railway.app/api/order/";
 
-// Helper to get auth headers
-const getAuthHeader = (token) => ({
-  Authorization: `Bearer ${token}`,
-});
+const getAuthHeader = (token) => ({Authorization: `Bearer ${token}`});
 
-// Create a new order
-export const createOrder = async (data, token) => {
-  const res = await axios.post(`${API_URL}create`, data, {
-    headers: getAuthHeader(token),
-   
-  });
-  return res.data;
-};
+export const createOrder = async (data, token) =>
+  (
+    await axios.post(API_URL + "create", data, {
+      headers: getAuthHeader(token),
+      withCredentials: true,
+    })
+  ).data;
 
-// Get all orders for the logged-in user
-export const getOrders = async (params, token) => {
-  const res = await axios.get(`${API_URL}me`, {
-    headers: getAuthHeader(token),
-    withCredentials: true,
-    params,
-  });
-  return res.data;
-};
+export const getOrders = async (params, token) =>
+  (
+    await axios.get(API_URL + "me", {
+      headers: getAuthHeader(token),
+      withCredentials: true,
+      params,
+    })
+  ).data;
 
-const orderService = { createOrder, getOrders };
+const orderService = {createOrder, getOrders};
 export default orderService;
