@@ -1,23 +1,6 @@
 const mongoose = require("mongoose");
 const cartModel = require("../models/cart.model");
 
-
-function generateToken(id, email, role) {
-  return jwt.sign({id, email, role}, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-}
-
-function cookieOptions() {
-  const isProd = process.env.NODE_ENV === "production";
-  return {
-    httpOnly: true,
-    secure: isProd, // secure cookies in production (https)
-    sameSite: isProd ? "None" : "Lax", // None required for cross-site cookies (production)
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days to match token expiry
-  };
-}
-
 // ================= GET CART =================
 async function getCart(req, res) {
   try {
@@ -36,8 +19,7 @@ async function getCart(req, res) {
       cart = new cartModel({user: user.id, items: []});
       await cart.save();
     }
-    const token = generateToken(user._id, user.email, user.role);
-    res.cookie("token", token, cookieOptions());
+
     return res.status(200).json({
       success: true,
       message: "Cart found",
@@ -130,6 +112,17 @@ async function addItemToCart(req, res) {
     }
 
     await cart.save();
+
+    await cartModel.create({
+      user,
+      cart,
+      totals: {
+        itemsCount: cart.items.length,
+        totalQuantity: cart.items.reduce((sum, item) => sum + item.quantity, 0),
+        colors: cart.colors,
+        sizes: cart.sizes,
+      },
+    });
 
     return res.status(201).json({message: "Item(s) added to cart", cart});
   } catch (error) {
