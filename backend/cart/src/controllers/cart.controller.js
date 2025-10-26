@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const cartModel = require("../models/cart.model");
-const {default: mongoose} = require("mongoose");
+
 
 function generateToken(id, email, role) {
   return jwt.sign({id, email, role}, process.env.JWT_SECRET, {
