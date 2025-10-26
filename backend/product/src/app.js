@@ -13,7 +13,7 @@ app.use(cookieParser());
 
 // ✅ CORS setup
 const origins = (
-  process.env.FRONTEND_ORIGINS || "http://localhost:5173,http://localhost:5174"
+  process.env.FRONTEND_ORIGINS || "http://localhost:5173,http://localhost:5174,https://www.skyzzcloset.shop"
 )
   .split(",")
   .map((o) => o.trim());
