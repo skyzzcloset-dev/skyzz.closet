@@ -4,6 +4,7 @@ const cors = require("cors");
 const routes = require("./routes/auth.routes");
 
 const app = express();
+exports.app = app;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -14,13 +15,10 @@ const origins = (process.env.FRONTEND_ORIGINS || "http://localhost:5173,https://
   .split(",")
   .map(o => o.trim());
 
+// ✅ CORS setup (frontend: Vercel, allow cookies)
 app.use(
   cors({
-    origin: function(origin, callback) {
-      if (!origin) return callback(null, true);
-      if (origins.indexOf(origin) !== -1) return callback(null, true);
-      return callback(new Error("CORS policy: Origin not allowed"));
-    },
+    origin: ["http://localhost:5173", "https://www.skyzzcloset.shop"],
     credentials: true,
     exposedHeaders: ["set-cookie"],
   })

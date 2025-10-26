@@ -1,30 +1,50 @@
 import axios from "axios";
 
-const API_URL =  "https://auth-production-547e.up.railway.app/api/auth";
+// Use proxy endpoint instead of full URL
+const API_URL = "https://auth-production-547e.up.railway.app/api/auth";
 
-// Create axios instance to set defaults once
-const api = axios.create({
-  baseURL: API_URL,
-  withCredentials: true, // send cookies and accept set-cookie from server
-});
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  return { Authorization: `Bearer ${token}` };
+};
 
+// Login user
 const login = async (userData) => {
-  const res = await api.post("/login", userData);
+  const res = await axios.post(`${API_URL}/login`, userData, { withCredentials: true });
+
+  if (res.data?.token) {
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+  }
+
   return res.data;
 };
 
+// Register user
 const register = async (userData) => {
-  const res = await api.post("/register", userData);
+  const res = await axios.post(`${API_URL}/register`, userData, { withCredentials: true });
+
+  if (res.data?.token) {
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+  }
+
   return res.data;
 };
 
-const logout = async () => {
-  const res = await api.post("/logout", {});
-  return res.data;
+// Logout user
+const logout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 };
 
+// Get all users (optional filters)
 const getAllUsers = async (filters = {}) => {
-  const res = await api.get(`/getAllUsers`, { params: filters });
+  const query = new URLSearchParams(filters).toString();
+  const res = await axios.get(`${API_URL}/getAllUsers?${query}`, {
+    headers: getAuthHeader(),
+    withCredentials: true,
+  });
   return res.data;
 };
 

@@ -13,7 +13,14 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const resultAction = await dispatch(loginUser({ email: data.email, password: data.password }));
+      const payload = {
+        email: data.email,
+        password: data.password,
+      };
+
+      const resultAction = await dispatch(loginUser(payload));
+
+
       if (loginUser.fulfilled.match(resultAction)) {
         toast.success("Logged in Successfully");
         reset();

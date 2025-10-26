@@ -69,7 +69,6 @@ async function loginUser(req, res) {
     if (!isPasswordValid) return res.status(400).json({ success: false, message: "Invalid email or password" });
 
     const token = generateToken(user._id, user.email, user.role);
-    res.cookie("token", token, cookieOptions());
 
     return res.status(200).json({
       success: true,
@@ -113,21 +112,32 @@ async function getProfile(req, res) {
 }
 
 async function getAllUsers(req, res) {
-  const { firstName, lastName, email, role } = req.query;
-  const skip = parseInt(req.query.skip) || 0;
-  const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+  const {
+    fullname: {firstName, lastName} = {},
+    email,
+    role,
+    skip = 0,
+    limit = 20,
+  } = req.query;
 
   try {
     const filter = {};
+
     if (firstName) filter["fullName.firstName"] = firstName;
     if (lastName) filter["fullName.lastName"] = lastName;
     if (email) filter.email = email;
     if (role) filter.role = role;
 
-    const users = await userModel.find(filter).skip(skip).limit(limit).select("-password");
-    return res.status(200).json({ success: true, users });
+    const users = await userModel
+      .find(filter)
+      .skip(skip)
+      .limit(limit)
+      .select("-password");
+    return res.status(200).json({success: true, users});
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Server error", details: error.message });
+    return res
+      .status(500)
+      .json({success: false, message: "Server error", details: error.message});
   }
 }
 
@@ -168,5 +178,4 @@ module.exports = {
   getProfile,
   updateProfile,
   userCount,
-  getAllUsers,
 };
