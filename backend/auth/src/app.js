@@ -11,11 +11,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
-// Dynamic origins
-const origins = (process.env.FRONTEND_ORIGINS || "http://localhost:5173,https://www.skyzzcloset.shop")
-  .split(",")
-  .map(o => o.trim());
-
 
 // ✅ CORS setup (frontend: Vercel, allow cookies)
 app.use(
