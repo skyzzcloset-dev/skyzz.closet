@@ -4,9 +4,9 @@ import axios from "axios";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useDispatch } from "react-redux";
 import { addCartItems } from "../../features/cart/cartSlice";
-import "react-lazy-load-image-component/src/effects/blur.css";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import toast from "react-hot-toast";;
+import toast from "react-hot-toast";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const ProductLayout = () => {
   const { id } = useParams();
@@ -17,7 +17,6 @@ const ProductLayout = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [liked, setLiked] = useState(false);
-
   const dispatch = useDispatch();
   const defaultSizes = ["XS", "S", "M", "L", "XL"];
 
@@ -54,9 +53,6 @@ const ProductLayout = () => {
       sizes: selectedSize ? [selectedSize] : [],
       colors: selectedColor ? [selectedColor] : [],
     };
-
-    console.log(cartData);
-    
     try {
       await dispatch(addCartItems(cartData)).unwrap();
       toast.success("Item added to cart successfully!");
@@ -65,89 +61,96 @@ const ProductLayout = () => {
     }
   };
 
-  const toggleLike = () => setLiked((prev) => !prev);
+  const toggleLike = () => setLiked((p) => !p);
 
-  if (loading) return <p className="p-6 text-center">Loading product...</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-60">
+        <span className="text-gray-500 text-lg">Loading product...</span>
+      </div>
+    );
+
   if (!item)
-    return <p className="p-6 text-center text-red-500">Product not found</p>;
+    return (
+      <div className="flex items-center justify-center h-60">
+        <span className="text-red-500 text-lg">Product not found</span>
+      </div>
+    );
 
   return (
-    <div className="py-8 md:py-14 px-4 sm:px-6 md:px-8 lg:px-16">
-      <div className="flex flex-col md:flex-row gap-8 md:gap-10 lg:gap-14">
-        {/* Left: Product Images */}
-        <div className="flex flex-col items-center md:w-1/2">
-          <div className="w-full max-w-md rounded-lg overflow-hidden shadow-md">
+    <section className="w-full max-w-7xl mx-auto px-4 py-10 md:py-14">
+      <div className="flex flex-col lg:flex-row gap-10">
+        {/* Left: Image Gallery */}
+        <div className="lg:w-1/2 flex flex-col items-center gap-4">
+          <div className="w-full max-w-[480px]  bg-white rounded-2xl shadow-md overflow-hidden relative flex items-center justify-center">
             <LazyLoadImage
               src={selectedImage}
               alt={item.name}
               effect="blur"
-              className="w-full h-auto object-cover"
+              className="max-w-full h-[350px] lg:h-[500px] rounded-2xl transition-transform duration-500 hover:scale-105"
             />
+            <button
+              onClick={toggleLike}
+              className="absolute top-4 right-4 text-3xl text-white bg-black/40 rounded-full p-2 backdrop-blur-md"
+            >
+              {liked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
+            </button>
           </div>
 
-          {/* Thumbnail Scroll */}
           {item.images?.length > 1 && (
-            <div className="flex gap-2 mt-4 w-full overflow-x-auto scrollbar-hide scroll-smooth snap-x">
-              {item.images?.map((img) => (
-                <div key={img._id} className="snap-center">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide p-5">
+              {item.images.map((img) => (
+                <button
+                  key={img._id}
+                  onClick={() => setSelectedImage(img.url)}
+                  className={`rounded-xl h-20 overflow-hidden border-2 transition-all duration-200 ${
+                    selectedImage === img.url
+                      ? "border-orange-500 scale-105"
+                      : "border-transparent hover:border-gray-300"
+                  }`}
+                >
                   <LazyLoadImage
                     src={img.url}
                     alt="thumb"
+                    className="w-20 h-25 object-cover"
                     effect="blur"
-                    onClick={() => setSelectedImage(img.url)}
-                    className={`w-20 h-20 object-cover rounded-md cursor-pointer flex-shrink-0 border transition ${
-                      selectedImage === img.url
-                        ? "border-orange-500 ring-2 ring-orange-200"
-                        : "border-gray-300 hover:border-orange-400"
-                    }`}
                   />
-                </div>
+                </button>
               ))}
             </div>
           )}
         </div>
 
-        {/* Right: Product Info */}
-        <div className="flex-1 flex flex-col space-y-5">
-          {/* Title + Like */}
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold leading-tight">
-                {item.name}
-              </h1>
-              <p className="text-gray-500 text-sm mt-1">Item #{item.sku}</p>
-            </div>
-            <button
-              onClick={toggleLike}
-              className="ml-3 text-red-500 text-2xl md:text-3xl transition-transform hover:scale-110"
-            >
-              {liked ? <FaHeart /> : <FaRegHeart />}
-            </button>
+        {/* Right: Product Details */}
+        <div className="lg:w-1/2 flex flex-col gap-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">{item.name}</h1>
+            <p className="text-gray-500 text-sm mt-1">SKU: {item.sku}</p>
           </div>
 
-          {/* Price */}
-          <p className="text-2xl font-bold text-orange-600">₹{item.price}</p>
+          <div className="text-3xl font-extrabold text-orange-600">
+            ₹{item.price}
+          </div>
 
-          {/* Description */}
-          <div className="bg-gray-50 border rounded-lg p-3 text-sm md:text-base text-gray-700 leading-relaxed max-h-48 overflow-y-auto">
+          <p className="text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-4 text-base leading-relaxed max-h-40 overflow-y-auto">
             {item.description || "No description available."}
-          </div>
+          </p>
 
           {/* Colors */}
           {item.colors?.length > 0 && (
             <div>
-              <h3 className="font-semibold text-sm mb-2 uppercase tracking-wide text-gray-700">
-                Color
+              <h3 className="font-semibold text-sm mb-2 uppercase text-gray-700">
+                Colors
               </h3>
-              <div className="flex gap-2 flex-wrap">
-                {item.colors?.join(",").split(",").map((color, idx) => (
+              <div className="flex flex-wrap gap-2">
+                {item.colors.map((color, i) => (
                   <button
-                    key={idx}
+                    key={i}
                     onClick={() => setSelectedColor(color)}
-                    className={`px-3 py-1.5 rounded-md border text-sm font-medium transition ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
                       selectedColor === color
-                        ? "bg-orange-500 text-white border-orange-500"
-                        : "bg-white text-gray-700 border-gray-300 hover:border-orange-400"
+                        ? "bg-orange-500 text-white border-orange-500 shadow-md"
+                        : "bg-white text-gray-800 border-gray-300 hover:border-orange-400"
                     }`}
                   >
                     {color}
@@ -159,22 +162,22 @@ const ProductLayout = () => {
 
           {/* Sizes */}
           <div>
-            <h3 className="font-semibold text-sm mb-2 uppercase tracking-wide text-gray-700">
-              Size
+            <h3 className="font-semibold text-sm mb-2 uppercase text-gray-700">
+              Sizes
             </h3>
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex flex-wrap gap-3">
               {defaultSizes.map((size) => {
-                const isAvailable = item.sizes?.join(",").split(",").includes(size);
+                const available = item.sizes.includes(size);
                 return (
                   <button
                     key={size}
-                    onClick={() => isAvailable && setSelectedSize(size)}
-                    disabled={!isAvailable}
-                    className={`w-10 h-10 flex items-center justify-center rounded-full border text-xs font-semibold transition ${
+                    onClick={() => available && setSelectedSize(size)}
+                    disabled={!available}
+                    className={`w-12 h-12 flex items-center justify-center rounded-full border text-xs font-bold transition-all duration-200 ${
                       selectedSize === size
-                        ? "bg-orange-500 text-white border-orange-500"
-                        : isAvailable
-                        ? "bg-white text-gray-700 border-gray-300 hover:border-orange-400"
+                        ? "bg-orange-500 text-white border-orange-500 shadow"
+                        : available
+                        ? "bg-white text-gray-800 border-gray-300 hover:border-orange-400"
                         : "bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed"
                     }`}
                   >
@@ -187,20 +190,20 @@ const ProductLayout = () => {
 
           {/* Quantity */}
           <div>
-            <h3 className="font-semibold text-sm mb-2 uppercase tracking-wide text-gray-700">
+            <h3 className="font-semibold text-sm mb-2 uppercase text-gray-700">
               Quantity
             </h3>
-            <div className="flex items-center border rounded-md w-32">
+            <div className="flex items-center w-36 border rounded-xl overflow-hidden">
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="flex-1 py-1.5 text-lg font-bold hover:bg-gray-100"
+                className="flex-1 py-2 text-lg font-bold hover:bg-gray-100"
               >
                 -
               </button>
-              <span className="flex-1 text-center">{quantity}</span>
+              <span className="flex-1 text-center text-base">{quantity}</span>
               <button
                 onClick={() => setQuantity((q) => q + 1)}
-                className="flex-1 py-1.5 text-lg font-bold hover:bg-gray-100"
+                className="flex-1 py-2 text-lg font-bold hover:bg-gray-100"
               >
                 +
               </button>
@@ -208,17 +211,15 @@ const ProductLayout = () => {
           </div>
 
           {/* Add to Cart */}
-          <div>
-            <button
-              onClick={handleAddToCart}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg shadow-md transition text-base md:text-lg"
-            >
-              Add to Cart
-            </button>
-          </div>
+          <button
+            onClick={handleAddToCart}
+            className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:opacity-90 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-300 text-lg"
+          >
+            Add to Cart
+          </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

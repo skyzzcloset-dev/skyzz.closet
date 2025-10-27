@@ -1,50 +1,47 @@
-import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+// ✅ cartSlice.js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import cartService from "./cartServices";
 
 const initialState = {
-  cart: null,
+  cartItems: [],
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: "",
-  cartItems: [],
 };
 
+const getToken = (thunkAPI) =>
+  thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
+
 // ➕ Add item
-export const addCartItems = createAsyncThunk(
-  "cart/add",
-  async (cartData, thunkAPI) => {
-    try {
-      const res = await cartService.addCartItems(cartData);
-      return {cart: res.cart};
-    } catch (error) {
-      const message = error.response?.data?.message || error.message;
-      return thunkAPI.rejectWithValue(message);
-    }
+export const addCartItems = createAsyncThunk("cart/add", async (cartData, thunkAPI) => {
+  try {
+    const res = await cartService.addCartItems(cartData);
+    return res;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message;
+    return thunkAPI.rejectWithValue(message);
   }
-);
+});
 
 // 📥 Get items
-export const getCartItems = createAsyncThunk(
-  "cart/get",
-  async (_, thunkAPI) => {
-    try {
-      const token = getToken(thunkAPI);
-      return await cartService.getCartItems(token);
-    } catch (error) {
-      const message = error.response?.data?.message || error.message;
-      return thunkAPI.rejectWithValue(message);
-    }
+export const getCartItems = createAsyncThunk("cart/get", async (_, thunkAPI) => {
+  try {
+    const res = await cartService.getCartItems();
+    return res;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message;
+    return thunkAPI.rejectWithValue(message);
   }
-);
+});
 
 // ✏ Update
 export const updateCart = createAsyncThunk(
   "cart/update",
-  async ({id, cartData}, thunkAPI) => {
+  async ({ id, cartData }, thunkAPI) => {
     try {
-      const token = getToken(thunkAPI);
-      return await cartService.updateCart(id, cartData, token);
+      const res = await cartService.updateCart(id, cartData);
+      return res;
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       return thunkAPI.rejectWithValue(message);
@@ -53,18 +50,15 @@ export const updateCart = createAsyncThunk(
 );
 
 // 🗑 Delete
-export const deleteCart = createAsyncThunk(
-  "cart/delete",
-  async ({id}, thunkAPI) => {
-    try {
-      const token = getToken(thunkAPI);
-      return await cartService.deleteCart(id, token);
-    } catch (error) {
-      const message = error.response?.data?.message || error.message;
-      return thunkAPI.rejectWithValue(message);
-    }
+export const deleteCart = createAsyncThunk("cart/delete", async ({ id }, thunkAPI) => {
+  try {
+    const res = await cartService.deleteCart(id);
+    return res;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message;
+    return thunkAPI.rejectWithValue(message);
   }
-);
+});
 
 const cartSlice = createSlice({
   name: "cart",
@@ -105,5 +99,5 @@ const cartSlice = createSlice({
   },
 });
 
-export const {reset, clearCart, loadCartFromStorage} = cartSlice.actions;
+export const { reset, clearCart, loadCartFromStorage } = cartSlice.actions;
 export default cartSlice.reducer;

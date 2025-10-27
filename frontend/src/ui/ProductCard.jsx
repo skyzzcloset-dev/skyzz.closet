@@ -7,7 +7,7 @@ const ProductCard = ({ product }) => {
   const imageUrl = product.img || product.images?.[0]?.url;
 
   return (
-    <NavLink to={`/product/${product._id}`} className="flex justify-center w-full">
+    <NavLink to={`/product/${product._id}`} className="flex justify-center w-full ">
       <div className="w-full max-w-[320px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-[300px] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-transform transform hover:scale-105 bg-white">
         <LazyLoadImage
           src={imageUrl}
