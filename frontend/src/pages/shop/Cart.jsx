@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+// ✅ Cart.jsx
+import React, {useEffect, useState} from "react";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
-import { deleteCart, updateCart } from "../../features/cart/cartSlice";
+import {useSelector, useDispatch} from "react-redux";
+import {deleteCart, updateCart} from "../../features/cart/cartSlice";
 import toast from "react-hot-toast";
-import { NavLink } from "react-router-dom";
+import {NavLink} from "react-router-dom";
 
 const Cart = () => {
-  const { cartItems } = useSelector((state) => state.cart);
+  const {cartItems} = useSelector((state) => state.cart);
   const [products, setProducts] = useState([]);
   const dispatch = useDispatch();
 
@@ -28,14 +29,19 @@ const Cart = () => {
 
         const fetchedProducts = responses.map((res, index) => ({
           ...res.data.product,
+          cartItemId: cartItems[index]._id, // ✅ keep backend cart id
           quantity: cartItems[index].quantity,
           sizes: cartItems[index].sizes || res.data.product.sizes || [],
           colors: cartItems[index].colors || res.data.product.colors || [],
           selectedSize:
-            cartItems[index].sizes?.[0] || res.data.product.sizes?.[0] || "Default",
+            cartItems[index].sizes?.[0] ||
+            res.data.product.sizes?.[0] ||
+            "Default",
         }));
 
         setProducts(fetchedProducts);
+        console.log(fetchedProducts);
+        
       } catch (error) {
         console.error("Error fetching cart products:", error);
       }
@@ -44,21 +50,20 @@ const Cart = () => {
     fetchCartProducts();
   }, [cartItems]);
 
-  const handleQuantityChange = (productId, newQty) => {
-    dispatch(updateCart({ id: productId, cartData: { quantity: newQty } }));
+  const handleQuantityChange = (itemId, newQty) => {
+    dispatch(updateCart({id: itemId, cartData: {quantity: newQty}}));
   };
 
   const handleDelete = (productId) => {
-    try {
-      dispatch(deleteCart({ id: productId }));
-      toast.success("Cart Item Deleted!!");
-    } catch (error) {
-      toast.error("Error deleting cart item");
-    }
-  };
+    console.log(productId);
+  if (!productId) return toast.error("Invalid productId");
+  
+  dispatch(deleteCart({ id: productId }));
+  toast.success("Cart item deleted!");
+};
 
-  const handleSizeChange = (productId, size) => {
-    dispatch(updateCart({ id: productId, cartData: { sizes: [size] } }));
+  const handleSizeChange = (itemId, size) => {
+    dispatch(updateCart({id: itemId, cartData: {sizes: [size]}}));
   };
 
   const totalPrice = products.reduce(
@@ -74,14 +79,12 @@ const Cart = () => {
 
       {products.length > 0 ? (
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Cart Items */}
           <div className="lg:col-span-2 space-y-6">
             {products.map((product) => (
               <div
-                key={product._id}
+                key={product.cartItemId}
                 className="flex flex-col sm:flex-row justify-between bg-white rounded-xl shadow-sm p-5 border border-gray-100 transition hover:shadow-md"
               >
-                {/* Product Info */}
                 <div className="flex items-start gap-4 w-full sm:w-auto">
                   <img
                     src={product.images?.[0]?.url}
@@ -96,13 +99,12 @@ const Cart = () => {
                       ₹{product.price}
                     </p>
 
-                    {/* Size Selector */}
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs text-gray-500">Size:</span>
                       <select
                         value={product.selectedSize}
                         onChange={(e) =>
-                          handleSizeChange(product._id, e.target.value)
+                          handleSizeChange(product.cartItemId, e.target.value)
                         }
                         className="text-xs border rounded-md px-2 py-1 bg-gray-50 focus:ring-1 focus:ring-orange-500"
                       >
@@ -124,9 +126,7 @@ const Cart = () => {
                   </div>
                 </div>
 
-                {/* Quantity, Delete, and Total */}
-                <div className="flex  sm:flex-row sm:items-center justify-between sm:justify-end gap-4 sm:gap-6 mt-4 sm:mt-0  sm:w-auto">
-                  {/* Quantity Controls */}
+                <div className="flex sm:flex-row sm:items-center justify-between sm:justify-end gap-4 sm:gap-6 mt-4 sm:mt-0 sm:w-auto">
                   <div className="flex items-center border rounded-full overflow-hidden shadow-sm bg-gray-50 w-25">
                     <button
                       onClick={() =>
@@ -144,7 +144,10 @@ const Cart = () => {
                     </span>
                     <button
                       onClick={() =>
-                        handleQuantityChange(product._id, product.quantity + 1)
+                        handleQuantityChange(
+                          product._id,
+                          product.quantity + 1
+                        )
                       }
                       className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-200 transition"
                     >
@@ -152,7 +155,6 @@ const Cart = () => {
                     </button>
                   </div>
 
-                  {/* Delete Button */}
                   <button
                     onClick={() => handleDelete(product._id)}
                     className="flex items-center justify-center w-10 h-10 rounded-full bg-red-50 hover:bg-red-100 text-red-500 text-lg transition"
@@ -161,7 +163,6 @@ const Cart = () => {
                     🗑
                   </button>
 
-                  {/* Total */}
                   <div className="font-semibold text-gray-800 text-center sm:text-right text-xl whitespace-nowrap">
                     ₹{product.price * product.quantity}
                   </div>
@@ -170,7 +171,6 @@ const Cart = () => {
             ))}
           </div>
 
-          {/* Order Summary */}
           <div className="bg-white rounded-xl shadow-md p-6 h-fit border border-gray-100 sticky top-6">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">
               Order Summary

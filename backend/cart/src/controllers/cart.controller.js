@@ -156,27 +156,25 @@ async function updateCart(req, res) {
 }
 
 // ================= DELETE CART ITEM =================
+
 async function deleteCart(req, res) {
   try {
-    const { productId } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(productId))
-      return res.status(400).json({ message: "Invalid Product ID" });
+    const { id } = req.params;
 
     const cart = await cartModel.findOne({ user: req.user.id });
     if (!cart) return res.status(404).json({ message: "Cart not found" });
 
     const itemIndex = cart.items.findIndex(
-      (item) => item.productId.toString() === productId
+      (item) => item._id.toString() === id
     );
     if (itemIndex === -1)
-      return res.status(404).json({ message: "Product not found in cart" });
+      return res.status(404).json({ message: "Item not found in cart" });
 
     cart.items.splice(itemIndex, 1);
     await cart.save();
 
     return res.status(200).json({
-      message: "Product removed from cart successfully",
+      message: "Item removed from cart successfully",
       cart,
     });
   } catch (error) {
@@ -186,5 +184,6 @@ async function deleteCart(req, res) {
       .json({ message: "Server error", error: error.message });
   }
 }
+
 
 module.exports = { getCart, addItemToCart, updateCart, deleteCart };
