@@ -15,10 +15,10 @@ async function getCart(req, res) {
       });
     }
 
-    let cart = await cartModel.findOne({ user: user.id });
+    let cart = await cartModel.findOne({user: user.id});
 
     if (!cart) {
-      cart = new cartModel({ user: user.id, items: [] });
+      cart = new cartModel({user: user.id, items: []});
       await cart.save();
     }
 
@@ -49,12 +49,16 @@ async function addItemToCart(req, res) {
     const user = req.user;
 
     if (!user) {
-      return res.status(401).json({ message: "Unauthorized: No user found" });
+      return res.status(401).json({message: "Unauthorized: No user found"});
     }
 
     let items = [];
 
-    if (req.body.items && Array.isArray(req.body.items) && req.body.items.length > 0) {
+    if (
+      req.body.items &&
+      Array.isArray(req.body.items) &&
+      req.body.items.length > 0
+    ) {
       items = req.body.items;
     } else if (req.body.productId && req.body.quantity) {
       items.push({
@@ -64,19 +68,19 @@ async function addItemToCart(req, res) {
         colors: req.body.colors || [],
       });
     } else {
-      return res.status(400).json({ message: "Invalid product or quantity" });
+      return res.status(400).json({message: "Invalid product or quantity"});
     }
 
     for (const item of items) {
       if (!item.productId || !item.quantity || item.quantity <= 0) {
         return res
           .status(400)
-          .json({ message: "Invalid product or quantity in items" });
+          .json({message: "Invalid product or quantity in items"});
       }
     }
 
-    let cart = await cartModel.findOne({ user: user.id });
-    if (!cart) cart = new cartModel({ user: user.id, items: [] });
+    let cart = await cartModel.findOne({user: user.id});
+    if (!cart) cart = new cartModel({user: user.id, items: []});
 
     for (const item of items) {
       const existingIndex = cart.items.findIndex(
@@ -85,8 +89,10 @@ async function addItemToCart(req, res) {
 
       if (existingIndex !== -1) {
         cart.items[existingIndex].quantity += item.quantity;
-        if (item.sizes?.length > 0) cart.items[existingIndex].sizes = item.sizes;
-        if (item.colors?.length > 0) cart.items[existingIndex].colors = item.colors;
+        if (item.sizes?.length > 0)
+          cart.items[existingIndex].sizes = item.sizes;
+        if (item.colors?.length > 0)
+          cart.items[existingIndex].colors = item.colors;
       } else {
         cart.items.push({
           productId: item.productId,
@@ -99,12 +105,12 @@ async function addItemToCart(req, res) {
 
     await cart.save();
 
-    return res.status(201).json({ message: "Item(s) added to cart", cart });
+    return res.status(201).json({message: "Item(s) added to cart", cart});
   } catch (error) {
     console.error("Error adding item to cart:", error);
     return res
       .status(500)
-      .json({ message: "Server error", error: error.message });
+      .json({message: "Server error", error: error.message});
   }
 }
 
@@ -112,9 +118,9 @@ async function addItemToCart(req, res) {
 async function updateCart(req, res) {
   try {
     const user = req.user;
-    const cart = await cartModel.findOne({ user: user.id });
+    const cart = await cartModel.findOne({user: user.id});
 
-    if (!cart) return res.status(404).json({ message: "Cart not found" });
+    if (!cart) return res.status(404).json({message: "Cart not found"});
 
     if (req.body.items && Array.isArray(req.body.items)) {
       req.body.items.forEach((updateItem) => {
@@ -128,30 +134,32 @@ async function updateCart(req, res) {
         }
       });
     } else {
-      const { productId } = req.params;
-      const { quantity } = req.body;
+      const {productId} = req.params;
+      const {quantity} = req.body;
 
       if (!mongoose.Types.ObjectId.isValid(productId))
-        return res.status(400).json({ message: "Invalid Product ID" });
+        return res.status(400).json({message: "Invalid Product ID"});
       if (!quantity || quantity <= 0)
-        return res.status(400).json({ message: "Quantity must be greater than 0" });
+        return res
+          .status(400)
+          .json({message: "Quantity must be greater than 0"});
 
       const idx = cart.items.findIndex(
         (i) => i.productId.toString() === productId
       );
       if (idx < 0)
-        return res.status(404).json({ message: "Item not found in cart" });
+        return res.status(404).json({message: "Item not found in cart"});
 
       cart.items[idx].quantity = quantity;
     }
 
     await cart.save();
-    return res.status(200).json({ message: "Cart updated", cart });
+    return res.status(200).json({message: "Cart updated", cart});
   } catch (error) {
     console.error("Error updating cart:", error);
     return res
       .status(500)
-      .json({ message: "Server error", error: error.message });
+      .json({message: "Server error", error: error.message});
   }
 }
 
@@ -161,29 +169,38 @@ async function deleteCart(req, res) {
   try {
     const { id } = req.params;
 
-    const cart = await cartModel.findOne({ user: req.user.id });
-    if (!cart) return res.status(404).json({ message: "Cart not found" });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid Product ID" });
+    }
+
+    const cart = await cartModel.findOne({ user: req.user._id });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    console.log("Cart items:", cart.items);
+    console.log("Param id:", id);
 
     const itemIndex = cart.items.findIndex(
-      (item) => item._id.toString() === id
+      (item) => item.productId.toString() === id || item._id.toString() === id
     );
-    if (itemIndex === -1)
-      return res.status(404).json({ message: "Item not found in cart" });
+
+    if (itemIndex === -1) {
+      return res.status(404).json({ message: "Product not found in cart" });
+    }
 
     cart.items.splice(itemIndex, 1);
     await cart.save();
 
     return res.status(200).json({
-      message: "Item removed from cart successfully",
+      message: "Product removed from cart successfully",
       cart,
     });
   } catch (error) {
     console.error("Error deleting cart item:", error);
-    return res
-      .status(500)
-      .json({ message: "Server error", error: error.message });
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 }
 
 
-module.exports = { getCart, addItemToCart, updateCart, deleteCart };
+module.exports = {getCart, addItemToCart, updateCart, deleteCart};
