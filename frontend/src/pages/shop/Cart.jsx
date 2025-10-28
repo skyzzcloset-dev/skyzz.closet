@@ -40,8 +40,6 @@ const Cart = () => {
         }));
 
         setProducts(fetchedProducts);
-        console.log(fetchedProducts);
-        
       } catch (error) {
         console.error("Error fetching cart products:", error);
       }
@@ -56,12 +54,11 @@ const Cart = () => {
 
   const handleDelete = (productId) => {
     console.log(productId);
-  if (!productId) return toast.error("Invalid productId");
-  
-  dispatch(deleteCart({ id: productId }));
-  toast.success("Cart item deleted!");
-};
+    if (!productId) return toast.error("Invalid productId");
 
+    dispatch(deleteCart({id: productId}));
+    toast.success("Cart item deleted!");
+  };
   const handleSizeChange = (itemId, size) => {
     dispatch(updateCart({id: itemId, cartData: {sizes: [size]}}));
   };
@@ -144,10 +141,7 @@ const Cart = () => {
                     </span>
                     <button
                       onClick={() =>
-                        handleQuantityChange(
-                          product._id,
-                          product.quantity + 1
-                        )
+                        handleQuantityChange(product._id, product.quantity + 1)
                       }
                       className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-200 transition"
                     >
@@ -156,7 +150,7 @@ const Cart = () => {
                   </div>
 
                   <button
-                    onClick={() => handleDelete(product._id)}
+                    onClick={() => handleDelete(product.cartItemId)}
                     className="flex items-center justify-center w-10 h-10 rounded-full bg-red-50 hover:bg-red-100 text-red-500 text-lg transition"
                     title="Remove Item"
                   >
