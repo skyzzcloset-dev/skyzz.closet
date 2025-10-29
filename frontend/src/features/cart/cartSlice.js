@@ -1,4 +1,3 @@
-// ✅ cartSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import cartService from "./cartServices";
 
@@ -9,9 +8,6 @@ const initialState = {
   isLoading: false,
   message: "",
 };
-
-const getToken = (thunkAPI) =>
-  thunkAPI.getState().auth?.user?.token || localStorage.getItem("token");
 
 // ➕ Add item
 export const addCartItems = createAsyncThunk("cart/add", async (cartData, thunkAPI) => {
