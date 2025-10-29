@@ -15,9 +15,7 @@ const Orders = () => {
         const res = await axios.get(
           "https://skyzzcloset-production-b3c8.up.railway.app/api/order/getAllOrders",
           {
-           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+            headers: {Authorization: `Bearer ${token}`},
           }
         );
 

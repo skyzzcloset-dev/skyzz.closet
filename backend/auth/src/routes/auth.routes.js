@@ -6,7 +6,8 @@ const {
   registerUser,
   loginUser,
   logoutUser,
-  userCount
+  userCount,
+  getAllUser
 } = require("../controllers/auth.controller");
 
 const  {authMiddleware}  = require("../middlewares/auth.middleware");
@@ -22,5 +23,6 @@ router.post("/logout", logoutUser);
 router.get("/profile/:id", authMiddleware, getProfile);
 router.patch("/updateprofile/:id", authMiddleware, updateProfile);
 router.get("/userCount", authMiddleware, userCount);
+router.get("/getAllUser" , authMiddleware , getAllUser)
 
 module.exports = router;

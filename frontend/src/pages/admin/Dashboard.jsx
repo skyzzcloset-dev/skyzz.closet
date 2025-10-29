@@ -41,7 +41,10 @@ const Dashboard = () => {
     const fetchOrders = async () => {
       try {
         const res = await axios.get(
-          "https://order-pvnb.onrender.com/api/order/orderCount"
+          "https://skyzzcloset-production-b3c8.up.railway.app/api/order/orderCount",
+          {
+            headers: {Authorization: `Bearer ${token}`},
+          }
         );
         setOrder(res.data);
       } catch (error) {

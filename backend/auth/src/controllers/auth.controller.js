@@ -150,6 +150,35 @@ async function getProfile(req, res) {
   }
 }
 
+//====================getALLUser===================
+
+async function getAllUser(req, res) {
+  const { fullName, email, role, skip = 0, limit = 20 } = req.query;
+
+  try {
+    const filter = {};
+
+    if (fullName) filter.fullName = fullName;
+    if (email) filter.email = email;
+    if (role) filter.role = role;
+
+    const users = await userModel
+      .find(filter)
+      .skip(parseInt(skip))
+      .limit(parseInt(limit));
+
+    return res.status(200).json({
+      message: "Users fetched successfully",
+      users,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+}
+
 // ================== UPDATE PROFILE ==================
 async function updateProfile(req, res) {
   try {
@@ -201,4 +230,5 @@ module.exports = {
   getProfile,
   updateProfile,
   userCount,
+  getAllUser
 };
