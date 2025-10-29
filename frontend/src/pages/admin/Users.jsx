@@ -16,11 +16,8 @@ const Users = () => {
   async function fetchUser() {
     try {
       const res = await axios.get(
-        "https://auth-production-547e.up.railway.app/api/auth/getAllUsers",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+        "https://auth-production-547e.up.railway.app/api/auth/getAllUser",{
+          header : localStorage.getItem("token")
         }
       );
       setUser(res.data.users || []);
@@ -29,6 +26,8 @@ const Users = () => {
     }
   }
 
+  console.log(user);
+  
   useEffect(() => {
     fetchUser();
   }, []);

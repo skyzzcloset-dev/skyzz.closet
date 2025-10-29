@@ -44,9 +44,6 @@ const Cart = () => {
 
         setProducts(fetchedProducts);
 
-        fetchedProducts.forEach((p) =>
-          console.log("Product fetched:",p.cartItemId)
-        );
       } catch (error) {
         console.error("Error fetching cart products:", error);
       }
@@ -78,7 +75,7 @@ const handleDelete = (cartItemId) => {
     0
   );
 
-    console.log(localStorage.getItem("token"))
+   
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-20">
       <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800">
