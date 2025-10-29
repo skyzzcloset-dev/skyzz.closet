@@ -1,14 +1,12 @@
-// ✅ cartServices.js
 import axios from "axios";
 
 const API_URL = "https://skyzzcloset-production.up.railway.app/api/cart/";
 
 const api = axios.create({
   baseURL: API_URL,
-  withCredentials: true,
+ 
 });
 
-// 🛒 Add item
 const addCartItems = async (cartData) => {
   const token = localStorage.getItem("token");
   const res = await api.post("items", cartData, {
@@ -17,7 +15,6 @@ const addCartItems = async (cartData) => {
   return res.data;
 };
 
-// 📥 Get items
 const getCartItems = async () => {
   const token = localStorage.getItem("token");
   const res = await api.get("getItems", {
@@ -26,7 +23,6 @@ const getCartItems = async () => {
   return res.data;
 };
 
-// ✏ Update
 const updateCart = async (id, cartData) => {
   const token = localStorage.getItem("token");
   const res = await api.patch(`items/${id}`, cartData, {
@@ -35,15 +31,12 @@ const updateCart = async (id, cartData) => {
   return res.data;
 };
 
-// 🗑 Delete
-const deleteCart = async (productId) => {
+const deleteCart = async (id) => {
   const token = localStorage.getItem("token");
-  const res = await api.delete(`items/${productId}`, {
+  const res = await api.delete(`items/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 };
 
-
-const cartService = { addCartItems, getCartItems, updateCart, deleteCart };
-export default cartService;
+export default { addCartItems, getCartItems, updateCart, deleteCart };

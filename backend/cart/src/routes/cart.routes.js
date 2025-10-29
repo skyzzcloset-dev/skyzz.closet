@@ -1,6 +1,5 @@
-// backend/src/routes/cart.routes.js
 const express = require("express");
-const {createAuthMiddleware} = require("../middlewares/auth.middleware");
+const { createAuthMiddleware } = require("../middlewares/auth.middleware");
 const {
   addItemToCart,
   getCart,

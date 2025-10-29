@@ -1,4 +1,3 @@
-// ✅ Cart.jsx
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useSelector, useDispatch} from "react-redux";
@@ -27,19 +26,27 @@ const Cart = () => {
 
         const responses = await Promise.all(productRequests);
 
-        const fetchedProducts = responses.map((res, index) => ({
-          ...res.data.product,
-          cartItemId: cartItems[index]._id, // ✅ keep backend cart id
-          quantity: cartItems[index].quantity,
-          sizes: cartItems[index].sizes || res.data.product.sizes || [],
-          colors: cartItems[index].colors || res.data.product.colors || [],
-          selectedSize:
-            cartItems[index].sizes?.[0] ||
-            res.data.product.sizes?.[0] ||
-            "Default",
-        }));
+        const fetchedProducts = responses.map((res, index) => {
+          const product = res.data.product;
+          const cartItem = cartItems[index];
+
+          return {
+            ...product,
+            productId: cartItem.productId, // keep your cart productId
+            cartItemId: cartItem._id, // if needed for cart item actions
+            quantity: cartItem.quantity,
+            sizes: cartItem.sizes || product.sizes || [],
+            colors: cartItem.colors || product.colors || [],
+            selectedSize:
+              cartItem.sizes?.[0] || product.sizes?.[0] || "Default",
+          };
+        });
 
         setProducts(fetchedProducts);
+
+        fetchedProducts.forEach((p) =>
+          console.log("Product fetched:",p.cartItemId)
+        );
       } catch (error) {
         console.error("Error fetching cart products:", error);
       }
@@ -48,19 +55,22 @@ const Cart = () => {
     fetchCartProducts();
   }, [cartItems]);
 
-  const handleQuantityChange = (itemId, newQty) => {
-    dispatch(updateCart({id: itemId, cartData: {quantity: newQty}}));
+  // ✅ use productId instead of _id here
+  const handleQuantityChange = (cartItemId, newQty) => {
+    dispatch(updateCart({id: cartItemId, cartData: {quantity: newQty}}));
   };
 
-  const handleDelete = (productId) => {
-    console.log(productId);
-    if (!productId) return toast.error("Invalid productId");
+const handleDelete = (cartItemId) => {
+  if (!cartItemId) return toast.error("Invalid productId");
 
-    dispatch(deleteCart({id: productId}));
-    toast.success("Cart item deleted!");
-  };
-  const handleSizeChange = (itemId, size) => {
-    dispatch(updateCart({id: itemId, cartData: {sizes: [size]}}));
+
+  dispatch(deleteCart({ id: cartItemId }));
+  toast.success("Cart item deleted!");
+};
+
+
+  const handleSizeChange = (cartItemId, size) => {
+    dispatch(updateCart({id: cartItemId, cartData: {sizes: [size]}}));
   };
 
   const totalPrice = products.reduce(
@@ -68,6 +78,7 @@ const Cart = () => {
     0
   );
 
+    console.log(localStorage.getItem("token"))
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-20">
       <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800">
@@ -79,7 +90,7 @@ const Cart = () => {
           <div className="lg:col-span-2 space-y-6">
             {products.map((product) => (
               <div
-                key={product.cartItemId}
+                key={product.productId}
                 className="flex flex-col sm:flex-row justify-between bg-white rounded-xl shadow-sm p-5 border border-gray-100 transition hover:shadow-md"
               >
                 <div className="flex items-start gap-4 w-full sm:w-auto">
@@ -128,7 +139,7 @@ const Cart = () => {
                     <button
                       onClick={() =>
                         handleQuantityChange(
-                          product._id,
+                          product.cartItemId,
                           Math.max(1, product.quantity - 1)
                         )
                       }
@@ -141,7 +152,10 @@ const Cart = () => {
                     </span>
                     <button
                       onClick={() =>
-                        handleQuantityChange(product._id, product.quantity + 1)
+                        handleQuantityChange(
+                          product.cartItemId,
+                          product.quantity + 1
+                        )
                       }
                       className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-200 transition"
                     >
