@@ -277,32 +277,15 @@ async function countOrders(req, res) {
 
 
 async function updateOrderStatus(req, res) {
-  const user = req.user;
 
-  const { status } = req.body;
+  const  user = req.user 
 
-  console.log(user);
-  
   try {
-   const order = await orderModel.findOne({ user: new mongoose.Types.ObjectId(user.id) });
-
-    console.log(order);
-    
-    if (!order) {
-      return res.status(404).json({ message: "No order found" });
-    }
-
-    order.status = status;
-    await order.save();
-
-    return res.status(200).json({
-      message: `Order status updated to ${status}`,
-      order,
-    });
+    const payment = await axios.get("https://payment-production-42a1.up.railway.app/api/payment/get")
   } catch (error) {
-    console.error("Error updating order status:", error);
-    res.status(500).json({ message: "Server error" });
+    
   }
+   
 }
 
 
