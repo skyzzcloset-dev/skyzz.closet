@@ -9,17 +9,22 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
-// ✅ CORS setup: must be before routes
+// ✅ CORS setup (frontend: Vercel, allow cookies)
 app.use(
   cors({
-    origin: ["https://www.skyzzcloset.shop", "http://localhost:5173"], // allowed frontends
+    origin: [
+      "https://www.skyzzcloset.shop",
+      "https://skyzzcloset.shop", // added non-www for mobile compatibility
+      "http://localhost:5173",
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // important for cookies
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
   })
 );
 
-// ✅ Add a small middleware to log requests (optional, useful for debugging Railway issues)
+// ✅ Optional: Log requests (useful for debugging on Railway)
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
@@ -38,7 +43,7 @@ app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// ✅ Error handler
+// ✅ Global error handler
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({ message: "Internal server error", error: err.message });
