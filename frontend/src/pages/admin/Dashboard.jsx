@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Orders from "./Orders";
 
@@ -6,6 +6,8 @@ const Dashboard = () => {
   const [product, setProduct] = useState(0);
   const [user, setUser] = useState(0);
   const [order, setOrder] = useState(0);
+
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchProductCount = async () => {
@@ -15,55 +17,48 @@ const Dashboard = () => {
         );
         setProduct(res.data.count || 0);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching product count:", error);
       }
     };
-    fetchProductCount();
-  }, []);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await axios.get(
-        "https://auth-production-547e.up.railway.app/api/auth/userCount",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setUser(res.data.count);
+    const fetchUserCount = async () => {
+      try {
+        const res = await axios.get(
+          "https://auth-production-547e.up.railway.app/api/auth/userCount",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setUser(res.data.count || 0);
+      } catch (error) {
+        console.error("Error fetching user count:", error);
+      }
     };
 
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchOrderCount = async () => {
       try {
         const res = await axios.get(
           "https://skyzzcloset-production-b3c8.up.railway.app/api/order/orderCount",
           {
-            headers: {Authorization: `Bearer ${token}`},
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setOrder(res.data);
+        setOrder(res.data.count || 0);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching order count:", error);
       }
     };
 
-    fetchOrders();
-  }, []);
-
-  console.log(order);
+    fetchProductCount();
+    fetchUserCount();
+    fetchOrderCount();
+  }, [token]);
 
   const stats = [
-    {name: "Total Product", value: product},
-    {name: "Total Users", value: user},
-    {name: "Total Orders", value: order},
+    { name: "Total Products", value: product },
+    { name: "Total Users", value: user },
+    { name: "Total Orders", value: order },
   ];
-
-  const columns = ["ID", "Customer", "Date", "Total"];
 
   return (
     <>
@@ -86,6 +81,7 @@ const Dashboard = () => {
           </div>
         </main>
       </div>
+
       <div>
         <Orders />
       </div>

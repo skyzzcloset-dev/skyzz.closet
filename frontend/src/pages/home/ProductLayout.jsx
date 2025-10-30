@@ -63,6 +63,7 @@ const ProductLayout = () => {
 
   const toggleLike = () => setLiked((p) => !p);
 
+  // ✅ Loading & not-found states first
   if (loading)
     return (
       <div className="flex items-center justify-center h-60">
@@ -77,17 +78,25 @@ const ProductLayout = () => {
       </div>
     );
 
+  // ✅ Safe stock logic (after item is available)
+  const stockMessage =
+    item.stock === 0
+      ? "Out of Stock"
+      : item.stock <= 5
+      ? `Only ${item.stock} left!`
+      : "In Stock";
+
   return (
     <section className="w-full max-w-7xl mx-auto px-4 py-10 md:py-14">
       <div className="flex flex-col lg:flex-row gap-10">
         {/* Left: Image Gallery */}
         <div className="lg:w-1/2 flex flex-col items-center gap-4">
-          <div className="w-full max-w-[480px]  bg-white rounded-2xl shadow-md overflow-hidden relative flex items-center justify-center">
+          <div className="w-full max-w-[480px] bg-white rounded-2xl shadow-md overflow-hidden relative flex items-center justify-center">
             <LazyLoadImage
               src={selectedImage}
               alt={item.name}
               effect="blur"
-              className="max-w-full h-[350px] lg:h-[500px] rounded-2xl transition-transform duration-500 hover:scale-105"
+              className="max-w-full h-[350px] lg:h-[500px] rounded-2xl transition-transform duration-500 hover:scale-105 object-contain"
             />
             <button
               onClick={toggleLike}
@@ -128,8 +137,22 @@ const ProductLayout = () => {
             <p className="text-gray-500 text-sm mt-1">SKU: {item.sku}</p>
           </div>
 
-          <div className="text-3xl font-extrabold text-orange-600">
-            ₹{item.price}
+          {/* ✅ Price + Stock Message */}
+          <div>
+            <div className="text-3xl font-extrabold text-orange-600">
+              ₹{item.price}
+            </div>
+            <div
+              className={`mt-2 text-sm font-medium px-3 py-1 rounded-lg w-fit ${
+                stockMessage.toLowerCase().includes("out")
+                  ? "bg-red-100 text-red-600 border border-red-200"
+                  : stockMessage.toLowerCase().includes("only")
+                  ? "bg-yellow-100 text-yellow-700 border border-yellow-200"
+                  : "bg-green-100 text-green-600 border border-green-200"
+              }`}
+            >
+              {stockMessage}
+            </div>
           </div>
 
           <p className="text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-4 text-base leading-relaxed max-h-40 overflow-y-auto">

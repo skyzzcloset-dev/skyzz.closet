@@ -6,9 +6,11 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [viewOrder, setViewOrder] = useState(null);
+  const [payment, setPayment] = useState([]);
 
   const reversedOrders = [...orders].reverse();
 
+  const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -26,6 +28,24 @@ const Orders = () => {
     };
 
     fetchOrders();
+  }, []);
+
+  useEffect(() => {
+    const fetchPayment = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:3004/api/payment/getPay",
+          {
+            headers: {Authorization: `Bearer ${token}`},
+          }
+        );
+        setPayment(res.data.payments);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+
+    fetchPayment();
   }, []);
 
   const handleCheckboxChange = (orderId) => {
@@ -48,12 +68,23 @@ const Orders = () => {
   };
 
   // ✅ Column labels must match the keys in `data` (case-insensitive)
-  const columns = ["", "Order ID", "Customer", "Address", "Total", "Actions"];
+  const columns = [
+    "",
+    "Order ID",
+    "Customer",
+    "Address",
+    "Total",
+    "payment Status",
+    "Actions",
+  ];
 
   // ✅ Map API data into table rows with lowercase keys
   const data = reversedOrders.map((order) => {
     const address = order.shippingAddress || {};
     const isDelivered = selectedOrders.includes(order._id);
+
+    const paymentData = payment.find((p) => p.order === order._id);
+    const paymentStatus = paymentData ? paymentData.status : "PENDING";
 
     return {
       "": (
@@ -78,6 +109,19 @@ const Orders = () => {
       total: (
         <span className="font-semibold">
           {order.totalAmount?.price} {order.totalAmount?.currency}
+        </span>
+      ),
+      "payment status": (
+        <span
+          className={`font-semibold ${
+            paymentStatus === "confirmed"
+              ? "text-green-600"
+              : paymentStatus === "failed"
+              ? "text-red-600"
+              : "text-yellow-600"
+          }`}
+        >
+          {paymentStatus}
         </span>
       ),
       actions: (

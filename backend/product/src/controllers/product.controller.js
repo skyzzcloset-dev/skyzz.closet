@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require("uuid");
+const {v4: uuidv4} = require("uuid");
 const uploadFile = require("../services/imagekit.service");
 const productModel = require("../models/product.model");
 const mongoose = require("mongoose");
@@ -6,16 +6,16 @@ const mongoose = require("mongoose");
 // ✅ Add product
 async function addProduct(req, res) {
   try {
-    const { name, description, price, stock, sizes, colors, category, brand } =
+    const {name, description, price, stock, sizes, colors, category, brand} =
       req.body;
 
     if (!name || !description || !price || !stock || !category || !brand) {
-      return res.status(400).json({ error: "All fields are required" });
+      return res.status(400).json({error: "All fields are required"});
     }
 
     const admin = req.user?.id;
     if (!admin) {
-      return res.status(400).json({ error: "Admin ID is required" });
+      return res.status(400).json({error: "Admin ID is required"});
     }
 
     const uploadImages = await Promise.all(
@@ -25,12 +25,12 @@ async function addProduct(req, res) {
           `${uuidv4()}-${file.originalname}`,
           category
         );
-        return { url: result.url, fileId: result.fileId };
+        return {url: result.url, fileId: result.fileId};
       })
     );
 
     if (!uploadImages || uploadImages.length === 0) {
-      return res.status(400).json({ error: "No image uploaded" });
+      return res.status(400).json({error: "No image uploaded"});
     }
 
     const product = await productModel.create({
@@ -46,28 +46,34 @@ async function addProduct(req, res) {
       images: uploadImages,
     });
 
-    res.status(201).json({ message: "Product Added Successfully", product });
+    res.status(201).json({message: "Product Added Successfully", product});
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({error: err.message});
   }
 }
 
 // ✅ Get all products
 
 async function allProducts(req, res) {
-  const { q, maxPrice, minPrice, category, skip = 0, limit = 20 } = req.query;
+  const {q, maxPrice, minPrice, category, skip = 0, limit = 20} = req.query;
   try {
     const filter = {};
-    
-    if (q) filter.$text = { $search: q };
+
+    if (q) filter.$text = {$search: q};
     if (category) filter.category = category; // ✅ filter by category
 
     if (minPrice) {
-      filter["price.amount"] = { ...filter["price.amount"], $gte: Number(minPrice) };
+      filter["price.amount"] = {
+        ...filter["price.amount"],
+        $gte: Number(minPrice),
+      };
     }
     if (maxPrice) {
-      filter["price.amount"] = { ...filter["price.amount"], $lte: Number(maxPrice) };
+      filter["price.amount"] = {
+        ...filter["price.amount"],
+        $lte: Number(maxPrice),
+      };
     }
 
     const products = await productModel
@@ -75,35 +81,66 @@ async function allProducts(req, res) {
       .skip(Number(skip))
       .limit(Math.min(Number(limit), 20));
 
-    res.status(200).json({ message: "All Products fetched", products });
+    const result = products.map((p) => ({
+      ...p.toObject(),
+      stockMessage:
+        p.stock === 0
+          ? "Out of stock"
+          : p.stock === 1
+            ? "Hurry! Only 1 left"
+            : p.stock <= 3
+              ? `Only ${p.stock} left`
+              : "In stock",
+    }));
+    res
+      .status(200)
+      .json({message: "All Products fetched", products, products: result});
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({error: err.message});
   }
 }
-
 
 // ✅ Get single product
 async function singleProduct(req, res) {
   try {
     const product = await productModel.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
-    res.status(200).json({ message: "Product fetched successfully", product });
+    if (!product) return res.status(404).json({message: "Product not found"});
+
+    const stockMessage =
+      product.stock === 0
+        ? "Out of stock"
+        : product.stock === 1
+          ? "Hurry! Only 1 left"
+          : product.stock <= 3
+            ? `Only ${product.stock} left`
+            : "In stock";
+
+    res.status(200).json({
+      message: "Product fetched successfully",
+      product: {...product.toObject(), stockMessage},
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({error: err.message});
   }
 }
 
-
 async function updateProduct(req, res) {
-  const { id } = req.params;
+  const {id} = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: "Invalid product id" });
+    return res.status(400).json({message: "Invalid product id"});
   }
 
-  const product = await productModel.findOne({ _id: id, admin: req.user.id });
-  if (!product) return res.status(404).json({ message: "Product not found" });
+  const product = await productModel.findOne({_id: id, admin: req.user.id});
+  if (!product) return res.status(404).json({message: "Product not found"});
 
-  const allowedUpdates = ["name", "description", "price", "category", "stock", "brand"];
+  const allowedUpdates = [
+    "name",
+    "description",
+    "price",
+    "category",
+    "stock",
+    "brand",
+  ];
   for (const key of Object.keys(req.body)) {
     if (allowedUpdates.includes(key)) {
       if (key === "price") {
@@ -115,36 +152,36 @@ async function updateProduct(req, res) {
   }
 
   await product.save();
-  res.status(200).json({ message: "Product updated successfully", product });
+  res.status(200).json({message: "Product updated successfully", product});
 }
 
 // ✅ Delete product
 async function deleteProduct(req, res) {
-  const { id } = req.params;
+  const {id} = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: "Invalid Product ID" });
+    return res.status(400).json({message: "Invalid Product ID"});
   }
 
-  const product = await productModel.findOne({ _id: id });
-  if (!product) return res.status(404).json({ message: "Product not Found" });
+  const product = await productModel.findOne({_id: id});
+  if (!product) return res.status(404).json({message: "Product not Found"});
 
   if (product.admin.toString() !== req.user.id) {
     return res
       .status(403)
-      .json({ message: "Forbidden : You can delete your own products" });
+      .json({message: "Forbidden : You can delete your own products"});
   }
 
   await product.deleteOne();
-  return res.status(200).json({ message: "Product deleted" });
+  return res.status(200).json({message: "Product deleted"});
 }
 
 // ✅ Count products
 async function countProduct(req, res) {
   try {
     const count = await productModel.countDocuments();
-    res.status(200).json({ message: "Count Fetch Successfully", count });
+    res.status(200).json({message: "Count Fetch Successfully", count});
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({error: err.message});
   }
 }
 

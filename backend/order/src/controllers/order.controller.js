@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const orderModel = require("../models/order.model");
 const axios = require("axios");
+const mongoose = require("mongoose")
 
 // ✅ Create Order
 async function createOrder(req, res) {
@@ -274,6 +275,38 @@ async function countOrders(req, res) {
   }
 }
 
+
+async function updateOrderStatus(req, res) {
+  const user = req.user;
+
+  const { status } = req.body;
+
+  console.log(user);
+  
+  try {
+   const order = await orderModel.findOne({ user: new mongoose.Types.ObjectId(user.id) });
+
+    console.log(order);
+    
+    if (!order) {
+      return res.status(404).json({ message: "No order found" });
+    }
+
+    order.status = status;
+    await order.save();
+
+    return res.status(200).json({
+      message: `Order status updated to ${status}`,
+      order,
+    });
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+
 module.exports = {
   createOrder,
   getMyOrders,
@@ -282,4 +315,5 @@ module.exports = {
   updateOrderAddress,
   countOrders,
   getAllOrders,
+  updateOrderStatus
 };
