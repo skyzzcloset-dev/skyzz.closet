@@ -15,19 +15,25 @@ const Users = () => {
 
   async function fetchUser() {
     try {
+      const token = localStorage.getItem("token"); // or wherever you store it
+
       const res = await axios.get(
-        "https://auth-production-547e.up.railway.app/api/auth/getAllUser",{
-          header : localStorage.getItem("token")
+        "https://auth-production-547e.up.railway.app/api/auth/getAllUser",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
+
       setUser(res.data.users || []);
     } catch (error) {
       console.error("Failed to fetch users:", error);
     }
   }
 
-  console.log(user);
-  
+
+
   useEffect(() => {
     fetchUser();
   }, []);
