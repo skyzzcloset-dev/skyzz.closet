@@ -6,11 +6,12 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [viewOrder, setViewOrder] = useState(null);
-  const [payment, setPayment] = useState([]);
-
-  const reversedOrders = [...orders].reverse();
+  const [payments, setPayments] = useState([]);
 
   const token = localStorage.getItem("token");
+  const reversedOrders = [...orders].reverse();
+
+  // 🧾 Fetch Orders
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -20,7 +21,6 @@ const Orders = () => {
             headers: {Authorization: `Bearer ${token}`},
           }
         );
-
         setOrders(res.data.orders);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -28,26 +28,40 @@ const Orders = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, [token]);
 
+  // 💳 Fetch Payment Info for Each Order
   useEffect(() => {
     const fetchPayment = async () => {
+      if (!token) {
+        console.warn("No token found in localStorage");
+        return;
+      }
+
       try {
-        const res = await axios.get(
-          "http://localhost:3004/api/payment/getPay",
-          {
-            headers: {Authorization: `Bearer ${token}`},
-          }
+        const responses = await Promise.all(
+          orders.map((order) =>
+            axios.get(`https://payment-production-42a1.up.railway.app/api/payment/getPay/${order._id}`, {
+              headers: {Authorization: `Bearer ${token}`},
+            })
+          )
         );
-        setPayment(res.data.payments);
+      
+        const paymentList = responses.map((res) => res.data);
+        setPayments(paymentList);
       } catch (error) {
-        console.error("Error fetching orders:", error);
+        console.error(
+          "Error fetching payments:",
+          error.response?.data || error
+        );
       }
     };
 
-    fetchPayment();
-  }, []);
+    if (orders.length > 0) fetchPayment();
+  }, [orders, token]);
 
+  
+  // 🧩 Checkbox toggle
   const handleCheckboxChange = (orderId) => {
     setSelectedOrders((prev) =>
       prev.includes(orderId)
@@ -56,6 +70,7 @@ const Orders = () => {
     );
   };
 
+  // 📦 Format Address
   const formatAddress = (address) => {
     const parts = [
       address.street,
@@ -67,30 +82,28 @@ const Orders = () => {
     return parts.join(", ");
   };
 
-  // ✅ Column labels must match the keys in `data` (case-insensitive)
+  // 🪶 Table columns
   const columns = [
     "",
     "Order ID",
     "Customer",
     "Address",
     "Total",
-    "payment Status",
+    "Payment Status",
     "Actions",
   ];
 
-  // ✅ Map API data into table rows with lowercase keys
-  const data = reversedOrders.map((order) => {
+  // 🗂️ Table data
+  const data = reversedOrders.map((order, index) => {
     const address = order.shippingAddress || {};
-    const isDelivered = selectedOrders.includes(order._id);
-
-    const paymentData = payment.find((p) => p.order === order._id);
-    const paymentStatus = paymentData ? paymentData.status : "PENDING";
+    const isSelected = selectedOrders.includes(order._id);
+    const paymentStatus = payments[index]?.status || "pending";
 
     return {
       "": (
         <input
           type="checkbox"
-          checked={isDelivered}
+          checked={isSelected}
           onChange={() => handleCheckboxChange(order._id)}
           className="cursor-pointer"
         />
@@ -135,13 +148,14 @@ const Orders = () => {
     };
   });
 
+  // 🪟 Modal for viewing order
   return (
     <>
       <div className="px-5 lg:mr-65">
         <header className="mb-4 border-b border-gray-300 p-5">
           <h1 className="text-2xl lg:text-4xl font-bold">Orders</h1>
         </header>
-        {/* ✅ Modal */}
+
         {viewOrder && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
             <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
@@ -188,6 +202,7 @@ const Orders = () => {
           </div>
         )}
       </div>
+
       <Table columns={columns} data={data} />
     </>
   );

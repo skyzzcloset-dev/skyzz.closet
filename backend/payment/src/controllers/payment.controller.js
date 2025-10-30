@@ -98,30 +98,20 @@ async function verifyPayment(req, res) {
 }
 
 async function getPayment(req, res) {
-  const { user, order, status, razorpayOrderId, skip = 0, limit = 20 } = req.query;
+  const {id} = req.params;
 
   try {
-    const filter = {};
+    const payment = await paymentModel.findOne({order: id});
 
-    if (user) filter.user = user;
-    if (order) filter.order = order;
-    if (status) filter.status = status;
-    if (razorpayOrderId) filter.razorpayOrderId = razorpayOrderId;
-
-    const payments = await paymentModel
-      .find(filter)
-      .skip(parseInt(skip))
-      .limit(parseInt(limit));
-
-    if (payments.length === 0) {
-      return res.status(404).json({ message: "No payments found" });
+    if (!payment) {
+      return res.status(400).json({message: "Payment Not Found!!"});
     }
 
-    return res.status(200).json({ message: "Payments found", payments });
+    return res.status(200).json(payment);
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching payments", error: error.message });
+    console.error(error);
+    res.status(500).json({message: "Server Error"});
   }
 }
-
 
 module.exports = {createPayment, verifyPayment, getPayment};
