@@ -1,5 +1,5 @@
 const express = require("express");
-const {createAuthMiddleware} = require("../middlewares/auth.middleware");
+const { createAuthMiddleware } = require("../middlewares/auth.middleware");
 const {
   createOrder,
   getMyOrders,
@@ -8,26 +8,31 @@ const {
   updateOrderAddress,
   countOrders,
   getAllOrders,
+  updateOrderStatus,
 } = require("../controllers/order.controller");
 
 const router = express.Router();
 
-// ✅ Static & specific routes FIRST
+// ✅ Customer routes
 router.post("/create", createAuthMiddleware(["customer"]), createOrder);
 router.post("/cancel/:id", createAuthMiddleware(["customer"]), cancelOrderById);
-
 router.get("/me", createAuthMiddleware(["customer"]), getMyOrders);
-router.get("/getAllOrders", createAuthMiddleware(["admin"]), getAllOrders);
-router.get("/orderCount", createAuthMiddleware(["admin"]), countOrders);
-
-// ✅ Address update before dynamic :id
 router.patch(
   "/address/:id",
   createAuthMiddleware(["customer"]),
   updateOrderAddress
 );
 
-// ✅ Dynamic route LAST (or with regex)
+// ✅ Admin routes
+router.get("/getAllOrders", createAuthMiddleware(["admin"]), getAllOrders);
+router.get("/orderCount", createAuthMiddleware(["admin"]), countOrders);
+router.patch(
+  "/updateStatus/:id",
+  createAuthMiddleware(["admin"]),
+  updateOrderStatus
+);
+
+// ✅ Dynamic route (must be last)
 router.get("/:id", createAuthMiddleware(["customer"]), getOrderById);
 
 module.exports = router;
