@@ -81,20 +81,9 @@ async function allProducts(req, res) {
       .skip(Number(skip))
       .limit(Math.min(Number(limit), 20));
 
-    const result = products.map((p) => ({
-      ...p.toObject(),
-      stockMessage:
-        p.stock === 0
-          ? "Out of stock"
-          : p.stock === 1
-            ? "Hurry! Only 1 left"
-            : p.stock <= 3
-              ? `Only ${p.stock} left`
-              : "In stock",
-    }));
     res
       .status(200)
-      .json({message: "All Products fetched", products, products: result});
+      .json({message: "All Products fetched", products});
   } catch (err) {
     res.status(500).json({error: err.message});
   }
@@ -106,18 +95,10 @@ async function singleProduct(req, res) {
     const product = await productModel.findById(req.params.id);
     if (!product) return res.status(404).json({message: "Product not found"});
 
-    const stockMessage =
-      product.stock === 0
-        ? "Out of stock"
-        : product.stock === 1
-          ? "Hurry! Only 1 left"
-          : product.stock <= 3
-            ? `Only ${product.stock} left`
-            : "In stock";
 
     res.status(200).json({
       message: "Product fetched successfully",
-      product: {...product.toObject(), stockMessage},
+      product: {...product.toObject()},
     });
   } catch (err) {
     res.status(500).json({error: err.message});
