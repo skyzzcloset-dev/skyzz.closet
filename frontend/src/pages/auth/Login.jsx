@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { login as loginUser } from "../../features/auth/authSlice";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm();
