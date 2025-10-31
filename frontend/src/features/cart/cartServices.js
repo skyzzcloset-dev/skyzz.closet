@@ -1,10 +1,9 @@
 import axios from "axios";
 
-const API_URL = "https://skyzzcloset-production.up.railway.app/api/cart/";
+const API_URL = "https://skyzzcloset-production.up.railway.app/api/cart/items/";
 
 const api = axios.create({
   baseURL: API_URL,
- 
 });
 
 const addCartItems = async (cartData) => {
@@ -28,6 +27,9 @@ const updateCart = async (id, cartData) => {
   const res = await api.patch(`items/${id}`, cartData, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+  console.log(res.data);
+  
   return res.data;
 };
 

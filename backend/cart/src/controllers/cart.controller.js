@@ -74,24 +74,65 @@ async function addItemToCart(req, res) {
 
 // ================= UPDATE CART ITEM =================
 async function updateCart(req, res) {
-  const {id} = req.params;
-  const {qty} = req.body;
-  const user = req.user;
-  const cart = await cartModel.findOne({user: user.id});
+  try {
+    const user = req.user;
+    console.log(user);
+    
+    const cart = await cartModel.findOne({ user: user.id });
+    console.log(cart);
+    
+   console.log(cart.items);
+   
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
 
-  console.log(cart);
+    // 🟢 Case 1: Bulk update with items array
+    if (cart.items && Array.isArray(cart.items)) {
+      cart.items.forEach((updateItem) => {
+        const idx = cart.items.findIndex(
+          (i) => i.productId.toString() === updateItem.productId
+        );
+        if (idx >= 0) {
+          if (!updateItem.quantity || updateItem.quantity <= 0) {
+            throw new Error("Quantity must be greater than 0");
+          }
+          cart.items[idx].quantity = updateItem.quantity;
+        }
+      });
+    } else {
+      // 🟢 Case 2: Single update with productId param + quantity in body
+      const { productId } = req.params;
+      const { quantity } = req.body;
 
-  if (!cart) {
-    return res.status(404).json({message: "Cart not found"});
+      if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return res.status(400).json({ message: "Invalid Product ID" });
+      }
+
+      if (!quantity || quantity <= 0) {
+        return res
+          .status(400)
+          .json({ message: "Quantity must be greater than 0" });
+      }
+
+      const idx = cart.items.findIndex(
+        (i) => i.productId.toString() === productId
+      );
+      if (idx < 0) {
+        return res.status(404).json({ message: "Item not found in cart" });
+      }
+
+      cart.items[idx].quantity = quantity;
+    }
+
+    await cart.save();
+    return res.status(200).json({ message: "Cart updated", cart });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
   }
-  const index = cart.items.findIndex((item) => item._id.toString() === id);
-
-  if (index < 0) {
-    return res.status(404).json({message: "Item not found"});
-  }
-  cart.items[index].quantity = qty;
-  await cart.save();
-  res.status(200).json({message: "Item updated", cart});
 }
 
 // ================= DELETE CART ITEM =================
@@ -100,15 +141,9 @@ async function deleteCart(req, res) {
     const {id} = req.params;
     const cart = await cartModel.findOne({user: req.user.id});
 
-    console.log(cart);
-    console.log("REQ.USER:", req.user);
-    console.log("AUTH HEADER:", req.headers.authorization);
-
     if (!cart) return res.status(404).json({message: "Cart not found"});
 
     const index = cart.items.findIndex((item) => item._id.toString() === id);
-
-    console.log(index);
 
     if (index < 0)
       return res.status(404).json({message: "Item not found in cart"});
