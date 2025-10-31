@@ -3,7 +3,7 @@ import {useDispatch} from "react-redux";
 import {NavLink, useNavigate} from "react-router-dom";
 import "remixicon/fonts/remixicon.css";
 import {logout} from "../features/auth/authSlice";
-import {toast} from "react-toastify";
+import toast from "react-hot-toast";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
