@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const orderModel = require("../models/order.model");
 const axios = require("axios");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 // ✅ Create Order
 async function createOrder(req, res) {
@@ -38,9 +38,8 @@ async function createOrder(req, res) {
       {headers: {Authorization: `Bearer ${token}`}}
     );
 
-
     console.log(cartData);
-    
+
     const items = cartData?.cart?.items || [];
     if (!items.length)
       return res.status(400).json({success: false, message: "Cart is empty"});
@@ -115,7 +114,6 @@ async function createOrder(req, res) {
       .status(201)
       .json({success: true, message: "Order created", order});
   } catch (error) {
-   
     console.error("Order error:", error.response?.data || error.message);
     return res.status(500).json({success: false, message: error.message});
   }
@@ -275,19 +273,41 @@ async function countOrders(req, res) {
   }
 }
 
-
 async function updateOrderStatus(req, res) {
-
-  const  user = req.user 
+  const { id } = req.params;
+  const token =
+    req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
 
   try {
-    const payment = await axios.get("https://payment-production-42a1.up.railway.app/api/payment/get")
-  } catch (error) {
-    
-  }
-   
-}
+    // ✅ 1. Get latest payment
+    const { data: payment } = await axios.get(
+      `https://payment-production-42a1.up.railway.app/api/payment/getPay/${id}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
+    if (!payment) return res.status(400).json({ message: "Payment not found" });
+
+    // ✅ 2. Handle payment status
+    if (payment.status === "PENDING") {
+      return res.status(200).json({ message: "Payment pending" });
+    }
+
+    if (payment.status === "COMPLETED") {
+      const order = await orderModel.findById(id);
+      if (!order) return res.status(404).json({ message: "Order not found" });
+
+      if (order.status !== "CONFIRMED") {
+        order.status = "CONFIRMED";
+        await order.save();
+      }
+    }
+
+    return res.status(200).json({ message: "Order status checked/updated" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong", error });
+  }
+}
 
 
 module.exports = {
@@ -298,5 +318,5 @@ module.exports = {
   updateOrderAddress,
   countOrders,
   getAllOrders,
-  updateOrderStatus
+  updateOrderStatus,
 };

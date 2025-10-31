@@ -42,6 +42,9 @@ const Cart = () => {
           };
         });
 
+        console.log(products);
+        
+
         setProducts(fetchedProducts);
 
       } catch (error) {
@@ -59,8 +62,6 @@ const Cart = () => {
 
 const handleDelete = (cartItemId) => {
   if (!cartItemId) return toast.error("Invalid productId");
-
-
   dispatch(deleteCart({ id: cartItemId }));
   toast.success("Cart item deleted!");
 };

@@ -33,6 +33,7 @@ router.patch(
 );
 
 // ✅ Dynamic route (must be last)
-router.get("/:id", createAuthMiddleware(["customer"]), getOrderById);
+router.get("/:id", createAuthMiddleware(["customer", "admin"]), getOrderById);
+
 
 module.exports = router;
