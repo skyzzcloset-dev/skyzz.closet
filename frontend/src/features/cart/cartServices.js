@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://skyzzcloset-production.up.railway.app/api/cart/items/";
+const API_URL = "https://skyzzcloset-production.up.railway.app/api/cart/";
 
 const api = axios.create({
   baseURL: API_URL,
