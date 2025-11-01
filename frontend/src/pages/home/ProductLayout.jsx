@@ -197,10 +197,7 @@ const ProductLayout = () => {
                     ? item.sizes[0].split(",").map((s) => s.trim())
                     : item.sizes;
 
-                console.log(availableSizes);
-
                 const isAvailable = availableSizes.includes(size);
-                console.log(isAvailable);
 
                 return (
                   <button
