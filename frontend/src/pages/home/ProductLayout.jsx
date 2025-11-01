@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
 import axios from "axios";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import { useDispatch } from "react-redux";
-import { addCartItems } from "../../features/cart/cartSlice";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import {LazyLoadImage} from "react-lazy-load-image-component";
+import {useDispatch} from "react-redux";
+import {addCartItems} from "../../features/cart/cartSlice";
+import {FaHeart, FaRegHeart} from "react-icons/fa";
 import toast from "react-hot-toast";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
 const ProductLayout = () => {
-  const { id } = useParams();
+  const {id} = useParams();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState("");
@@ -63,7 +63,6 @@ const ProductLayout = () => {
 
   const toggleLike = () => setLiked((p) => !p);
 
-  // ✅ Loading & not-found states first
   if (loading)
     return (
       <div className="flex items-center justify-center h-60">
@@ -78,7 +77,6 @@ const ProductLayout = () => {
       </div>
     );
 
-  // ✅ Safe stock logic (after item is available)
   const stockMessage =
     item.stock === 0
       ? "Out of Stock"
@@ -86,12 +84,17 @@ const ProductLayout = () => {
       ? `Only ${item.stock} left!`
       : "In Stock";
 
+  // ✅ Fix: Convert "S,M" → ["S","M"]
+  const availableSizes = Array.isArray(item.sizes)
+    ? item.sizes
+    : item.sizes[0]?.split(",") || [];
+
   return (
     <section className="w-full max-w-7xl mx-auto px-4 py-10 md:py-14">
       <div className="flex flex-col lg:flex-row gap-10">
         {/* Left: Image Gallery */}
         <div className="lg:w-1/2 flex flex-col items-center gap-4">
-          <div className="w-full max-w-[480px] bg-white rounded-2xl shadow-md overflow-hidden relative flex items-center justify-center">
+          <div className="w-full h-[350px] lg:h-[450px] max-w-[480px] bg-white rounded-2xl shadow-md overflow-hidden relative flex items-center justify-center">
             <LazyLoadImage
               src={selectedImage}
               alt={item.name}
@@ -107,12 +110,12 @@ const ProductLayout = () => {
           </div>
 
           {item.images?.length > 1 && (
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide p-5">
+            <div className="flex gap-3 overflow-x-auto  scrollbar-hide p-1">
               {item.images.map((img) => (
                 <button
                   key={img._id}
                   onClick={() => setSelectedImage(img.url)}
-                  className={`rounded-xl h-20 overflow-hidden border-2 transition-all duration-200 ${
+                  className={`rounded-xl h-25 overflow-hidden border-2 transition-all duration-200 ${
                     selectedImage === img.url
                       ? "border-orange-500 scale-105"
                       : "border-transparent hover:border-gray-300"
@@ -137,7 +140,6 @@ const ProductLayout = () => {
             <p className="text-gray-500 text-sm mt-1">SKU: {item.sku}</p>
           </div>
 
-          {/* ✅ Price + Stock Message */}
           <div>
             <div className="text-3xl font-extrabold text-orange-600">
               ₹{item.price}
@@ -159,7 +161,6 @@ const ProductLayout = () => {
             {item.description || "No description available."}
           </p>
 
-          {/* Colors */}
           {item.colors?.length > 0 && (
             <div>
               <h3 className="font-semibold text-sm mb-2 uppercase text-gray-700">
@@ -183,26 +184,34 @@ const ProductLayout = () => {
             </div>
           )}
 
-          {/* Sizes */}
           <div>
             <h3 className="font-semibold text-sm mb-2 uppercase text-gray-700">
               Sizes
             </h3>
             <div className="flex flex-wrap gap-3">
               {defaultSizes.map((size) => {
-                const available = item.sizes.includes(size);
+                const availableSizes =
+                  Array.isArray(item.sizes) &&
+                  item.sizes.length === 1 &&
+                  item.sizes[0].includes(",")
+                    ? item.sizes[0].split(",").map((s) => s.trim())
+                    : item.sizes;
+
+                const isAvailable = availableSizes.includes(size);
+
                 return (
                   <button
                     key={size}
-                    onClick={() => available && setSelectedSize(size)}
-                    disabled={!available}
-                    className={`w-12 h-12 flex items-center justify-center rounded-full border text-xs font-bold transition-all duration-200 ${
-                      selectedSize === size
-                        ? "bg-orange-500 text-white border-orange-500 shadow"
-                        : available
-                        ? "bg-white text-gray-800 border-gray-300 hover:border-orange-400"
-                        : "bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed"
-                    }`}
+                    onClick={() => isAvailable && setSelectedSize(size)}
+                    disabled={!isAvailable}
+                    className={`w-12 h-12 flex items-center justify-center rounded-full border text-xs font-bold transition-all duration-200
+            ${
+              selectedSize === size
+                ? "bg-orange-500 text-white border-orange-500 shadow"
+                : isAvailable
+                ? "bg-white text-gray-800 border-gray-300 hover:border-orange-400"
+                : "bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed"
+            }`}
                   >
                     {size}
                   </button>
@@ -211,7 +220,6 @@ const ProductLayout = () => {
             </div>
           </div>
 
-          {/* Quantity */}
           <div>
             <h3 className="font-semibold text-sm mb-2 uppercase text-gray-700">
               Quantity
@@ -233,7 +241,6 @@ const ProductLayout = () => {
             </div>
           </div>
 
-          {/* Add to Cart */}
           <button
             onClick={handleAddToCart}
             className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:opacity-90 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-300 text-lg"
