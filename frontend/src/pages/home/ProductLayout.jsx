@@ -190,21 +190,17 @@ const ProductLayout = () => {
             </h3>
             <div className="flex flex-wrap gap-3">
               {defaultSizes.map((size) => {
-               
-                
-               const availableSizes =
-  Array.isArray(item.sizes) && item.sizes.length === 1 && item.sizes[0].includes(",")
-    ? item.sizes[0].split(",").map((s) => s.trim())
-    : item.sizes;
+                const availableSizes =
+                  Array.isArray(item.sizes) &&
+                  item.sizes.length === 1 &&
+                  item.sizes[0].includes(",")
+                    ? item.sizes[0].split(",").map((s) => s.trim())
+                    : item.sizes;
 
-
-
-                  console.log(availableSizes);
-                  
+                console.log(availableSizes);
 
                 const isAvailable = availableSizes.includes(size);
                 console.log(isAvailable);
-                
 
                 return (
                   <button
